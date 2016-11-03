@@ -1,0 +1,5 @@
+setup default files in packages => like controller model and view
+make interface CRUD ( create retrieve update delete)
+setup libraries for encryption (jasypt)
+setup libraries for Google Drive API
+javadoc for every file
