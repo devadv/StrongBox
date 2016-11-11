@@ -1,5 +1,12 @@
-setup default files in packages => like controller model and view
-make interface CRUD ( create retrieve update delete)
-setup libraries for encryption (jasypt)
-setup libraries for Google Drive API
-javadoc for every file
+*setup default files in packages => like controller model and view
+
+*make interface CRUD ( create retrieve update delete)
+
+*setup libraries for encryption (jasypt) !! important Unlimited Strength Java(TM) Cryptography Extension Policy Files
+see lib/UnlimitedJCEPolicy/README.txt. You have to install two jars into $JAVA_HOME/jre/lib/security/
+Is jasypt working with Android and is the policy needed?
+
+*setup libraries for Google Drive API
+
+*javadoc for every file
+
