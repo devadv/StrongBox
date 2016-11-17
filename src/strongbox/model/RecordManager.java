@@ -4,8 +4,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.charset.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A class to read lines of text from a file (the records) and to write them
@@ -13,24 +11,24 @@ import java.util.Map;
  * add new ones, edit them, delete records and so on.
  * 
  * @author Thomas Timmermans
- * @version 15-11-2016
+ * @version 16-11-2016
  */
 
-public class ModelFirstTest {
+public class RecordManager {
 
-    File file;
-    Charset charset;
-    ArrayList<String> lineList;
-    HashMap<String, String> records;
+    private File file;
+    private Charset charset;
+    private ArrayList<String> lineList;
+    private ArrayList<Record> records;
 
     /**
-     * Constructor for objects of class ReadWrite.
+     * Constructor for objects of class RecordManager.
      */
-    public ModelFirstTest()	{
-        file = new File("res/test.csv");
+    public RecordManager()	{
+        file = new File("res/recordListSevenFields.csv");
         charset = Charset.forName("US-ASCII");
         lineList = new ArrayList<>();
-        records = new HashMap<>();
+        records = new ArrayList<>();
     }
 
     /**
@@ -46,6 +44,19 @@ public class ModelFirstTest {
         } catch (IOException e) {
             System.err.format("IOException: %s%n", e);
         }
+    }
+    
+    /**
+     * Make the records by processing the lines of text, then add 
+     * the records to the list.
+     */
+    public void makeRecords() {
+    	for (String line: lineList) {
+    		String[] prop = line.split(",");
+            Record record = new Record(prop[0], prop[1], prop[2], prop[3],
+            		prop[4], prop[5], prop[6]);
+            records.add(record);
+    	}
     }
 
     /**
@@ -68,58 +79,8 @@ public class ModelFirstTest {
             System.err.format("IOException: %s%n", e);
         }
     }
-
-    /**
-     * Print the list to the console.
-     */
-    public void printList() {
-        for (String line: lineList) {
-            System.out.println(line);
-        }
+    
+    public int recordListSize() {
+    	return records.size();
     }
-
-    /**
-     * Create the records in a hashmap.
-     */
-    public void makeRecords() {
-        for (String line: lineList) {
-            splitLine(line);
-        }
-    }
-
-    /**
-     * Split the line at the comma, add the first part to records-map as 
-     * the name of a site or account and add the second part as the 
-     * corresponding password for it.
-     */
-    public void splitLine(String line) {
-        String[] pair = line.split(",");
-        records.put(pair[0], pair[1]);
-    }
-
-    /**
-     * Print the records (the hasmap's entries) to the console.
-     */
-    public void printRecords() {
-        for (Map.Entry<String, String> entry: records.entrySet()) {
-            System.out.println(entry);
-        }
-    }
-
-    /**
-     * Add a line of text to the list.
-     * @param newLine  The string to be added to the list as a new line.
-     */
-    public void addLine(String newLine) {
-        lineList.add(newLine);
-    }
-
-    /**
-     * Remove a line from the list.
-     * @param index  The indexnumber of the line to remove.
-     */
-    public void removeLine(int index) {
-        lineList.remove(index);
-    }
-
 }

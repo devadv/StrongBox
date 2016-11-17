@@ -1,15 +1,15 @@
 package strongbox.test;
 
-import strongbox.model.ModelFirstTest;
+import strongbox.model.RecordManager;
 
 public class MainTest{
 	
 	
 	public static void main(String[] args) {
-        ModelFirstTest test = new ModelFirstTest();
+        RecordManager test = new RecordManager();
         test.readFile();
-        test.printList();
+        test.makeRecords();
+        System.out.println("" + test.recordListSize()); // 2 expected
 	}
-	
 	
 }
