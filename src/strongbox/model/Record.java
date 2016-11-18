@@ -1,14 +1,24 @@
 package strongbox.model;
 
-public class Record {
+import java.io.Serializable;
+
+/**
+ * A model for record objects.
+ * 
+ * @author ttimmermans
+ */
+
+public class Record implements Serializable {
 	
-    private String title;
+	private String title;
     private String address;
     private String userName;
     private String password;
     private String info;
     private String folder;
     private String note;
+    // serialVersionUID is needed since Serializable interface is implemented.
+	private static final long serialVersionUID = 1983L;
 
     /**
      * Constructor for objects of class Record
