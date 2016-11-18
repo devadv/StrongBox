@@ -100,4 +100,7 @@ public class TextFileIO {
     public int recordListSize() {
     	return records.size();
     }
+    public ArrayList<Record> getRecordList(){
+    	return records;
+    }
 }

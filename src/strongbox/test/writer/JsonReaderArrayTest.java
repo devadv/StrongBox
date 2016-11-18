@@ -30,10 +30,18 @@ public class JsonReaderArrayTest {
 			JSONArray jsonArray = new JSONArray();
 			jsonArray = (JSONArray) obj.get("Providers");
 			list.addAll(jsonArray);
-
+			
+			/*loop through JSONArray*/
+			for(int i =0;i<jsonArray.size();i++){
+				System.out.println(jsonArray.get(i));
+				
+			}
+			/*loop through list of JSONObjects*/
 			for (JSONObject jobj : list) {
 				System.out.println(jobj.get("name"));
 			}
+			
+			
 
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block

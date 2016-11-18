@@ -131,7 +131,22 @@ public class Record implements Serializable {
 	public void setNote(String note) {
 		this.note = note;
 	}
-    
+    /**
+     * @return String to display Record
+     */
+	public String toString(){
+		String s =
+		String.format("Folder: %s"
+				+ "\nTitle: %s"
+				+ " Address: %s"
+				+ " Username: %s"
+				+ " Password: %s"
+				+ "\nInfo: %s"
+				+ " Note: %s" 
+				, folder,title,address,userName,password,info,note	);
+		
+		return s ;
+	}
     
 
 }
