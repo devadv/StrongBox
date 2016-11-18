@@ -1,11 +1,16 @@
 package strongbox.test;
 
+
 import strongbox.test.encryption.EncryptingText;
+
+import strongbox.model.TextFileIO;
+
 
 public class MainTest{
 	
 	
 	public static void main(String[] args) {
+
 		System.out.println("StrongBox Development started");
 		System.out.println("======Starting Encryption=======");
 		String s = "Example text to be encrypted";
@@ -15,7 +20,12 @@ public class MainTest{
 		System.out.println("======Starting Decryption=======");
 		System.out.println("Decrypt: " + EncryptingText.decrypt(eText));
 		
+
+        TextFileIO test = new TextFileIO();
+        test.readFile();
+        test.makeRecords();
+        System.out.println("" + test.recordListSize()); // 2 expected
+
 	}
-	
 	
 }

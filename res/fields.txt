@@ -1,0 +1,10 @@
+title (of your record)
+website address
+email or user name
+password                 generate random pw
+
+additional info:
+(2 lines for e.g. a desciption such as "account number" and the number itself on 2nd line)
+
+folder name
+add note
