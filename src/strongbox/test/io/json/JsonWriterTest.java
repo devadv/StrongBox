@@ -1,4 +1,4 @@
-package strongbox.test.writer;
+package strongbox.test.io.json;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
