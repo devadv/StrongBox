@@ -2,6 +2,7 @@ package strongbox.test;
 
 
 import strongbox.test.encryption.EncryptingText;
+import strongbox.view.GUI;
 import strongbox.model.Record;
 import strongbox.model.TextFileIO;
 
@@ -29,6 +30,8 @@ public class MainTest{
         	System.out.println("===============================================");
         }
         System.out.println("" + test.recordListSize()); // 2 expected
+        
+        GUI guiTest = new GUI();
 
 	}
 	
