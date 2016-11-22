@@ -31,13 +31,13 @@ public class Model implements iModel {
 	}
 
 	@Override
-	public ArrayList<Record> getRecords(String foldername) {
+	public ArrayList<String> getRecords(String foldername) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Record getRecord(String title) {
+	public String[] getRecord(String title) {
 		// TODO Auto-generated method stub
 		return null;
 	}
