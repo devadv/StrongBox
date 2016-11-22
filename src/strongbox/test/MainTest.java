@@ -29,7 +29,7 @@ public class MainTest{
         	System.out.println(r.toString());
         	System.out.println("===============================================");
         }
-        System.out.println("" + test.recordListSize()); // 2 expected
+        System.out.println("" + test.recordListSize());
         
         GUI guiTest = new GUI();
 

@@ -49,7 +49,6 @@ public class GUI extends JFrame {
         recordDetailPanel.add(octaBox, BorderLayout.CENTER);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setSize(300, 320);
         setLocationRelativeTo(null);
         pack();
         setVisible(true);
