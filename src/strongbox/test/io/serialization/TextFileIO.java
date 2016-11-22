@@ -1,9 +1,11 @@
-package strongbox.model;
+package strongbox.test.io.serialization;
 
 import java.io.*;
 import java.nio.file.*;
 import java.nio.charset.*;
 import java.util.ArrayList;
+
+import strongbox.model.Record;
 
 /**
  * A class to read lines of text from a file (the records' attributes) and to 
@@ -67,7 +69,7 @@ public class TextFileIO {
     	for (String line: lineList) {
     		String[] prop = line.split(",");
             Record record = new Record(prop[0], prop[1], prop[2], prop[3],
-            		prop[4], prop[5], prop[6]);
+            		prop[4], prop[5]);
             records.add(record);
     	}
     }

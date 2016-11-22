@@ -1,11 +1,13 @@
-package strongbox.model;
+package strongbox.test.io.serialization;
 
 	import java.io.ObjectOutputStream;
-	import java.io.FileOutputStream;
-	import java.io.ObjectInputStream;
-	import java.io.FileInputStream;
-	import java.io.FileNotFoundException;
-	import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import strongbox.model.Record;
 
 	/**
 	 * Reading and writing a binary file with
@@ -31,7 +33,7 @@ package strongbox.model;
 	    public BinaryFileIO() {
 	        // initialise instance variables
 	        file = "res/data.bin";
-	        record = new Record("a", "b", "c", "d", "e", "f", "g");
+	        record = new Record("a", "b", "c", "d", "f", "g");
 	    }
 
 	    /**

@@ -11,12 +11,14 @@ import strongbox.model.Record;
 
 public class CSVInputOutput {
 
-	public static ArrayList<Record> readFile(String path) {
+	private ArrayList<Record> records;
+
+	public void readFile(String path) {
 
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
-		ArrayList<Record> records = new ArrayList<>();
+		records = new ArrayList<>();
 
 		try {
 
@@ -26,7 +28,7 @@ public class CSVInputOutput {
 				// separator
 				String[] item = line.split(cvsSplitBy);
 				Record record = new Record(item[0], item[1], item[2], item[3],
-						item[4], item[5], item[6]);
+						item[4], item[5]);
 				records.add(record);
 			}
 		}
@@ -44,12 +46,13 @@ public class CSVInputOutput {
 				e.printStackTrace();
 			}
 		}
-
-		return records;
-
 	}
 
-	public static void writeFile(Writer writer, ArrayList<Record> records) {
+	public ArrayList<Record> getRecords() {
+		return records;
+	}
+
+	public void writeFile(Writer writer, ArrayList<Record> records) {
 
 		for (Record record : records) {
 			writeLine(writer, record);
@@ -68,8 +71,6 @@ public class CSVInputOutput {
 		s += record.getUserName();
 		s += seperator;
 		s += record.getPassword();
-		s += seperator;
-		s += record.getInfo();
 		s += seperator;
 		s += record.getFolder();
 		s += seperator;

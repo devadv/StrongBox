@@ -9,30 +9,29 @@ import java.io.Serializable;
  */
 
 public class Record implements Serializable {
-	
+
 	private String title;
-    private String address;
-    private String userName;
-    private String password;
-    private String info;
-    private String folder;
-    private String note;
-    // serialVersionUID is needed since Serializable interface is implemented.
+	private String address;
+	private String userName;
+	private String password;
+	private String info;
+	private String folder;
+	private String note;
+	// serialVersionUID is needed since Serializable interface is implemented.
 	private static final long serialVersionUID = 1983L;
 
-    /**
-     * Constructor for objects of class Record
-     */
-    public Record(String title, String address, String userName, 
-    		String password, String info, String folder, String note) {
-        this.title = title;
-        this.address = address;
-        this.userName = userName;
-        this.password = password;
-        this.info = info;
-        this.folder = folder;
-        this.note = note;
-    }
+	/**
+	 * Constructor for objects of class Record
+	 */
+	public Record(String title, String address, String userName,
+			String password, String folder, String note) {
+		this.title = title;
+		this.address = address;
+		this.userName = userName;
+		this.password = password;
+		this.folder = folder;
+		this.note = note;
+	}
 
 	/**
 	 * @return the title
@@ -42,7 +41,8 @@ public class Record implements Serializable {
 	}
 
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -56,7 +56,8 @@ public class Record implements Serializable {
 	}
 
 	/**
-	 * @param address the address to set
+	 * @param address
+	 *            the address to set
 	 */
 	public void setAddress(String address) {
 		this.address = address;
@@ -70,7 +71,8 @@ public class Record implements Serializable {
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -84,26 +86,13 @@ public class Record implements Serializable {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	/**
-	 * @return the info
-	 */
-	public String getInfo() {
-		return info;
-	}
-
-	/**
-	 * @param info the info to set
-	 */
-	public void setInfo(String info) {
-		this.info = info;
-	}
-
+	
 	/**
 	 * @return the folder
 	 */
@@ -112,7 +101,8 @@ public class Record implements Serializable {
 	}
 
 	/**
-	 * @param folder the folder to set
+	 * @param folder
+	 *            the folder to set
 	 */
 	public void setFolder(String folder) {
 		this.folder = folder;
@@ -126,27 +116,23 @@ public class Record implements Serializable {
 	}
 
 	/**
-	 * @param note the note to set
+	 * @param note
+	 *            the note to set
 	 */
 	public void setNote(String note) {
 		this.note = note;
 	}
-    /**
-     * @return String to display Record
-     */
-	public String toString(){
-		String s =
-		String.format("Folder: %s"
-				+ "\nTitle: %s"
-				+ " Address: %s"
-				+ " Username: %s"
-				+ " Password: %s"
-				+ "\nInfo: %s"
-				+ " Note: %s" 
-				, folder,title,address,userName,password,info,note	);
-		
-		return s ;
+
+	/**
+	 * @return String to display Record
+	 */
+	public String toString() {
+		String s = String.format("Folder: %s" + "\nTitle: %s" + " Address: %s"
+				+ " Username: %s" + " Password: %s" + "\nInfo: %s"
+				+ " Note: %s", folder, title, address, userName, password,
+				info, note);
+
+		return s;
 	}
-    
 
 }

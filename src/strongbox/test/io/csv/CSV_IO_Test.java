@@ -9,25 +9,26 @@ import strongbox.model.Record;
 public class CSV_IO_Test {
 
 	public static void main(String[] args) {
-		
-		ArrayList<Record> recordlist = CSVInputOutput.readFile("res/recordListSevenFields.csv");
+		CSVInputOutput io = new CSVInputOutput();
+		io.readFile("res/data.csv");
+		ArrayList<Record> recordlist = io.getRecords();
 		
 		for(Record record: recordlist){
-			System.out.println(record.toString());
+			System.out.println(record);
 		}
 		
-		recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "test Info", "Providers" , "telefoon en internet"));
-		recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "test Info", "Provider" , "mobiel"));
+		//recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
+		//recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
 		
 		FileWriter writer = null;
 		try {
-			writer = new FileWriter("res/recordListSevenFields.csv");
+			writer = new FileWriter("res/data.csv");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CSVInputOutput.writeFile(writer, recordlist);
+		io.writeFile(writer, recordlist);
 		try {
 			writer.flush();
 			writer.close();
