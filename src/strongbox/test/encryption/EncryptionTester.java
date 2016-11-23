@@ -7,6 +7,7 @@ import strongbox.model.Record;
 public class EncryptionTester {
 
 	public static void main(String[] args) {
+		
 		ArrayList<String> encryptedPasswords = new ArrayList<>();
 		String [] passwords = {
 				"p-gktXAbGKyzT3Dx",
@@ -25,15 +26,20 @@ public class EncryptionTester {
 		}
 		
 		for(String password : encryptedPasswords){
-			System.out.println(password);
+			System.out.println("hash_" +password);
 		
 		}
 				
 		Record record = new Record("Telfort", "telfort.nl", "ansems", "ictacademie", "Provider","wifi code" );
+		Record record1 = new Record("Telfort", "telfort.nl", "ansems", "hash_wWgfFXuv0ply1rSBZqMnpIpk1piP1qQ5", "Provider","wifi code" );
 		
 		System.out.println(record.getPassword());
 	    System.out.println(record.getEncryptionpasswd());
-				
+	    System.out.println(record);
+
+		System.out.println(record1.getPassword());
+	    System.out.println(record1.getEncryptionpasswd());
+	    System.out.println(record1);		
 		}
 		
 	}

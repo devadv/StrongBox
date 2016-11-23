@@ -29,10 +29,18 @@ public class Record implements Serializable {
 		this.title = title;
 		this.address = address;
 		this.userName = userName;
-		this.password = password;
 		this.folder = folder;
 		this.note = note;
-		this.encryptionpasswd = EncryptingText.encrypt(password);
+		//if password is hashed decrypt and set encryptionpasswd
+		if(password.startsWith("hash_")){
+			this.encryptionpasswd = password;
+			this.password = EncryptingText.decrypt(password.substring(5));
+		}else {
+			this.password = password;
+			setEncryptionpasswd(password);
+		}
+				
+		
 		
 	}
 
@@ -41,7 +49,7 @@ public class Record implements Serializable {
 	}
 
 	public void setEncryptionpasswd(String passwd) {
-		this.encryptionpasswd = EncryptingText.encrypt(passwd);
+		this.encryptionpasswd = "hash_" +EncryptingText.encrypt(passwd);
 	}
 
 	/**
@@ -93,7 +101,8 @@ public class Record implements Serializable {
 	 * @return the password
 	 */
 	public String getPassword() {
-		return EncryptingText.decrypt(encryptionpasswd);
+		return password;
+		
 	}
 
 	/**
@@ -139,9 +148,8 @@ public class Record implements Serializable {
 	 */
 	public String toString() {
 		String s = String.format("Folder: %s" + "\nTitle: %s" + " Address: %s"
-				+ " Username: %s" + " Password: %s" + "\nInfo: %s"
-				+ " Note: %s", folder, title, address, userName, getPassword(),
-				info, note);
+				+ " Username: %s" + " Password: %s" + " Note: %s", 
+				folder, title, address, userName, getPassword(),note);
 
 		return s;
 	}
