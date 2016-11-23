@@ -20,7 +20,7 @@ public class CSV_IO_Test {
 		//recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
 		//recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
 		
-		FileWriter writer = null;
+		/*FileWriter writer = null;
 		try {
 			writer = new FileWriter("res/data.csv");
 			
@@ -35,7 +35,7 @@ public class CSV_IO_Test {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
        
 	}
 	

@@ -70,7 +70,7 @@ public class CSVInputOutput {
 		s += seperator;
 		s += record.getUserName();
 		s += seperator;
-		s += record.getPassword();
+		s += record.getEncryptionpasswd();
 		s += seperator;
 		s += record.getFolder();
 		s += seperator;

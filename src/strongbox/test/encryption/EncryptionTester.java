@@ -2,6 +2,8 @@ package strongbox.test.encryption;
 
 import java.util.ArrayList;
 
+import strongbox.model.Record;
+
 public class EncryptionTester {
 
 	public static void main(String[] args) {
@@ -21,13 +23,16 @@ public class EncryptionTester {
 			String hash = EncryptingText.encrypt(passwords[i]);	
 			encryptedPasswords.add(hash);
 		}
-		int counter = 1;
+		
 		for(String password : encryptedPasswords){
-			System.out.println(counter + "." + password);
-			counter++;
+			System.out.println(password);
+		
 		}
 				
-				
+		Record record = new Record("Telfort", "telfort.nl", "ansems", "ictacademie", "Provider","wifi code" );
+		
+		System.out.println(record.getPassword());
+	    System.out.println(record.getEncryptionpasswd());
 				
 		}
 		

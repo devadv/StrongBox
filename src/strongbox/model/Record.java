@@ -17,6 +17,7 @@ public class Record implements Serializable {
 	private String info;
 	private String folder;
 	private String note;
+	private String encryptionpasswd;
 	// serialVersionUID is needed since Serializable interface is implemented.
 	private static final long serialVersionUID = 1983L;
 
@@ -31,6 +32,16 @@ public class Record implements Serializable {
 		this.password = password;
 		this.folder = folder;
 		this.note = note;
+		this.encryptionpasswd = EncryptingText.encrypt(password);
+		
+	}
+
+	public String getEncryptionpasswd() {
+		return encryptionpasswd;
+	}
+
+	public void setEncryptionpasswd(String passwd) {
+		this.encryptionpasswd = EncryptingText.encrypt(passwd);
 	}
 
 	/**
@@ -82,7 +93,7 @@ public class Record implements Serializable {
 	 * @return the password
 	 */
 	public String getPassword() {
-		return password;
+		return EncryptingText.decrypt(encryptionpasswd);
 	}
 
 	/**
@@ -129,7 +140,7 @@ public class Record implements Serializable {
 	public String toString() {
 		String s = String.format("Folder: %s" + "\nTitle: %s" + " Address: %s"
 				+ " Username: %s" + " Password: %s" + "\nInfo: %s"
-				+ " Note: %s", folder, title, address, userName, password,
+				+ " Note: %s", folder, title, address, userName, getPassword(),
 				info, note);
 
 		return s;
