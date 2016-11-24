@@ -2,7 +2,7 @@ package strongbox.test.encryption;
 
 import java.util.ArrayList;
 
-import strongbox.model.Record;
+
 
 
 public class EncryptionTester {
@@ -31,8 +31,8 @@ public class EncryptionTester {
 		
 		}
 				
-		Record record = new Record("Telfort", "telfort.nl", "ansems", "ictacademie", "Provider","wifi code" );
-		Record record1 = new Record("Telfort", "telfort.nl", "ansems", "hash_wWgfFXuv0ply1rSBZqMnpIpk1piP1qQ5", "Provider","wifi code" );
+		RecordBC record = new RecordBC("Telfort", "telfort.nl", "ansems", "ictacademie", "Provider","wifi code" );
+		RecordBC record1 = new RecordBC("Telfort", "telfort.nl", "ansems", "hash_MwVFtKMakf75SsPqS2zgGypV18X4vA//PH64enKTVXI=", "Provider","wifi code" );
 		
 		System.out.println(record.getPassword());
 	    System.out.println(record.getEncryptionpasswd());

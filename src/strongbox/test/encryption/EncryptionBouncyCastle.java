@@ -23,8 +23,8 @@ public class EncryptionBouncyCastle {
 		sStringEncrypter.setProvider(new BouncyCastleProvider());
 		sStringEncrypter.setAlgorithm("PBEWITHSHA256AND128BITAES-CBC-BC");
 		sStringEncrypter.setPassword("SpxJ!C=-6?gFu2Mc");
-		String encryptedText= sStringEncrypter.decrypt(encryptedtext);
-		return encryptedtext;
+		String decryptedText= sStringEncrypter.decrypt(encryptedtext);
+		return decryptedText;
 		}
 	
 }
