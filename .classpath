@@ -13,5 +13,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/StrongBox/lib/json/json-simple-1.1.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/encryption/bcprov-jdk15on-155.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

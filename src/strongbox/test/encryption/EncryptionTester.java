@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import strongbox.model.Record;
 
+
 public class EncryptionTester {
 
 	public static void main(String[] args) {
@@ -21,7 +22,7 @@ public class EncryptionTester {
 				"roderijst12"};
 		
 		for(int i= 0;i<passwords.length;i++){
-			String hash = EncryptingText.encrypt(passwords[i]);	
+			String hash = EncryptionBouncyCastle.encrypt(passwords[i]);	
 			encryptedPasswords.add(hash);
 		}
 		

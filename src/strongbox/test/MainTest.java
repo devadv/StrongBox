@@ -1,7 +1,7 @@
 package strongbox.test;
 
 
-import strongbox.test.encryption.EncryptingText;
+import strongbox.test.encryption.EncryptionBouncyCastle;
 import strongbox.test.io.serialization.TextFileIO;
 import strongbox.view.GUI;
 import strongbox.model.Record;

@@ -2,6 +2,8 @@ package strongbox.model;
 
 import java.io.Serializable;
 
+import strongbox.test.encryption.EncryptingText;
+
 /**
  * A model for record objects.
  * 

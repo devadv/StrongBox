@@ -9,9 +9,14 @@ import java.util.ArrayList;
 
 import strongbox.model.Record;
 
-public class CSVInputOutput {
 
+public class CSVInputOutput {
+	
 	private ArrayList<Record> records;
+	/**
+	 * Read the lines of the file an convert to objects of Record and make a list  
+	 * @param path the path where to the file
+	 */
 
 	public void readFile(String path) {
 
@@ -47,11 +52,18 @@ public class CSVInputOutput {
 			}
 		}
 	}
-
+	/**
+	 * Get the list of records
+	 */
 	public ArrayList<Record> getRecords() {
 		return records;
 	}
 
+	/**
+	 * Write the records to a file
+	 * @param writer file writer
+	 * @param records ArrayList of Record
+	 */
 	public void writeFile(Writer writer, ArrayList<Record> records) {
 
 		for (Record record : records) {
@@ -59,7 +71,12 @@ public class CSVInputOutput {
 		}
 		System.out.println("File saved");
 	}
-
+	/*
+	 * private method
+	 * Converts one object Record to one line of file and write it
+	 * @param writer
+	 * @param record
+	 */
 	private static void writeLine(Writer writer, Record record) {
 		// Title Address UserName Password Info Folder Note
 		String seperator = ",";

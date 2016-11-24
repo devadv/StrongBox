@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import strongbox.model.Record;
 
+
 public class CSV_IO_Test {
 
 	public static void main(String[] args) {
@@ -17,9 +18,9 @@ public class CSV_IO_Test {
 			System.out.println(record);
 		}
 		
-		//recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
-		//recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
-		
+		recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
+		recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
+	
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter("res/data.csv");
