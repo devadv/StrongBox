@@ -16,6 +16,7 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import org.jasypt.exceptions.AlreadyInitializedException;
+import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -97,10 +98,9 @@ public class ConfigProp {
 	}
 
 	public boolean setMasterKeyAndLogin(String masterpasswd) {
-
+		StrongTextEncryptor stringEncryptor = new StrongTextEncryptor();
 		boolean login = false;
 		stringEncryptor.setPassword(masterpasswd);
-
 		InputStream input;
 		try {
 			input = new FileInputStream(file);
@@ -113,7 +113,9 @@ public class ConfigProp {
 				}
 
 			}
-		}catch (EncryptionOperationNotPossibleException e){
+		
+			
+		} catch (EncryptionOperationNotPossibleException e){
 			System.out.println("Wrong Login... Terminating");
 			login = false;
 

@@ -35,7 +35,7 @@ public class Login extends JPanel implements ActionListener{
 		setLayout(null);
 		labelPassword.setBounds(10,10,120,20);
 		passwordField.setBounds(110,10,150,20);
-		button.setBounds(200,40,80,20);
+		button.setBounds(180,40,80,20);
 		add(labelPassword);
 		add(passwordField);
 		add(button);
