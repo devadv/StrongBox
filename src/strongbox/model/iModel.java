@@ -11,87 +11,89 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public interface iModel {
-	
-	
-	
-//CRUD
-	
-	//create and update
+		
+    // CRUD: create and update 
 	/**
-	 *save Record to File
-	 *@param records the list of Records to save
+	 * Create a new record and add it to the list.
 	 */
-	void writeRecordsToFile(ArrayList<Record> records);
+	void createNewRecord(String title, String address, String userName,
+			String password, String folder, String note);
 	
 	/**
-	 * Add an Record to ArrayList
+	 * Add a record to the list.
+	 * @param record  The record to add.
 	 */
-	void addRecord(String title, String address, String username, String password, String Info, String Folder, String Note);
-	
-	//read or retrieve
-	
-	void readRecordsFromFile();
-	/**
-	 *total list of Records
-	 *@return ArrayList
-	 */
-	ArrayList<Record> getRecords();
+	void addRecord(Record record);
 	
 	/**
-	 *gets list of records with the same foldername
-	 *@param foldername the foldername to get
-	 *@return Arraylist
-	 */
-	ArrayList<String> getRecords(String foldername);
-	
-	/**
-	 *get a record 
-	 *@param title search for title
-	 *@return String[]
-	 */
-	String[] getRecord(String title);
-	
-	/**
-	 *get unique folders
-	 *@return HashSet
-	 */
-	HashSet<String> getFolders();
-			
-	
-	/**
-	 *delete a record
-	 *@param record to delete
+	 * Delete a record from the list.
+	 * @param record  The record to delete.
 	 */
 	void delete(Record record);
 	
 	/**
-	 *delete all the records
+	 * Remove ALL records from the list.
 	 */	
 	void deleteAll();
 	
-// Settings
+	/**
+	 * Return the list holding the record objects.
+	 * @return  The record-list.
+	 */
+	ArrayList<Record> getRecordList();
+
+	/**
+	 * Get a record based on it's title.
+	 * @param title  The record's title.
+	 * @return  The corresponding record.
+	 */
+	Record getRecord(String title);
 	
 	/**
-	 *set the masterpassword for access and encryption
-	 *@param password password to set the first of using StrongBox 
+	 * Get a list of records containing (parts of) the keyword.
+	 * To create this list searching is done not only by title but address, 
+	 * note and folder attributes are also being searched.
+	 * @param keyword  The keyword to search for.
+	 * @return  A list of matching records.
+	 */
+	ArrayList<Record> search(String keyword);
+
+	/**
+	 * Returns a list of records having the specified folder name.
+	 * @param folder  The folder's name.
+	 * @return  The list of records.
+	 */
+	ArrayList<Record> getRecordsByFolder(String folder);
+	
+	/**
+	 * Get a set with the folder names (it's a set so no duplicate names are
+	 * to be found here).
+	 * @return  The set with folder names.
+	 */
+	HashSet<String> getFolders();
+	
+    // --- Password settings ---
+	/**
+	 * Set the master password for access and encryption.
+	 * @param password  The password to set the first time using StrongBox.
 	 */
 	void setMasterPassword(String password);
 	
 	/**
-	 *set the passfrase for encryption
-	 *@param passfrase the passfrase to set
+	 * Set the password phrase for encryption
+	 * @param passphrase the password phrase to set
 	 */
-	void setPassfraseEncryption(String passfrase);
+	void setPassPhraseEncryption(String passphrase);
 	
-	
-// Utils
+    // --- Input from or output to file ---
+	/**
+	 * Read or retrieve the records from a file.
+	 */
+	void readRecordsFromFile();
 	
 	/**
-	 *get a records that contains the keyword
-	 *@param keyword the keyword to search for
-	 *@return ArrayList
+	 * Save the records to a file.
 	 */
-	ArrayList<Record> search(String keyword);
-	
+	void writeRecordsToFile();
 	
 }

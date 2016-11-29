@@ -14,10 +14,10 @@ public class CSVInputOutput {
 	
 	private ArrayList<Record> records;
 	/**
-	 * Read the lines of the file an convert to objects of Record and make a list  
-	 * @param path the path where to the file
+	 * Read the lines of the file, convert to Record-objects and add them
+	 * to the records-list. 
+	 * @param path  The path of the file to read from and write to.
 	 */
-
 	public void readFile(String path) {
 
 		BufferedReader br = null;

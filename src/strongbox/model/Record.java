@@ -5,9 +5,7 @@ import java.io.Serializable;
 import strongbox.test.encryption.EncryptingText;
 
 /**
- * A model for record objects.
- * 
- * @author ttimmermans
+ * A representation of a record object.
  */
 
 public class Record implements Serializable {
@@ -16,7 +14,6 @@ public class Record implements Serializable {
 	private String address;
 	private String userName;
 	private String password;
-	private String info;
 	private String folder;
 	private String note;
 	private String encryptionpasswd;
@@ -51,7 +48,7 @@ public class Record implements Serializable {
 	}
 
 	public void setEncryptionpasswd(String passwd) {
-		this.encryptionpasswd = "hash_" +EncryptingText.encrypt(passwd);
+		this.encryptionpasswd = "hash_" + EncryptingText.encrypt(passwd);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package strongbox.test.io.serialization;
+package strongbox.test.io.csv;
 
 import java.io.*;
 import java.nio.file.*;
