@@ -29,6 +29,7 @@ public class PropertiesModel {
 	private File file;
 	private StrongTextEncryptor stringEncryptor;
 	private EncryptableProperties prop;
+	
 
 	public PropertiesModel() {
 		stringEncryptor = new StrongTextEncryptor();
@@ -86,7 +87,7 @@ public class PropertiesModel {
 				}
 			}
 		}
-
+		
 	}
 
 	/**
