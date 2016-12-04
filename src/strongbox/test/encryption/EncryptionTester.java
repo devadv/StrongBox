@@ -11,17 +11,12 @@ public class EncryptionTester {
 		
 		ArrayList<String> encryptedPasswords = new ArrayList<>();
 		String [] passwords = {
-				"p-gktXAbGKyzT3Dx",
-				"hgcPf#&S*yy@F2jW",
-				"3xJKA$z*cBEzffWx",
-				"!h+xQFND5tPq",
-				"HeU%-re?2Byf",
 				"z87_AvTa#=FA",
 				"klaasv44k",
 				"roderijst12",
 				"ictacademie",
-				"fds7os",
-				"magus178"};
+				"donaldduck7",
+				"Welkom01"};
 		
 		for(int i= 0;i<passwords.length;i++){
 			//String hash = EncryptingText.encrypt(passwords[i]);
@@ -37,13 +32,13 @@ public class EncryptionTester {
 		RecordBC record = new RecordBC("Telfort", "telfort.nl", "ansems", "ictacademie", "Provider","wifi code" );
 		RecordBC record1 = new RecordBC("Telfort", "telfort.nl", "ansems", "hash_MwVFtKMakf75SsPqS2zgGypV18X4vA//PH64enKTVXI=", "Provider","wifi code" );
 		
-		/*System.out.println(record.getPassword());
+		System.out.println(record.getPassword());
 	    System.out.println(record.getEncryptionpasswd());
 	    System.out.println(record);
 
 		System.out.println(record1.getPassword());
 	    System.out.println(record1.getEncryptionpasswd());
-	    System.out.println(record1);		*/
+	    System.out.println(record1);		
 		}
 		
 	}
