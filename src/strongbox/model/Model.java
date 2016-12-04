@@ -24,12 +24,16 @@ public class Model implements iModel {
 	private String masterpassword;
 	private String passphrase;
 	
+	/**
+	 * Constructor
+	 */
+	public Model() {
+		records = new ArrayList<>();
+	}
 	
 	public String getMasterpassword() {
 		return masterpassword;
 	}
-
-
 
 	public String getPassphrase() {
 		return passphrase;
@@ -129,21 +133,19 @@ public class Model implements iModel {
 	}
 
 	/**
-	 * Returns a list of records having the specified folder name.
-	 * 
-	 * @param folder
-	 *            The folder's name.
-	 * @return The list of records.
+	 * Returns a list of record titles associated with the specified folder name.
+	 * @param folder   The folder's name.
+	 * @return The list of record titles.
 	 */
 	@Override
-	public ArrayList<Record> getRecordsByFolder(String folder) {
-		ArrayList<Record> recordsByFolder = new ArrayList<>();
-		for (Record record : records) {
+	public ArrayList<String> getTitlesByFolder(String folder) {
+		ArrayList<String> titlesByFolder = new ArrayList<>();
+		for (Record record: records) {
 			if (record.getFolder().equals(folder)) {
-				recordsByFolder.add(record);
+				titlesByFolder.add(record.getTitle());
 			}
 		}
-		return recordsByFolder;
+		return titlesByFolder;
 	}
 
 	/**

@@ -59,11 +59,11 @@ public interface iModel {
 	ArrayList<Record> search(String keyword);
 
 	/**
-	 * Returns a list of records having the specified folder name.
-	 * @param folder  The folder's name.
-	 * @return  The list of records.
+	 * Returns a list of record titles associated with the specified folder name.
+	 * @param folder   The folder's name.
+	 * @return The list of record titles.
 	 */
-	ArrayList<Record> getRecordsByFolder(String folder);
+	ArrayList<String> getTitlesByFolder(String folder);
 	
 	/**
 	 * Get a set with the folder names (it's a set so no duplicate names are

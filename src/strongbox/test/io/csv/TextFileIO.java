@@ -40,7 +40,7 @@ public class TextFileIO {
      * Constructor
      */
     public TextFileIO()	{
-        file = new File("res/recordListSevenFields.csv");
+        file = new File("res/testBufferedIO.csv");
         charset = Charset.forName("US-ASCII");
         lineList = new ArrayList<>();
         records = new ArrayList<>();
