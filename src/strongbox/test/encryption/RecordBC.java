@@ -36,7 +36,7 @@ public class RecordBC implements Serializable {
 		//if password is hashed decrypt and set encryptionpasswd
 		if(password.startsWith("hash_")){
 			this.encryptionpasswd = password;
-			this.password = EncryptionBouncyCastle.decrypt(password.substring(5));
+			this.password = EncryptionBC.decrypt(password.substring(5));
 		}else {
 			this.password = password;
 			setEncryptionpasswd(password);
@@ -51,7 +51,7 @@ public class RecordBC implements Serializable {
 	}
 
 	public void setEncryptionpasswd(String passwd) {
-		this.encryptionpasswd = "hash_" + EncryptionBouncyCastle.encrypt(passwd);
+		this.encryptionpasswd = "hash_" + EncryptionBC.encrypt(passwd);
 	}
 
 	/**

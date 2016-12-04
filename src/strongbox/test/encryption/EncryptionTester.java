@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class EncryptionTester {
 
 	public static void main(String[] args) {
+		EncryptionBC  enBC = new EncryptionBC("spongbob34");
 		
 		ArrayList<String> encryptedPasswords = new ArrayList<>();
 		String [] passwords = {
@@ -20,7 +21,7 @@ public class EncryptionTester {
 		
 		for(int i= 0;i<passwords.length;i++){
 			//String hash = EncryptingText.encrypt(passwords[i]);
-			String hash = EncryptionBouncyCastle.encrypt(passwords[i]);	
+			String hash = EncryptionBC.encrypt(passwords[i]);	
 			encryptedPasswords.add(hash);
 		}
 		
@@ -30,7 +31,7 @@ public class EncryptionTester {
 		}
 				
 		RecordBC record = new RecordBC("Telfort", "telfort.nl", "ansems", "ictacademie", "Provider","wifi code" );
-		RecordBC record1 = new RecordBC("Telfort", "telfort.nl", "ansems", "hash_MwVFtKMakf75SsPqS2zgGypV18X4vA//PH64enKTVXI=", "Provider","wifi code" );
+		RecordBC record1 = new RecordBC("Telfort", "telfort.nl", "ansems", "hash_YsS/xcDqpwoU72aU2+NpEGzUTgt9WctlEe+ngdWit04=", "Provider","wifi code" );
 		
 		System.out.println(record.getPassword());
 	    System.out.println(record.getEncryptionpasswd());
