@@ -4,25 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.ObjectInputStream.GetField;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.bouncycastle.asn1.cmp.GenRepContent;
-import org.bouncycastle.jcajce.provider.digest.SHA512.KeyGenerator;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.properties.EncryptableProperties;
-import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
-import strongbox.view.GUI;
 
 public class PropertiesModel {
 
@@ -131,7 +122,11 @@ public class PropertiesModel {
 		return login;
 
 	}
-
+	/**
+	 * for making a password or phassphrase 
+	 * @param length
+	 * @return passphrase 
+	 */
 	
 	public String generatePassphrase(int length) {
 

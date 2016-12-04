@@ -11,5 +11,7 @@ Is jasypt working with Android and is the policy needed?
 
 *javadoc for every file
 
+*in the LoginController the frame is not repainted after setting up a password repaint does not work 
+
 
 
