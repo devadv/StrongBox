@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import strongbox.model.RecordBC;
+import strongbox.test.encryption.RecordBC;
+
+
 
 
 public class CSVInputOutput {

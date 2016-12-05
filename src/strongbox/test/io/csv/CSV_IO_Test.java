@@ -4,8 +4,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import strongbox.model.RecordBC;
 import strongbox.test.encryption.EncryptionBC;
+import strongbox.test.encryption.RecordBC;
+
 
 public class CSV_IO_Test {
 
