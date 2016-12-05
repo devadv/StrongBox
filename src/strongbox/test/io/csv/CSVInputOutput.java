@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import strongbox.model.Record;
+import strongbox.model.RecordBC;
 
 
 public class CSVInputOutput {
 	
-	private ArrayList<Record> records;
+	private ArrayList<RecordBC> records;
 	/**
 	 * Read the lines of the file, convert to Record-objects and add them
 	 * to the records-list. 
@@ -32,7 +32,7 @@ public class CSVInputOutput {
 
 				// separator
 				String[] item = line.split(cvsSplitBy);
-				Record record = new Record(item[0], item[1], item[2], item[3],
+				RecordBC record = new RecordBC(item[0], item[1], item[2], item[3],
 						item[4], item[5]);
 				records.add(record);
 			}
@@ -55,7 +55,7 @@ public class CSVInputOutput {
 	/**
 	 * Get the list of records
 	 */
-	public ArrayList<Record> getRecords() {
+	public ArrayList<RecordBC> getRecords() {
 		return records;
 	}
 
@@ -64,9 +64,9 @@ public class CSVInputOutput {
 	 * @param writer file writer
 	 * @param records ArrayList of Record
 	 */
-	public void writeFile(Writer writer, ArrayList<Record> records) {
+	public void writeFile(Writer writer, ArrayList<RecordBC> records) {
 
-		for (Record record : records) {
+		for (RecordBC record : records) {
 			writeLine(writer, record);
 		}
 		System.out.println("File saved");
@@ -77,7 +77,7 @@ public class CSVInputOutput {
 	 * @param writer
 	 * @param record
 	 */
-	private static void writeLine(Writer writer, Record record) {
+	private static void writeLine(Writer writer, RecordBC record) {
 		// Title Address UserName Password Info Folder Note
 		String seperator = ",";
 		String s = "";

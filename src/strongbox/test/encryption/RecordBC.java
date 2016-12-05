@@ -2,12 +2,11 @@ package strongbox.test.encryption;
 
 import java.io.Serializable;
 
-import strongbox.test.encryption.EncryptingText;
+import strongbox.test.encryption.EncryptionBC;
+
 
 /**
- * A model for record objects.
- * 
- * @author ttimmermans
+ * A representation of a record object.
  */
 
 public class RecordBC implements Serializable {
@@ -16,7 +15,6 @@ public class RecordBC implements Serializable {
 	private String address;
 	private String userName;
 	private String password;
-	private String info;
 	private String folder;
 	private String note;
 	private String encryptionpasswd;
