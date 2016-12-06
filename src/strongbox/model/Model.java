@@ -103,9 +103,6 @@ public class Model implements iModel {
 				rec = record;
 			}
 		}
-		if (rec == null) {
-			System.out.println("Error! No record with such title exists!");
-		}
 		return rec;
 	}
 

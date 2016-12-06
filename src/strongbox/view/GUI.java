@@ -2,18 +2,24 @@ package strongbox.view;
 
 import java.awt.*;
 import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * Write a description of class GUI here.
  * 
  * @author Thomas Timmermans
- * @version 04-12-2016
+ * @version 05-12-2016
  */
 public class GUI extends JFrame 
 {
     private JList<String> folderList = new JList<String>();
     private JList<String> recordList = new JList<String>();
     private JScrollPane scrollPane;
+
+    private String[] labels = new String[] {"Title", "Website Address", 
+    		"Email or User Name", "Password", "Folder Name", "Add Note"};
+    
+    private ArrayList<JTextField> fields = new ArrayList<>();
     private JTextField field;
 
     /**
@@ -49,8 +55,9 @@ public class GUI extends JFrame
         fieldBox.setLayout(new BoxLayout(fieldBox, BoxLayout.Y_AXIS));
         for (int i = 0; i < 6; i++) {
             JPanel flowPanel = new JPanel();
-            flowPanel.add(makeTestLabel());
+            flowPanel.add(makeTestLabel(labels[i]));
             flowPanel.add(makeTestField());
+            fields.add(field);
             fieldBox.add(flowPanel);
         }
         detailPanel.add(fieldBox, BorderLayout.CENTER);
@@ -69,13 +76,17 @@ public class GUI extends JFrame
     public JList<String> getRecordList() {
     	return recordList;
     }
+    
+    public ArrayList<JTextField> getFields() {
+    	return fields;
+    }
 
-    public JLabel makeTestLabel() {
-        return new JLabel("TestLabel");
+    public JLabel makeTestLabel(String labelText) {
+        return new JLabel(labelText);
     }
 
     public JTextField makeTestField() {
-        field = new JTextField("TestField");
+        field = new JTextField("Test field with enough space for long string");
         field.setEditable(false);
         return field;
     }

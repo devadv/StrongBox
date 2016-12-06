@@ -38,9 +38,6 @@ public class Record implements Serializable {
 			this.password = password;
 			setEncryptionpasswd(password);
 		}
-				
-		
-		
 	}
 
 	public String getEncryptionpasswd() {

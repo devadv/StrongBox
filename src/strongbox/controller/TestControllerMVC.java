@@ -1,6 +1,7 @@
 package strongbox.controller;
 
 import strongbox.model.Model;
+import strongbox.model.Record;
 import strongbox.view.GUI;
 
 import javax.swing.DefaultListModel;
@@ -22,23 +23,25 @@ public class TestControllerMVC {
      * Constructor
      */
 	public TestControllerMVC() {
+		
 		model = new Model();
 		view = new GUI();
 		createTestRecords();
 		makeFolderList();
 		makeRecordList();
+
 	}
 
 	/**
 	 * Create or update folderList and define it's behavior.
 	 */
     public void makeFolderList() {
-
-    	view.getFolderList().setModel(folderModel);
-
+    	
         for (String folderName: model.getFolders()) {
             folderModel.addElement(folderName);
         }
+
+    	view.getFolderList().setModel(folderModel);
 
         view.getFolderList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
@@ -53,9 +56,37 @@ public class TestControllerMVC {
         );
     }
     
+    /**
+     * Define behavior of the recordList.
+     */
     public void makeRecordList() {
     	
-        view.getRecordList().setModel(recordModel);
+    	view.getRecordList().setModel(recordModel);
+    	
+    	view.getRecordList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+    		    public void valueChanged(ListSelectionEvent e) {
+                    if (!e.getValueIsAdjusting()) {
+                    	Record record = model.getRecord(view.getRecordList().getSelectedValue());
+                    	String[] fields = getRecordFields(record);
+                    	for (int i = 0; i < 6; i++) {
+                    		view.getFields().get(i).setText(fields[i]);
+                    	}                    	
+                    }
+                }
+            }
+        );
+    }
+    
+    /**
+     * Create and return an array of strings representing the values of the 
+     * fields from a record.
+     * @param record   The record to get the fields from.
+     * @return An array with the values of the fields.
+     */
+    public String[] getRecordFields(Record record) {
+    	return new String[] {record.getTitle(), record.getAddress(), 
+    			record.getUserName(), record.getPassword(), 
+    			record.getFolder(), record.getNote()};
     }
     
 	public void createTestRecords() {
