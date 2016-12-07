@@ -47,7 +47,7 @@ public class TestControllerMVC {
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
                         recordModel.clear();
-                        for (String recordTitle: model.getTitlesByFolder(view.getFolderList().getSelectedValue())) {
+                    	for (String recordTitle: model.getTitlesByFolder(view.getFolderList().getSelectedValue())) {
                             recordModel.addElement(recordTitle);
                         }
                     }

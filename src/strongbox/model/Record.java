@@ -3,6 +3,7 @@ package strongbox.model;
 import java.io.Serializable;
 
 import strongbox.test.encryption.EncryptingText;
+import strongbox.test.encryption.Encryption;
 
 /**
  * A representation of a record object.
@@ -33,7 +34,7 @@ public class Record implements Serializable {
 		//if password is hashed decrypt and set encryptionpasswd
 		if(password.startsWith("hash_")){
 			this.encryptionpasswd = password;
-			this.password = EncryptingText.decrypt(password.substring(5));
+			this.password = Encryption.decrypt(password.substring(5));
 		}else {
 			this.password = password;
 			setEncryptionpasswd(password);
@@ -45,7 +46,7 @@ public class Record implements Serializable {
 	}
 
 	public void setEncryptionpasswd(String passwd) {
-		this.encryptionpasswd = "hash_" + EncryptingText.encrypt(passwd);
+		this.encryptionpasswd = "hash_" + Encryption.encrypt(passwd);
 	}
 
 	/**

@@ -1,10 +1,14 @@
 package strongbox.model;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -12,6 +16,7 @@ import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
+import strongbox.test.encryption.RecordBC;
 import strongbox.test.login.mvc.PropertiesModel;
 
 /**
@@ -23,14 +28,14 @@ public class Model implements iModel {
 	private ArrayList<Record> records;
 	private String masterpassword;
 	private String passphrase;
-	
+
 	/**
 	 * Constructor
 	 */
 	public Model() {
 		records = new ArrayList<>();
 	}
-	
+
 	public String getMasterpassword() {
 		return masterpassword;
 	}
@@ -130,14 +135,17 @@ public class Model implements iModel {
 	}
 
 	/**
-	 * Returns a list of record titles associated with the specified folder name.
-	 * @param folder   The folder's name.
+	 * Returns a list of record titles associated with the specified folder
+	 * name.
+	 * 
+	 * @param folder
+	 *            The folder's name.
 	 * @return The list of record titles.
 	 */
 	@Override
 	public ArrayList<String> getTitlesByFolder(String folder) {
 		ArrayList<String> titlesByFolder = new ArrayList<>();
-		for (Record record: records) {
+		for (Record record : records) {
 			if (record.getFolder().equals(folder)) {
 				titlesByFolder.add(record.getTitle());
 			}
@@ -181,7 +189,7 @@ public class Model implements iModel {
 	 */
 	@Override
 	public void setPassPhraseEncryption(String passphrase) {
-		
+
 		this.passphrase = passphrase;
 
 	}
@@ -192,7 +200,49 @@ public class Model implements iModel {
 	 */
 	@Override
 	public void readRecordsFromFile() {
-		// TODO Auto-generated method stub
+		readFile("res/data.csv");
+	}
+
+	/**
+	 * Read the lines of the file, convert to Record-objects and add them to the
+	 * records-list.
+	 * 
+	 * @param path
+	 *            The path of the file to read from and write to.
+	 */
+	private void readFile(String path) {
+
+		BufferedReader br = null;
+		String line = "";
+		String cvsSplitBy = ",";
+		records = new ArrayList<>();
+
+		try {
+
+			br = new BufferedReader(new FileReader(path));
+			while ((line = br.readLine()) != null) {
+
+				// separator
+				String[] item = line.split(cvsSplitBy);
+				Record record = new Record(item[0], item[1], item[2], item[3],
+						item[4], item[5]);
+				records.add(record);
+			}
+		}
+
+		catch (FileNotFoundException e) {
+			System.out.println(" File not found " + e);
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -200,19 +250,77 @@ public class Model implements iModel {
 	 */
 	@Override
 	public void writeRecordsToFile() {
-		// TODO Auto-generated method stub
+		FileWriter writer = null;
+		
+			try {
+				writer = new FileWriter("res/data.csv");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			writeFile(writer, getRecordList());
+			
+			
+			try {
+				writer.flush();
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
+	/**
+	 * Write the records to a file
+	 * @param writer file writer
+	 * @param arrayList ArrayList of Record
+	 */
+	private void writeFile(Writer writer, ArrayList<Record> arrayList) {
 
-	
+		for (Record record : arrayList) {
+			writeLine(writer, record);
+		}
+		System.out.println("File saved");
+	}
+	/*
+	 * private method
+	 * Converts one object Record to one line of file and write it
+	 * @param writer
+	 * @param record
+	 */
+	private static void writeLine(Writer writer, Record record) {
+		// Title Address UserName Password Info Folder Note
+		String seperator = ",";
+		String s = "";
+		s += record.getTitle();
+		s += seperator;
+		s += record.getAddress();
+		s += seperator;
+		s += record.getUserName();
+		s += seperator;
+		s += record.getEncryptionpasswd();
+		s += seperator;
+		s += record.getFolder();
+		s += seperator;
+		s += record.getNote();
+		s += "\n";
+		try {
+			writer.append(s);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	public void readProperties() {
 
 		File file = new File("res/config.properties");
 
 		StrongTextEncryptor stringEncryptor = new StrongTextEncryptor();
+		stringEncryptor.setPassword(getMasterpassword());
 		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
-		
-		
+
 		InputStream input;
 		try {
 			input = new FileInputStream(file);
@@ -224,10 +332,8 @@ public class Model implements iModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		setPassPhraseEncryption(prop.getProperty("passphrase"));
-		
-		
 
 	}
 }

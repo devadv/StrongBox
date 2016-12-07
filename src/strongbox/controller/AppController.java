@@ -4,13 +4,13 @@ import org.jasypt.util.text.StrongTextEncryptor;
 
 import strongbox.model.Model;
 import strongbox.test.encryption.EncryptingText;
-import strongbox.test.encryption.EncryptingTextObject;
+import strongbox.test.encryption.Encryption;
 import strongbox.view.GUI;
 
 public class AppController {
 
 	public AppController(Model model, String password) {
-		EncryptingTextObject encryptor = new EncryptingTextObject(password); 
+		Encryption encryptor = new Encryption(password); 
 		String encryptedPassphrase =model.getPassphrase();
 		String passphrase = encryptor.decrypt(encryptedPassphrase);
 				
