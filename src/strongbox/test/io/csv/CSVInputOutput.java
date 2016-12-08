@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
+import strongbox.model.Record;
 import strongbox.test.encryption.RecordBC;
 
 
@@ -14,7 +15,7 @@ import strongbox.test.encryption.RecordBC;
 
 public class CSVInputOutput {
 	
-	private ArrayList<RecordBC> records;
+	private ArrayList<Record> records;
 	/**
 	 * Read the lines of the file, convert to Record-objects and add them
 	 * to the records-list. 
@@ -34,7 +35,7 @@ public class CSVInputOutput {
 
 				// separator
 				String[] item = line.split(cvsSplitBy);
-				RecordBC record = new RecordBC(item[0], item[1], item[2], item[3],
+				Record record = new Record(item[0], item[1], item[2], item[3],
 						item[4], item[5]);
 				records.add(record);
 			}
@@ -57,18 +58,18 @@ public class CSVInputOutput {
 	/**
 	 * Get the list of records
 	 */
-	public ArrayList<RecordBC> getRecords() {
+	public ArrayList<Record> getRecords() {
 		return records;
 	}
 
 	/**
 	 * Write the records to a file
 	 * @param writer file writer
-	 * @param records ArrayList of Record
+	 * @param recordlist ArrayList of Record
 	 */
-	public void writeFile(Writer writer, ArrayList<RecordBC> records) {
+	public void writeFile(Writer writer, ArrayList<Record> recordlist) {
 
-		for (RecordBC record : records) {
+		for (Record record : recordlist) {
 			writeLine(writer, record);
 		}
 		System.out.println("File saved");
@@ -79,7 +80,7 @@ public class CSVInputOutput {
 	 * @param writer
 	 * @param record
 	 */
-	private static void writeLine(Writer writer, RecordBC record) {
+	private static void writeLine(Writer writer, Record record) {
 		// Title Address UserName Password Info Folder Note
 		String seperator = ",";
 		String s = "";

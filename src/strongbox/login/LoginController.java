@@ -1,4 +1,4 @@
-package strongbox.test.login.mvc;
+package strongbox.login;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,12 +47,11 @@ public class LoginController {
 					if (model.checkLogin(view.getPassword())) {
 
 						System.out.println("Login correct!");
-						password = view.getPassword();
-						//view.frame.repaint();
-						//view.frame.dispose();
-						System.out.println("Access!");
-						access = true;
-						
+						LoginController.this.password = view.getPassword();
+						//System.out.println(LoginController.this.password);
+						view.frame.repaint();
+						view.frame.dispose();
+						LoginController.this.access = true;
 						
 					} else {
 						//set the title of the frame

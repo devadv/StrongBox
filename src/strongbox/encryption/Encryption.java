@@ -1,4 +1,4 @@
-package strongbox.test.encryption;
+package strongbox.encryption;
 
 import org.jasypt.util.text.StrongTextEncryptor;
 /**
@@ -13,9 +13,6 @@ public class Encryption {
 	
 	public Encryption(String password) {
 		this.password = password;
-	}
-	public String getPasswd(){
-		return password;
 	}
 	/**
 	 * static method encrypts given text 

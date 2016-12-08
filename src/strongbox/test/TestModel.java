@@ -11,10 +11,10 @@ public class TestModel {
 
 	public static void main(String[] args) {
 		
-		Encryption encryption = new Encryption("SpxJ!C=-6?gFu2Mc");
-		
+		Encryption encryption = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
 		StrongTextEncryptor enc = new StrongTextEncryptor();
 		enc.setPassword("12345");
+		
 		Model model = new Model();
 		model.setMasterPassword("12345");
 		model.readRecordsFromFile();

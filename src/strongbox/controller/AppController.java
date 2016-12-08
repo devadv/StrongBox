@@ -1,21 +1,28 @@
 package strongbox.controller;
 
-import org.jasypt.util.text.StrongTextEncryptor;
-
 import strongbox.model.Model;
-import strongbox.test.encryption.EncryptingText;
 import strongbox.test.encryption.Encryption;
-import strongbox.view.GUI;
+
 
 public class AppController {
 
-	public AppController(Model model, String password) {
-		Encryption encryptor = new Encryption(password); 
-		String encryptedPassphrase =model.getPassphrase();
-		String passphrase = encryptor.decrypt(encryptedPassphrase);
-				
-		System.out.println(password);;
-		System.out.println(passphrase);
-		new GUI();
+	public AppController(Model model) {
+		model.readProperties();
+		String masterpassword = model.getMasterpassword();
+		System.out.println("masterpass " +masterpassword);
+		Encryption enMaster = new Encryption(masterpassword);
+		String encryptedpassphrase = model.getPassphrase();
+		String decryptedpassphrase = enMaster.decrypt(encryptedpassphrase);
+		System.out.println(encryptedpassphrase);
+		System.out.println(decryptedpassphrase);
+		Encryption enPassphrase = new Encryption(decryptedpassphrase);
+		model.readRecordsFromFile();
+		System.out.println(model.getRecordList());
+		
+		
+		
+		
+		
+		
 	}
 }

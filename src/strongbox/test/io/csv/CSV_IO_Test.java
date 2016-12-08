@@ -4,32 +4,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import strongbox.test.encryption.EncryptionBC;
-import strongbox.test.encryption.RecordBC;
+import strongbox.model.Record;
+import strongbox.test.encryption.Encryption;
+
 
 
 public class CSV_IO_Test {
 
 	public static void main(String[] args) {
 		
-		String passphrase = "PeGsd0T2d1*"
-				+ "vaUCMcCaw%jt0B%FxkRUdA"
-				+ "2H9nmpg@fRPNTqsssGqTpoU"
-				+ "E$BN95bEu32z1HXB12fw*q26P"
-				+ "pJ9K6&Uje84d4K0JyyV*$MNnBp"
-				+ "L7iJl$GuFeE$Ll#CKpo8&";
+		String passphrase = "hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ";
 		System.out.println(passphrase);
-		EncryptionBC enBC = new EncryptionBC(passphrase);
+		Encryption encryption = new Encryption(passphrase);
 		CSVInputOutput io = new CSVInputOutput();
 		io.readFile("res/data.csv");
-		ArrayList<RecordBC> recordlist = io.getRecords();
+		ArrayList<Record> recordlist = io.getRecords();
 		
-		for(RecordBC record: recordlist){
+		for(Record record: recordlist){
 			System.out.println(record);
 		}
 		
-		recordlist.add(new RecordBC("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
-		recordlist.add(new RecordBC("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
+		recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
+		recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
 	
 		FileWriter writer = null;
 		try {
