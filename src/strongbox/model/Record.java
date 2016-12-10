@@ -29,9 +29,11 @@ public class Record implements Serializable {
 		this.title = title;
 		this.address = address;
 		this.userName = userName;
+		this.password = password; // <--- REMOVE line once finished
 		this.folder = folder;
 		this.note = note;
 		//if password is hashed decrypt and set encryptionpasswd
+		/* UNCOMMENT AGAIN ONCE FINISHED
 		if(password.startsWith("hash_")){
 			this.encryptionpasswd = password;
 			this.password = Encryption.decrypt(password.substring(5));
@@ -39,6 +41,7 @@ public class Record implements Serializable {
 			this.password = password;
 			setEncryptionpasswd(password);
 		}
+		*/
 	}
 
 	public String getEncryptionpasswd() {

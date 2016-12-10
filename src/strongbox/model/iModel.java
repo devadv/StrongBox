@@ -50,13 +50,13 @@ public interface iModel {
 	Record getRecord(String title);
 	
 	/**
-	 * Get a list of records containing (parts of) the keyword.
-	 * To create this list searching is done not only by title but address, 
-	 * note and folder attributes are also being searched.
+	 * Get a list of record titles containing (parts of) the keyword. To create 
+	 * the list searching is done not only by title but address, note and folder
+	 * attributes are also being searched.
 	 * @param keyword  The keyword to search for.
-	 * @return  A list of matching records.
+	 * @return A list of matching record titles.
 	 */
-	ArrayList<Record> search(String keyword);
+	ArrayList<String> search(String keyword);
 
 	/**
 	 * Returns a list of record titles associated with the specified folder name.

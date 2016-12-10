@@ -30,18 +30,10 @@ public class Model implements iModel {
 	private String passphrase;
 
 	/**
-	 * Constructor
+	 * Constructor for the model.
 	 */
 	public Model() {
 		records = new ArrayList<>();
-	}
-
-	public String getMasterpassword() {
-		return masterpassword;
-	}
-
-	public String getPassphrase() {
-		return passphrase;
 	}
 
 	/**
@@ -56,8 +48,7 @@ public class Model implements iModel {
 	/**
 	 * Add a record to the list.
 	 * 
-	 * @param record
-	 *            The record to add.
+	 * @param record  The record to add.
 	 */
 	@Override
 	public void addRecord(Record record) {
@@ -67,8 +58,7 @@ public class Model implements iModel {
 	/**
 	 * Delete a record from the list.
 	 * 
-	 * @param record
-	 *            The record to delete.
+	 * @param record  The record to delete.
 	 */
 	@Override
 	public void delete(Record record) {
@@ -96,8 +86,7 @@ public class Model implements iModel {
 	/**
 	 * Get a record based on it's title.
 	 * 
-	 * @param title
-	 *            The record's title.
+	 * @param title  The record's title.
 	 * @return The corresponding record.
 	 */
 	@Override
@@ -112,34 +101,31 @@ public class Model implements iModel {
 	}
 
 	/**
-	 * Get a list of records containing (parts of) the keyword. To create this
-	 * list searching is done not only by title but address, note and folder
+	 * Get a list of record titles containing (parts of) the keyword. To create 
+	 * the list searching is done not only by title but address, note and folder
 	 * attributes are also being searched.
 	 * 
-	 * @param keyword
-	 *            The keyword to search for.
-	 * @return A list of matching records.
+	 * @param keyword  The keyword to search for.
+	 * @return A list of matching record titles.
 	 */
 	@Override
-	public ArrayList<Record> search(String keyword) {
-		ArrayList<Record> recordsByKeyword = new ArrayList<>();
+	public ArrayList<String> search(String keyword) {
+		ArrayList<String> titlesByKeyword = new ArrayList<>();
 		for (Record record : records) {
 			if (record.getTitle().contains(keyword)
 					|| record.getAddress().contains(keyword)
 					|| record.getNote().contains(keyword)
 					|| record.getFolder().contains(keyword)) {
-				recordsByKeyword.add(record);
+				titlesByKeyword.add(record.getTitle());
 			}
 		}
-		return recordsByKeyword;
+		return titlesByKeyword;
 	}
 
 	/**
-	 * Returns a list of record titles associated with the specified folder
+	 * Returns a list of record titles associated with the specified folder 
 	 * name.
-	 * 
-	 * @param folder
-	 *            The folder's name.
+	 * @param folder  The folder's name.
 	 * @return The list of record titles.
 	 */
 	@Override
@@ -168,30 +154,60 @@ public class Model implements iModel {
 		return folderNames;
 	}
 
+    /**
+     * Create and return an array of strings representing the values of the 
+     * fields from a record.
+     * @param record   The record to get the fields from.
+     * @throws NullPointerException if record is null. The possible throwing of
+     *         this (unchecked) exception is absolutely necessary for the
+     *         RecordListener from controller-class, which calls this method,
+     *         to function correctly. 
+     * @return An array with the values of the fields.
+     */
+    public String[] getRecordFields(Record record) throws NullPointerException {
+    	return new String[] {record.getTitle(), record.getAddress(), 
+    			record.getUserName(), record.getPassword(), 
+    			record.getFolder(), record.getNote()};
+    }
+	
 	// --- Password settings ---
 	/**
 	 * Set the master password for access and encryption.
 	 * 
-	 * @param password
-	 *            The password to set the first time using StrongBox.
+	 * @param password  The password to set the first time using StrongBox.
 	 */
 	@Override
 	public void setMasterPassword(String password) {
 		this.masterpassword = password;
 
 	}
+	
+	/**
+	 * Get the master password.
+	 * @return The master password.
+	 */
+	public String getMasterpassword() {
+		return masterpassword;
+	}
 
 	/**
 	 * Set the password phrase for encryption
 	 * 
-	 * @param passphrase
-	 *            the password phrase to set
+	 * @param passphrase  The password phrase to set.
 	 */
 	@Override
 	public void setPassPhraseEncryption(String passphrase) {
 
 		this.passphrase = passphrase;
 
+	}
+	
+	/**
+	 * Get the password phrase.
+	 * @return The password phrase.
+	 */
+	public String getPassphrase() {
+		return passphrase;
 	}
 
 	// --- Input from or output to file ---
@@ -207,8 +223,7 @@ public class Model implements iModel {
 	 * Read the lines of the file, convert to Record-objects and add them to the
 	 * records-list.
 	 * 
-	 * @param path
-	 *            The path of the file to read from and write to.
+	 * @param path   The path of the file to read from and write to.
 	 */
 	private void readFile(String path) {
 
@@ -271,9 +286,9 @@ public class Model implements iModel {
 		
 	}
 	/**
-	 * Write the records to a file
-	 * @param writer file writer
-	 * @param arrayList ArrayList of Record
+	 * Write the records to a file.
+	 * @param writer  FileWriter
+	 * @param arrayList  ArrayList of Record
 	 */
 	private void writeFile(Writer writer, ArrayList<Record> arrayList) {
 
@@ -282,26 +297,26 @@ public class Model implements iModel {
 		}
 		System.out.println("File saved");
 	}
-	/*
+	/**
 	 * private method
-	 * Converts one object Record to one line of file and write it
-	 * @param writer
-	 * @param record
+	 * Converts one object Record to one line of file and write it.
+	 * @param writer  FileWriter
+	 * @param record  The record to write as a line.
 	 */
 	private static void writeLine(Writer writer, Record record) {
 		// Title Address UserName Password Info Folder Note
-		String seperator = ",";
+		String separator = ",";
 		String s = "";
 		s += record.getTitle();
-		s += seperator;
+		s += separator;
 		s += record.getAddress();
-		s += seperator;
+		s += separator;
 		s += record.getUserName();
-		s += seperator;
+		s += separator;
 		s += record.getEncryptionpasswd();
-		s += seperator;
+		s += separator;
 		s += record.getFolder();
-		s += seperator;
+		s += separator;
 		s += record.getNote();
 		s += "\n";
 		try {
