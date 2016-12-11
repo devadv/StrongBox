@@ -2,10 +2,12 @@ package strongbox.controller;
 
 import strongbox.model.Model;
 import strongbox.model.Record;
+import strongbox.encryption.Encryption;
 import strongbox.view.GUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.DefaultListModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -13,6 +15,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+
+import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
  * @version 10-12-2016
@@ -29,11 +33,18 @@ public class TestControllerMVC {
      * Constructor
      */
 	public TestControllerMVC() {
-		
+			
 		model = new Model();
+		model.setMasterPassword("12345"); // Password from login controller
+		model.readProperties();
+		StrongTextEncryptor enc = new StrongTextEncryptor();
+		enc.setPassword(model.getMasterpassword());
+		Encryption encryption = new Encryption(enc.decrypt(model.getPassphrase()));
+		model.readRecordsFromFile();
+		
 		view = new GUI();
 		
-		createTestRecords();
+		//createTestRecords();
 		
 		initializeFolderData();
 		
