@@ -1,7 +1,7 @@
 package strongbox.controller;
 
 import strongbox.model.Model;
-import strongbox.test.encryption.Encryption;
+import strongbox.encryption.Encryption;
 
 
 public class AppController {
