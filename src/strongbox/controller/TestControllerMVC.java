@@ -7,8 +7,10 @@ import strongbox.view.GUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -19,12 +21,14 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 10-12-2016
+ * @version 12-12-2016
  */
 public class TestControllerMVC {
 
 	private Model model;
 	private GUI view;
+	
+	private Record record; // The currently selected or last selected record.
 	
     private DefaultListModel<String> folderData = new DefaultListModel<>();
     private DefaultListModel<String> recordData = new DefaultListModel<>();
@@ -54,8 +58,10 @@ public class TestControllerMVC {
 		addFolderListener();
 		addRecordListener();
 		
-		addSearchListener();
+		addRecordCreationListener();
+		addSaveListener();
 		addDeleteListener();
+		addSearchListener();
 
 	}
 
@@ -97,7 +103,7 @@ public class TestControllerMVC {
     		public void valueChanged(ListSelectionEvent e) {
     			if (!e.getValueIsAdjusting()) {
     				try {
-    					Record record = model.getRecord(view.getRecordView().getSelectedValue());
+    					record = model.getRecord(view.getRecordView().getSelectedValue());
     					String[] fields = model.getRecordFields(record);
     					for (int i = 0; i < 6; i++) {
     						view.getFields().get(i).setText(fields[i]);
@@ -108,6 +114,106 @@ public class TestControllerMVC {
     						view.getFields().get(i).setText("No record selected");
     					}
     				}
+    			}
+    		}
+    	}
+    	);
+    }
+
+    /**
+     * Add an ActionListener to the 'Create new record' button.
+     */
+    public void addRecordCreationListener() {
+    	view.getNewRecordButton().addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			view.showMessageDialog("Please enter the details of the new " + 
+    					"record in the textfields to the right \n" +
+    					"A new folder will be created if needed.");
+    			view.getFolderView().setEnabled(false);
+    			view.getRecordView().setEnabled(false);
+    			view.getSearchBox().setEnabled(false);
+    			ArrayList<JTextField> fields = view.getFields();
+    			for (JTextField field: fields) {
+    				field.setEditable(true);
+    				field.setText("");
+       			}
+    			fields.get(0).grabFocus();
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * Add an ActionListener to the 'Save' button so a new record can be saved
+     * or to save changes to an existing record.
+     */
+    // TODO HIER GEBLEVEN (12-12-2016) NOG NIET VOLLEDIG AF EN GETEST
+    public void addSaveListener() {
+    	view.getSaveButton().addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			String[] fieldValues = new String[6];
+    			for (int i = 0; i < fieldValues.length; i++) {
+    				fieldValues[i] = view.getFields().get(i).getText();
+    			}
+			 	String titleFromField = fieldValues[0].trim().toLowerCase();
+    			
+    			boolean existingRecord = false;
+    			
+    			for (Record rec: model.getRecordList()) {
+    			 	String recordTitle = rec.getTitle().trim().toLowerCase();
+    				if (recordTitle.equals(titleFromField)) {
+    					existingRecord = true;
+    				}
+    			}
+    			
+    			if (existingRecord) {
+    				model.setRecordFields(record, fieldValues);
+    			}
+    			else { // New record
+        			model.createNewRecord(fieldValues[0], fieldValues[1], 
+        					fieldValues[2], fieldValues[3], fieldValues[4], 
+        					fieldValues[5]);
+    			}
+    			
+    			for (JTextField field: view.getFields()) {
+    				field.setEditable(false);
+       			}
+    			view.getFolderView().setEnabled(true);
+    			view.getRecordView().setEnabled(true);
+    			view.getSearchBox().setEnabled(true);
+    			
+    			initializeFolderData();
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * Add an ActionListener to the 'delete' button so selected records can
+     * be deleted (ask user for confirmation) from the records-list.
+     */
+    public void addDeleteListener() {
+    	view.getDeleteButton().addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if (view.getRecordView().getSelectedValue() != null) {
+    				String title = view.getRecordView().getSelectedValue();
+    				if (view.showConfirmDialog("Are you sure you want to" + 
+    						" delete the following record: " + title + " ?")) {
+    					record = model.getRecord(title);
+    					String folder = record.getFolder();
+    					model.delete(record);
+    					initializeFolderData();
+    					recordData.clear();
+    					for (String recordTitle: model.getTitlesByFolder(folder)) {
+    						recordData.addElement(recordTitle);
+    					}
+    					if (folderData.indexOf(folder) != -1) {
+    						view.getFolderView().setSelectedIndex(folderData.indexOf(folder));
+    					}
+    				}
+    			}
+    			else {
+    				view.showMessageDialog("No record selected");
     			}
     		}
     	}
@@ -149,7 +255,7 @@ public class TestControllerMVC {
      * @throws BadLocationException if a portion of the given range was not 
      *         a valid part of the document.
      */
-    public String getDocumentText(PlainDocument doc) {
+    private String getDocumentText(PlainDocument doc) {
 		String s = "";
 		try {
 			s = doc.getText(0, doc.getLength());
@@ -158,36 +264,6 @@ public class TestControllerMVC {
 			exc.printStackTrace();
 		}
 		return s;
-    }
-    
-    /**
-     * Add an ActionListener to the 'delete' button so selected records can
-     * be deleted (ask user for confirmation) from the records-list.
-     */
-    public void addDeleteListener() {
-    	view.getDeleteButton().addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    			if (view.getRecordView().getSelectedValue() != null) {
-    				if (view.showConfirmDialog(view.getRecordView().getSelectedValue())) {
-    					Record record = model.getRecord(view.getRecordView().getSelectedValue());
-    					String folder = record.getFolder();
-    					model.delete(record);
-    					initializeFolderData();
-    					recordData.clear();
-    					for (String recordTitle: model.getTitlesByFolder(folder)) {
-    						recordData.addElement(recordTitle);
-    					}
-    					if (folderData.indexOf(folder) != -1) {
-    						view.getFolderView().setSelectedIndex(folderData.indexOf(folder));
-    					}
-    				}
-    			}
-    			else {
-    				view.showNothingSelected();
-    			}
-    		}
-    	}
-    	);
     }
     
 	public void createTestRecords() {

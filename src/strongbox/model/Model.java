@@ -154,9 +154,23 @@ public class Model implements iModel {
 		return folderNames;
 	}
 
+	/**
+	 * Set the fields of a record to the values provided by an array of strings.
+	 * @param record   The record whose fields will be set.
+	 * @param fields   The array to set the record's fields.
+	 */
+	public void setRecordFields(Record record, String[] fields) {
+		record.setTitle(fields[0]);
+		record.setAddress(fields[1]);
+		record.setUserName(fields[2]);
+		record.setPassword(fields[3]);
+		record.setFolder(fields[4]);
+		record.setNote(fields[5]);
+	}
+	
     /**
      * Create and return an array of strings representing the values of the 
-     * fields from a record.
+     * fields from this record.
      * @param record   The record to get the fields from.
      * @throws NullPointerException if record is null. The possible throwing of
      *         this (unchecked) exception is absolutely necessary for the

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 10-12-2016
+ * @version 12-12-2016
  */
 public class GUI extends JFrame 
 {
@@ -23,8 +23,13 @@ public class GUI extends JFrame
     
     private JTextField searchBox;
     
-    private JButton eyeButton;
+    private JButton newRecordButton;
+    private JButton editButton;
+    private JButton saveButton;
     private JButton deleteButton;
+    
+    private JButton eyeButton;
+    private JButton diceButton;
 
     /**
      * Constructor for objects of class GUI
@@ -61,7 +66,14 @@ public class GUI extends JFrame
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
         
+        folderPanel.add(makeNewRecordButton(), BorderLayout.SOUTH);
         recordPanel.add(makeDeleteButton(), BorderLayout.SOUTH);
+
+        JPanel temp = new JPanel(new GridLayout(0, 1));
+        detailPanel.add(temp, BorderLayout.SOUTH);
+        temp.add(makeEditButton());
+        temp.add(makeSaveButton());
+
         
         // record details panel
         JPanel fieldBox = new JPanel();
@@ -73,6 +85,7 @@ public class GUI extends JFrame
             fields.add(field);
             if (i == 3) {
             	flowPanel.add(makeEyeButton());
+            	flowPanel.add(makeDiceButton());
             }
             fieldBox.add(flowPanel);
         }
@@ -105,6 +118,18 @@ public class GUI extends JFrame
     	return searchBox;
     }
     
+    public JButton getNewRecordButton() {
+    	return newRecordButton;
+    }
+   
+    public JButton getEditButton() {
+    	return editButton;
+    }
+    
+    public JButton getSaveButton() {
+    	return saveButton;
+    }
+    
     public JButton getDeleteButton() {
     	return deleteButton;
     }
@@ -114,10 +139,20 @@ public class GUI extends JFrame
         field.setEditable(false);
         return field;
     }
+
+    public JButton makeNewRecordButton() {
+        newRecordButton = new JButton("Create new record");
+        return newRecordButton;
+    }
+
+    public JButton makeEditButton() {
+        editButton = new JButton("Edit selected record");
+        return editButton;
+    }
     
-    public JButton makeEyeButton() {
-        eyeButton = new JButton("oog");
-        return eyeButton;
+    public JButton makeSaveButton() {
+        saveButton = new JButton("Save record");
+        return saveButton;
     }
     
     public JButton makeDeleteButton() {
@@ -125,28 +160,33 @@ public class GUI extends JFrame
         return deleteButton;
     }
     
-    public void showNothingSelected() {
-    	JOptionPane.showMessageDialog(this, "No record selected");
+    public JButton makeEyeButton() {
+        eyeButton = new JButton("oog");
+        return eyeButton;
     }
     
-    public boolean showConfirmDialog(String recordTitle) {
-    	boolean delete = false;
-    	int n = JOptionPane.showConfirmDialog(this, 
-    			"Are you sure you want to delete the following record: " + 
-    					recordTitle + " ?" , 
-    					"Select an Option", JOptionPane.YES_NO_CANCEL_OPTION);
+    public JButton makeDiceButton() {
+        diceButton = new JButton("dice");
+        return diceButton;
+    }
+    
+    public void showMessageDialog(String message) {
+    	JOptionPane.showMessageDialog(this, message);
+    }
+    
+    public boolean showConfirmDialog(String dialogText) {
+    	boolean confirm = false;
+    	int n = JOptionPane.showConfirmDialog(this, dialogText , 
+    			"Select an Option", JOptionPane.YES_NO_OPTION);
 
     	if(n == JOptionPane.YES_OPTION) {
-    		 // Yes - delete record
-    		delete = true;
+    		// Yes
+    		confirm = true;
     	}
-    	else if (n == JOptionPane.NO_OPTION) {
-    		 // No - don't delete record
-    	}     
     	else {
-    		 // Cancel - don't delete record
+    		// No
     	}
-    	return delete;
+    	return confirm;
     }
 
 }

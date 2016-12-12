@@ -141,14 +141,14 @@ public class Record implements Serializable {
 	public void setNote(String note) {
 		this.note = note;
 	}
-
+	
 	/**
 	 * @return String to display Record
 	 */
 	public String toString() {
 		String s = String.format("Folder: %s" + "\nTitle: %s" + " Address: %s"
 				+ " Username: %s" + " Password: %s" + " Note: %s", 
-				folder, title, address, userName, getPassword(),note);
+				folder, title, address, userName, getPassword(), note);
 
 		return s;
 	}
