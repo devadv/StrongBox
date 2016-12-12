@@ -1,11 +1,18 @@
 package strongbox.test.googledrive;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -49,7 +56,8 @@ public class GoogleDriveModel {
 	 * ~/.credentials/drive-java-quickstart
 	 */
 	private static final List<String> SCOPES = Arrays.asList(
-			DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPDATA);
+			DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_FILE,
+			DriveScopes.DRIVE_APPDATA);
 
 	private static String fileID, folderID;
 
@@ -99,21 +107,20 @@ public class GoogleDriveModel {
 		return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
 	}
-	
-	public static void createFolder() throws IOException{
-		
+
+	public static void createFolder() throws IOException {
+
 		Drive service = getDriveService();
-		
+
 		File fileMetadata = new File();
 		fileMetadata.setName("StrongBox");
 		fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
-		File file = service.files().create(fileMetadata)
-		        .setFields("id")
-		        .execute();
+		File file = service.files().create(fileMetadata).setFields("id")
+				.execute();
 		setFolderID(file.getId());
 		System.out.println("Folder ID: " + file.getId());
-		
+
 	}
 
 	public static void createDataFile(String folderID) throws IOException {
@@ -125,45 +132,85 @@ public class GoogleDriveModel {
 		fileMetadata.setName("data.csv");
 		fileMetadata.setParents(Collections.singletonList(folderId));
 		File file = service.files().create(fileMetadata)
-		        .setFields("id, parents")
-		        .execute();
+				.setFields("id, parents").execute();
 		System.out.println("File ID: " + file.getId());
 	}
-	
-	public static void createDataAppFolder() throws IOException{
-		
+
+	public static void createDataAppFolder() throws IOException {
+
 		Drive service = getDriveService();
-		
+
 		File fileMetadata = new File();
 		fileMetadata.setName("data.csv");
 		fileMetadata.setParents(Collections.singletonList("appDataFolder"));
-		/*java.io.File filePath = new java.io.File("files/config.json");
-		FileContent mediaContent = new FileContent("application/text", filePath);*/
-		File file = service.files().create(fileMetadata)
-		        .setFields("id")
-		        .execute();
+		File file = service.files().create(fileMetadata).setFields("id")
+				.execute();
 		System.out.println("File ID: " + file.getId());
 
 	}
-	
-	public static void listAppFolder() throws IOException{
-		Drive  service = getDriveService();
-		
-		FileList files = service.files().list()
-		        .setSpaces("appDataFolder")
-		        .setFields("nextPageToken, files(id, name)")
-		        .setPageSize(10)
-		        .execute();
-		for(File file: files.getFiles()) {
-		    System.out.printf("Found file: %s (%s)\n",
-		            file.getName(), file.getId());
+
+	public static void listAppFolder() throws IOException {
+		Drive service = getDriveService();
+
+		FileList files = service.files().list().setSpaces("appDataFolder")
+				.setFields("nextPageToken, files(id, name)").setPageSize(10)
+				.execute();
+		for (File file : files.getFiles()) {
+			System.out.printf("Found file: %s (%s)\n", file.getName(),
+					file.getId());
+
 		}
 
+	}
+
+	public static String getFileID() throws IOException {
+
+		Drive service = getDriveService();
+		String fileId = "";
+		FileList files = service.files().list().setSpaces("appDataFolder")
+				.setFields("nextPageToken, files(id, name)").setPageSize(10)
+				.execute();
+		for (File file : files.getFiles()) {
+			System.out.printf("Found file: %s (%s)\n", file.getName(),
+					file.getId());
+			if (file.getName().equals("data.csv")) {
+				System.out.println("file exists");
+				fileId = file.getId();
+			}
+		}
+		return fileId;
+	}
+
+	public static void updateDataFile(String fileID) throws IOException {
+
+		/*	if(fileID != ""){
+			deleteDataFile(fileID);
+		}*/
+		Drive service = getDriveService();
+		File file = new File();
+		file.setTrashed(true);
+		java.io.File filePath = new java.io.File("res/data.csv");
+		FileContent mediaContent = new FileContent("text/csv", filePath);
+		File updatefile = service.files().update(fileID, file, mediaContent).execute();
+		System.out.println("File ID: " + updatefile.getId());
+	}
+	
+	public static void downloadDateFile(String fileID) throws IOException{
+		Drive service = getDriveService();
+		String fileId = fileID;
+		OutputStream outputStream = new ByteArrayOutputStream();
+		service.files().get(fileId)
+		        .executeMediaAndDownloadTo(outputStream);
+		Scanner input = new Scanner(outputStream.toString());
+		while(input.hasNextLine()){
+			System.out.println("Line: " +input.nextLine());
+		}
 		
 	}
 
-	public static String getFileID() {
-		return fileID;
+	public static void deleteDataFile(String fileID) throws IOException {
+		Drive service = getDriveService();
+		service.files().delete(fileID).execute();
 	}
 
 	public static void setFileID(String fileID) {
@@ -181,10 +228,15 @@ public class GoogleDriveModel {
 	public static void main(String[] args) {
 
 		try {
-			//createFolder();
-			//createDataFile(getFolderID());
+			// createFolder();
+			// createDataFile(getFolderID());
 			//createDataAppFolder();
-			listAppFolder();
+			// listAppFolder();
+			//deleteDataFile("1BrVOUnYcsPdvicb77dWe0GNav9x0PflmcTHZk9WyQF9q");
+			getFileID();
+			downloadDateFile(getFileID());
+			//updateDataFile(getFileID());
+			//listAppFolder();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
