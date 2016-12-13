@@ -8,7 +8,7 @@ package strongbox.model;
  */
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.TreeSet;
 
 public interface iModel {
 		
@@ -70,7 +70,7 @@ public interface iModel {
 	 * to be found here).
 	 * @return  The set with folder names.
 	 */
-	HashSet<String> getFolders();
+	TreeSet<String> getFolders();
 	
     // --- Password settings ---
 	/**

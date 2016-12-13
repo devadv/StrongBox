@@ -21,7 +21,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 12-12-2016
+ * @version 13-12-2016
  */
 public class TestControllerMVC {
 
@@ -57,11 +57,15 @@ public class TestControllerMVC {
 		
 		addFolderListener();
 		addRecordListener();
+
+		addSearchListener();
 		
 		addRecordCreationListener();
+		addEditListener();
+		addCancelListener();
 		addSaveListener();
 		addDeleteListener();
-		addSearchListener();
+		addDeleteAllListener();
 
 	}
 
@@ -124,20 +128,63 @@ public class TestControllerMVC {
      * Add an ActionListener to the 'Create new record' button.
      */
     public void addRecordCreationListener() {
-    	view.getNewRecordButton().addActionListener(new ActionListener() {
+    	view.getButton(0).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			view.showMessageDialog("Please enter the details of the new " + 
-    					"record in the textfields to the right \n" +
-    					"A new folder will be created if needed.");
+    					"record in the textfields to the right. \n" +
+    					"A new folder will be created if needed. " +
+    					"Click \"Save\" once you are done.");
     			view.getFolderView().setEnabled(false);
     			view.getRecordView().setEnabled(false);
     			view.getSearchBox().setEnabled(false);
-    			ArrayList<JTextField> fields = view.getFields();
-    			for (JTextField field: fields) {
+    			for (JTextField field: view.getFields()) {
     				field.setEditable(true);
     				field.setText("");
        			}
-    			fields.get(0).grabFocus();
+    			view.getFields().get(0).grabFocus();
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * Add an ActionListener to the 'Edit' button.
+     */
+    public void addEditListener() {
+    	view.getButton(1).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			view.showMessageDialog("Please enter the changes you wish " + 
+    					"to make in the textfields to the right. \n" +
+    					"A new folder will be created if needed. " +
+    					"Click \"Save\" once you are done.");
+    			view.getFolderView().setEnabled(false);
+    			view.getRecordView().setEnabled(false);
+    			view.getSearchBox().setEnabled(false);
+    			for (JTextField field: view.getFields()) {
+    				field.setEditable(true);
+       			}
+    			view.getFields().get(0).grabFocus();
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * Add an ActionListener to the 'Cancel' button so changes being made to an
+     * existing record can be discarded or to cancel the creation of a new
+     * record which is about to be made.
+     */
+    public void addCancelListener() {
+    	view.getButton(2).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if (view.showConfirmDialog("Discard changes?")) {
+        			for (JTextField field: view.getFields()) {
+        				field.setEditable(false);
+           			}
+        			view.getFolderView().setEnabled(true);
+        			view.getRecordView().setEnabled(true);
+        			view.getSearchBox().setEnabled(true);
+    			}
     		}
     	}
     	);
@@ -147,9 +194,8 @@ public class TestControllerMVC {
      * Add an ActionListener to the 'Save' button so a new record can be saved
      * or to save changes to an existing record.
      */
-    // TODO HIER GEBLEVEN (12-12-2016) NOG NIET VOLLEDIG AF EN GETEST
     public void addSaveListener() {
-    	view.getSaveButton().addActionListener(new ActionListener() {
+    	view.getButton(3).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			String[] fieldValues = new String[6];
     			for (int i = 0; i < fieldValues.length; i++) {
@@ -169,7 +215,7 @@ public class TestControllerMVC {
     			if (existingRecord) {
     				model.setRecordFields(record, fieldValues);
     			}
-    			else { // New record
+    			else {  // New record
         			model.createNewRecord(fieldValues[0], fieldValues[1], 
         					fieldValues[2], fieldValues[3], fieldValues[4], 
         					fieldValues[5]);
@@ -193,7 +239,7 @@ public class TestControllerMVC {
      * be deleted (ask user for confirmation) from the records-list.
      */
     public void addDeleteListener() {
-    	view.getDeleteButton().addActionListener(new ActionListener() {
+    	view.getButton(4).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
     				String title = view.getRecordView().getSelectedValue();
@@ -218,6 +264,23 @@ public class TestControllerMVC {
     		}
     	}
     	);
+    }
+    
+    /**
+     * Add an ActionListener to the 'delete ALL records' button so all records 
+     * can be deleted with one click on a button (but ask user for confirmation)
+     */
+    public void addDeleteAllListener() {
+    	view.getButton(5).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+				if (view.showConfirmDialog("Are you sure you want to" + 
+						" delete ALL records?")) {
+					model.deleteAll();
+					initializeFolderData();
+				}
+    		}
+    	}
+        );	
     }
     
     /**

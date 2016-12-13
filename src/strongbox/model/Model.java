@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.TreeSet;
 
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -140,14 +140,14 @@ public class Model implements iModel {
 	}
 
 	/**
-	 * Get a set with the folder names (it's a set so duplicate names are not to
-	 * be found here).
+	 * Get a set with the folder names (a TreeSet provides automatic sorting).
+	 * No duplicate names are added of course since it's a set.
 	 * 
 	 * @return The set with folder names.
 	 */
 	@Override
-	public HashSet<String> getFolders() {
-		HashSet<String> folderNames = new HashSet<>();
+	public TreeSet<String> getFolders() {
+		TreeSet<String> folderNames = new TreeSet<>();
 		for (Record record : records) {
 			folderNames.add(record.getFolder());
 		}

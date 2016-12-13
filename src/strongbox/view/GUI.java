@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 12-12-2016
+ * @version 13-12-2016
  */
 public class GUI extends JFrame 
 {
@@ -15,21 +15,16 @@ public class GUI extends JFrame
     private JList<String> recordView = new JList<String>();
     private JScrollPane scrollPane;
 
-    private String[] labels = new String[] {"Title", "Website Address", 
-    		"Email or User Name", "Password", "Folder Name", "Add Note"};
+    private JButton button;
+    private ArrayList<JButton> buttons = new ArrayList<>();
     
-    private ArrayList<JTextField> fields = new ArrayList<>();
     private JTextField field;
+    private ArrayList<JTextField> fields = new ArrayList<>();
     
     private JTextField searchBox;
     
-    private JButton newRecordButton;
-    private JButton editButton;
-    private JButton saveButton;
-    private JButton deleteButton;
-    
-    private JButton eyeButton;
-    private JButton diceButton;
+    private String[] labels = new String[] {"Title", "Website Address", 
+    		"Email or User Name", "Password", "Folder Name", "Add Note"};
 
     /**
      * Constructor for objects of class GUI
@@ -65,16 +60,16 @@ public class GUI extends JFrame
         searchPanel.add(new JLabel("Search: "));
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
-        
-        folderPanel.add(makeNewRecordButton(), BorderLayout.SOUTH);
-        recordPanel.add(makeDeleteButton(), BorderLayout.SOUTH);
 
         JPanel temp = new JPanel(new GridLayout(0, 1));
         detailPanel.add(temp, BorderLayout.SOUTH);
-        temp.add(makeEditButton());
-        temp.add(makeSaveButton());
+        temp.add(makeButton("Create new record"));         // buttons (0)
+        temp.add(makeButton("Edit selected record"));      // buttons (1)
+        temp.add(makeButton("Cancel / Discard Changes"));  // buttons (2)
+        temp.add(makeButton("Save record"));               // buttons (3)
+        temp.add(makeButton("Delete selected record"));    // buttons (4)
+        temp.add(makeButton("Delete ALL records"));        // buttons (5)
 
-        
         // record details panel
         JPanel fieldBox = new JPanel();
         fieldBox.setLayout(new BoxLayout(fieldBox, BoxLayout.Y_AXIS));
@@ -84,8 +79,8 @@ public class GUI extends JFrame
             flowPanel.add(makeField());
             fields.add(field);
             if (i == 3) {
-            	flowPanel.add(makeEyeButton());
-            	flowPanel.add(makeDiceButton());
+            	flowPanel.add(makeButton("oog"));          // buttons (6)
+            	flowPanel.add(makeButton("dice"));         // buttons (7)
             }
             fieldBox.add(flowPanel);
         }
@@ -98,78 +93,22 @@ public class GUI extends JFrame
         setVisible(true);
     }
 
-    public JList<String> getFolderView() {
-    	return folderView;
-    }
-    
-    public JList<String> getRecordView() {
-    	return recordView;
-    }
-    
-    public ArrayList<JTextField> getFields() {
-    	return fields;
+    public JButton makeButton(String text) {
+    	button = new JButton(text);
+    	buttons.add(button);
+    	return button;
     }
 
     public JLabel makeLabel(String labelText) {
         return new JLabel(labelText);
     }
     
-    public JTextField getSearchBox() {
-    	return searchBox;
-    }
-    
-    public JButton getNewRecordButton() {
-    	return newRecordButton;
-    }
-   
-    public JButton getEditButton() {
-    	return editButton;
-    }
-    
-    public JButton getSaveButton() {
-    	return saveButton;
-    }
-    
-    public JButton getDeleteButton() {
-    	return deleteButton;
-    }
-
     public JTextField makeField() {
         field = new JTextField("Test field with enough space for long string");
         field.setEditable(false);
         return field;
     }
-
-    public JButton makeNewRecordButton() {
-        newRecordButton = new JButton("Create new record");
-        return newRecordButton;
-    }
-
-    public JButton makeEditButton() {
-        editButton = new JButton("Edit selected record");
-        return editButton;
-    }
-    
-    public JButton makeSaveButton() {
-        saveButton = new JButton("Save record");
-        return saveButton;
-    }
-    
-    public JButton makeDeleteButton() {
-        deleteButton = new JButton("Delete selected record");
-        return deleteButton;
-    }
-    
-    public JButton makeEyeButton() {
-        eyeButton = new JButton("oog");
-        return eyeButton;
-    }
-    
-    public JButton makeDiceButton() {
-        diceButton = new JButton("dice");
-        return diceButton;
-    }
-    
+        
     public void showMessageDialog(String message) {
     	JOptionPane.showMessageDialog(this, message);
     }
@@ -188,5 +127,26 @@ public class GUI extends JFrame
     	}
     	return confirm;
     }
-
+    
+    // Getters to make components available for controller class
+    public JList<String> getFolderView() {
+    	return folderView;
+    }
+    
+    public JList<String> getRecordView() {
+    	return recordView;
+    }
+    
+    public ArrayList<JTextField> getFields() {
+    	return fields;
+    }
+    
+    public JButton getButton(int index) {
+    	return buttons.get(index);
+    }
+    
+    public JTextField getSearchBox() {
+    	return searchBox;
+    }
+    
 }
