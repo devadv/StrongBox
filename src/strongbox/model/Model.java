@@ -21,6 +21,8 @@ import strongbox.test.login.mvc.PropertiesModel;
 
 /**
  * A model for managing the application and the handling of records.
+ * 
+ * @version 16-12-2016
  */
 
 public class Model implements iModel {
@@ -42,7 +44,30 @@ public class Model implements iModel {
 	@Override
 	public void createNewRecord(String title, String address, String userName,
 			String password, String folder, String note) {
+		
+		validate(title, address, userName, password, folder);
 		addRecord(new Record(title, address, userName, password, folder, note));
+	}
+	
+	/**
+	 * Validate the arguments when a record is created or when editing is done.
+	 */
+	public void validate(String title, String address, String userName,
+			String password, String folder) {
+
+		for (Record record: records) {
+			if (title.trim().toLowerCase().equals(record.getTitle().trim().toLowerCase())) {
+				// Duplicate title
+				throw new IllegalArgumentException();
+			}
+		}
+
+		if (title.trim().length() == 0 || address.trim().length() == 0 ||
+				userName.trim().length() == 0 || password.trim().length() == 0
+				|| folder.trim().length() == 0) {
+			    // Empty field (the note-field is permitted to be empty)
+			    throw new IllegalArgumentException();
+		}
 	}
 
 	/**
@@ -158,8 +183,24 @@ public class Model implements iModel {
 	 * Set the fields of a record to the values provided by an array of strings.
 	 * @param record   The record whose fields will be set.
 	 * @param fields   The array to set the record's fields.
+	 * @throws IllegalArgumentException if the title already exists or if 
+	 *         one of the fields is empty (does not count for note).
 	 */
 	public void setRecordFields(Record record, String[] fields) {
+
+		for (Record rec: records) {
+			if (fields[0].trim().toLowerCase().equals(rec.getTitle().trim().toLowerCase())) {
+				throw new IllegalArgumentException();
+			}
+		}
+			
+		// less than 5 because the note-field is permitted to be empty
+		for (int i = 0; i < 5; i++) {
+			if (fields[i].trim().length() == 0) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
 		record.setTitle(fields[0]);
 		record.setAddress(fields[1]);
 		record.setUserName(fields[2]);
@@ -183,7 +224,7 @@ public class Model implements iModel {
     			record.getUserName(), record.getPassword(), 
     			record.getFolder(), record.getNote()};
     }
-	
+    
 	// --- Password settings ---
 	/**
 	 * Set the master password for access and encryption.
@@ -253,9 +294,7 @@ public class Model implements iModel {
 
 				// separator
 				String[] item = line.split(cvsSplitBy);
-				Record record = new Record(item[0], item[1], item[2], item[3],
-						item[4], item[5]);
-				records.add(record);
+				createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
 			}
 		}
 

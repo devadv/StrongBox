@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -21,7 +22,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 13-12-2016
+ * @version 16-12-2016
  */
 public class TestControllerMVC {
 
@@ -29,6 +30,7 @@ public class TestControllerMVC {
 	private GUI view;
 	
 	private Record record; // The currently selected or last selected record.
+	private boolean edit = false; // True if we are editing an existing record.
 	
     private DefaultListModel<String> folderData = new DefaultListModel<>();
     private DefaultListModel<String> recordData = new DefaultListModel<>();
@@ -66,6 +68,8 @@ public class TestControllerMVC {
 		addSaveListener();
 		addDeleteListener();
 		addDeleteAllListener();
+		
+		testButtonPrintList();
 
 	}
 
@@ -134,6 +138,7 @@ public class TestControllerMVC {
     					"record in the textfields to the right. \n" +
     					"A new folder will be created if needed. " +
     					"Click \"Save\" once you are done.");
+    			edit = false;
     			view.getFolderView().setEnabled(false);
     			view.getRecordView().setEnabled(false);
     			view.getSearchBox().setEnabled(false);
@@ -153,20 +158,26 @@ public class TestControllerMVC {
     public void addEditListener() {
     	view.getButton(1).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			view.showMessageDialog("Please enter the changes you wish " + 
-    					"to make in the textfields to the right. \n" +
-    					"A new folder will be created if needed. " +
-    					"Click \"Save\" once you are done.");
-    			view.getFolderView().setEnabled(false);
-    			view.getRecordView().setEnabled(false);
-    			view.getSearchBox().setEnabled(false);
-    			for (JTextField field: view.getFields()) {
-    				field.setEditable(true);
-       			}
-    			view.getFields().get(0).grabFocus();
+    			if (view.getRecordView().getSelectedValue() != null) {
+    				view.showMessageDialog("Please enter the changes you wish " + 
+    						"to make in the textfields to the right. \n" +
+    						"A new folder will be created if needed. " +
+    						"Click \"Save\" once you are done.");
+    				edit = true;
+    				view.getFolderView().setEnabled(false);
+    				view.getRecordView().setEnabled(false);
+    				view.getSearchBox().setEnabled(false);
+    				for (JTextField field: view.getFields()) {
+    					field.setEditable(true);
+    				}
+    				view.getFields().get(0).grabFocus();
+    			}
+        		else {
+        			view.showMessageDialog("No record selected");
+        		}
     		}
     	}
-    	);
+        );
     }
     
     /**
@@ -178,12 +189,22 @@ public class TestControllerMVC {
     	view.getButton(2).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if (view.showConfirmDialog("Discard changes?")) {
+    				
         			for (JTextField field: view.getFields()) {
         				field.setEditable(false);
-           			}
+           			}        			
         			view.getFolderView().setEnabled(true);
         			view.getRecordView().setEnabled(true);
         			view.getSearchBox().setEnabled(true);
+        			
+        			view.getRecordView().setSelectedValue(record.getTitle(), true);
+					String[] fields = model.getRecordFields(record);
+					for (int i = 0; i < 6; i++) {
+						view.getFields().get(i).setText(fields[i]);
+					}
+    			}
+    			else {
+    				// Do nothing
     			}
     		}
     	}
@@ -197,38 +218,42 @@ public class TestControllerMVC {
     public void addSaveListener() {
     	view.getButton(3).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			String[] fieldValues = new String[6];
-    			for (int i = 0; i < fieldValues.length; i++) {
-    				fieldValues[i] = view.getFields().get(i).getText();
-    			}
-			 	String titleFromField = fieldValues[0].trim().toLowerCase();
-    			
-    			boolean existingRecord = false;
-    			
-    			for (Record rec: model.getRecordList()) {
-    			 	String recordTitle = rec.getTitle().trim().toLowerCase();
-    				if (recordTitle.equals(titleFromField)) {
-    					existingRecord = true;
+    			try {
+    				String[] fieldValues = new String[6];
+    				for (int i = 0; i < fieldValues.length; i++) {
+    					fieldValues[i] = view.getFields().get(i).getText();
     				}
+
+    				if (edit) { // This is an existing record
+    					model.setRecordFields(record, fieldValues);
+    				}
+    				else {  // New record
+    					model.createNewRecord(fieldValues[0], fieldValues[1], 
+    							fieldValues[2], fieldValues[3], fieldValues[4], 
+    							fieldValues[5]);
+    				}
+
+    				view.showMessageDialog("Record Saved");
+
+    				for (JTextField field: view.getFields()) {
+    					field.setEditable(false);
+    				}
+    				view.getFolderView().setEnabled(true);
+    				view.getRecordView().setEnabled(true);
+    				view.getSearchBox().setEnabled(true);
+
+    				initializeFolderData();
+    				view.getFolderView().setSelectedValue(fieldValues[4], true);
+    				view.getRecordView().setSelectedValue(fieldValues[0], true);
     			}
-    			
-    			if (existingRecord) {
-    				model.setRecordFields(record, fieldValues);
+    			catch (IllegalArgumentException exc) {
+    				view.showMessageDialog("There was a problem with the record's" +
+    						" properties you entered in the textfields. \n" +
+    						"Most likely cause of the problem: You entered a " +
+    						"title that is already in use \n" + 
+    						"or you left one of the fields blank (you can " +
+    						"leave \"note\" blank).", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
     			}
-    			else {  // New record
-        			model.createNewRecord(fieldValues[0], fieldValues[1], 
-        					fieldValues[2], fieldValues[3], fieldValues[4], 
-        					fieldValues[5]);
-    			}
-    			
-    			for (JTextField field: view.getFields()) {
-    				field.setEditable(false);
-       			}
-    			view.getFolderView().setEnabled(true);
-    			view.getRecordView().setEnabled(true);
-    			view.getSearchBox().setEnabled(true);
-    			
-    			initializeFolderData();
     		}
     	}
     	);
@@ -327,6 +352,18 @@ public class TestControllerMVC {
 			exc.printStackTrace();
 		}
 		return s;
+    }
+    
+    public void testButtonPrintList() {
+    	view.getButton(8).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    	    	for (Record record: model.getRecordList()) {
+    	        	System.out.println(record.toString());
+    	        	System.out.println();
+    	        	}
+    		}
+    	}
+    	);
     }
     
 	public void createTestRecords() {

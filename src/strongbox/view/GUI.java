@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 13-12-2016
+ * @version 16-12-2016
  */
 public class GUI extends JFrame 
 {
@@ -86,6 +86,8 @@ public class GUI extends JFrame
         }
         detailPanel.add(fieldBox, BorderLayout.CENTER);
         
+        folderPanel.add(makeButton("Print ArrayList: records"), BorderLayout.NORTH);// [TEST] buttons(8)
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
         setLocationRelativeTo(null);
@@ -111,6 +113,10 @@ public class GUI extends JFrame
         
     public void showMessageDialog(String message) {
     	JOptionPane.showMessageDialog(this, message);
+    }
+    
+    public void showMessageDialog(String message, String title, int messageType) {
+    	JOptionPane.showMessageDialog(this, message, title, messageType);
     }
     
     public boolean showConfirmDialog(String dialogText) {
