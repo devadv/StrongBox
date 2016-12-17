@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 16-12-2016
+ * @version 17-12-2016
  */
 public class GUI extends JFrame 
 {
@@ -74,19 +74,21 @@ public class GUI extends JFrame
         JPanel fieldBox = new JPanel();
         fieldBox.setLayout(new BoxLayout(fieldBox, BoxLayout.Y_AXIS));
         for (int i = 0; i < 6; i++) {
-            JPanel flowPanel = new JPanel();
-            flowPanel.add(makeLabel(labels[i]));
-            flowPanel.add(makeField());
-            fields.add(field);
-            if (i == 3) {
-            	flowPanel.add(makeButton("oog"));          // buttons (6)
-            	flowPanel.add(makeButton("dice"));         // buttons (7)
-            }
+        	JPanel flowPanel = new JPanel();
+        	flowPanel.add(makeLabel(labels[i]));
+          	if (i == 3) {
+        		flowPanel.add(makePasswordField());
+        		flowPanel.add(makeButton("oog"));          // buttons (6)
+        		flowPanel.add(makeButton("dice"));         // buttons (7)
+        	}
+        	else {
+        		flowPanel.add(makeField());
+        	}
             fieldBox.add(flowPanel);
         }
         detailPanel.add(fieldBox, BorderLayout.CENTER);
         
-        folderPanel.add(makeButton("Print ArrayList: records"), BorderLayout.NORTH);// [TEST] buttons(8)
+        folderPanel.add(makeButton("Print ArrayList: records"), BorderLayout.NORTH);// buttons(8)
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
@@ -108,6 +110,14 @@ public class GUI extends JFrame
     public JTextField makeField() {
         field = new JTextField("Test field with enough space for long string");
         field.setEditable(false);
+    	fields.add(field);
+        return field;
+    }
+    
+    public JTextField makePasswordField() {
+        field = new JPasswordField("Password test field with lots of space");
+        field.setEditable(false);
+    	fields.add(field);
         return field;
     }
         

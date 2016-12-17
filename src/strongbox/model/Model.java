@@ -22,7 +22,7 @@ import strongbox.test.login.mvc.PropertiesModel;
 /**
  * A model for managing the application and the handling of records.
  * 
- * @version 16-12-2016
+ * @version 17-12-2016
  */
 
 public class Model implements iModel {
@@ -48,11 +48,21 @@ public class Model implements iModel {
 		validate(title, address, userName, password, folder);
 		addRecord(new Record(title, address, userName, password, folder, note));
 	}
+
+	/**
+	 * Add a record to the list.
+	 * 
+	 * @param record  The record to add.
+	 */
+	@Override
+	public void addRecord(Record record) {
+		records.add(record);
+	}
 	
 	/**
 	 * Validate the arguments when a record is created or when editing is done.
 	 */
-	public void validate(String title, String address, String userName,
+	private void validate(String title, String address, String userName,
 			String password, String folder) {
 
 		for (Record record: records) {
@@ -68,16 +78,6 @@ public class Model implements iModel {
 			    // Empty field (the note-field is permitted to be empty)
 			    throw new IllegalArgumentException();
 		}
-	}
-
-	/**
-	 * Add a record to the list.
-	 * 
-	 * @param record  The record to add.
-	 */
-	@Override
-	public void addRecord(Record record) {
-		records.add(record);
 	}
 
 	/**
@@ -183,16 +183,9 @@ public class Model implements iModel {
 	 * Set the fields of a record to the values provided by an array of strings.
 	 * @param record   The record whose fields will be set.
 	 * @param fields   The array to set the record's fields.
-	 * @throws IllegalArgumentException if the title already exists or if 
-	 *         one of the fields is empty (does not count for note).
+	 * @throws IllegalArgumentException if user left one of the fields empty.
 	 */
 	public void setRecordFields(Record record, String[] fields) {
-
-		for (Record rec: records) {
-			if (fields[0].trim().toLowerCase().equals(rec.getTitle().trim().toLowerCase())) {
-				throw new IllegalArgumentException();
-			}
-		}
 			
 		// less than 5 because the note-field is permitted to be empty
 		for (int i = 0; i < 5; i++) {

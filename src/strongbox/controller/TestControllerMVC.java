@@ -7,10 +7,10 @@ import strongbox.view.GUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -22,7 +22,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 16-12-2016
+ * @version 17-12-2016
  */
 public class TestControllerMVC {
 
@@ -31,6 +31,8 @@ public class TestControllerMVC {
 	
 	private Record record; // The currently selected or last selected record.
 	private boolean edit = false; // True if we are editing an existing record.
+	
+	private boolean showPassword = false;
 	
     private DefaultListModel<String> folderData = new DefaultListModel<>();
     private DefaultListModel<String> recordData = new DefaultListModel<>();
@@ -69,7 +71,9 @@ public class TestControllerMVC {
 		addDeleteListener();
 		addDeleteAllListener();
 		
-		testButtonPrintList();
+		addEyeButtonListener();
+		
+		testButtonPrintTheList();
 
 	}
 
@@ -189,19 +193,26 @@ public class TestControllerMVC {
     	view.getButton(2).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if (view.showConfirmDialog("Discard changes?")) {
-    				
-        			for (JTextField field: view.getFields()) {
-        				field.setEditable(false);
-           			}        			
-        			view.getFolderView().setEnabled(true);
-        			view.getRecordView().setEnabled(true);
-        			view.getSearchBox().setEnabled(true);
-        			
-        			view.getRecordView().setSelectedValue(record.getTitle(), true);
-					String[] fields = model.getRecordFields(record);
-					for (int i = 0; i < 6; i++) {
-						view.getFields().get(i).setText(fields[i]);
-					}
+
+    				for (JTextField field: view.getFields()) {
+    					field.setEditable(false);
+    				}        			
+    				view.getFolderView().setEnabled(true);
+    				view.getRecordView().setEnabled(true);
+    				view.getSearchBox().setEnabled(true);
+
+    				try {
+    					view.getRecordView().setSelectedValue(record.getTitle(), true);
+    					String[] fields = model.getRecordFields(record);
+    					for (int i = 0; i < 6; i++) {
+    						view.getFields().get(i).setText(fields[i]);
+    					}
+    				}
+    				catch (NullPointerException exc) {
+    					for (int i = 0; i < 6; i++) {
+    						view.getFields().get(i).setText("No record selected");
+    					}
+    				}
     			}
     			else {
     				// Do nothing
@@ -247,8 +258,8 @@ public class TestControllerMVC {
     				view.getRecordView().setSelectedValue(fieldValues[0], true);
     			}
     			catch (IllegalArgumentException exc) {
-    				view.showMessageDialog("There was a problem with the record's" +
-    						" properties you entered in the textfields. \n" +
+    				view.showMessageDialog("There was a problem with the data" +
+    						" you entered in the textfields. \n" +
     						"Most likely cause of the problem: You entered a " +
     						"title that is already in use \n" + 
     						"or you left one of the fields blank (you can " +
@@ -337,6 +348,28 @@ public class TestControllerMVC {
     	);
     }
     
+    public void addEyeButtonListener() {
+    	view.getButton(6).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if (record != null) {
+    				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+    				if (!showPassword) {
+    					pwField.setEchoChar((char)0);
+    					showPassword = true;
+    				}
+    				else {
+    					pwField.setEchoChar('•');
+    					showPassword = false;
+    				}
+    			}
+    			else {
+    				view.showMessageDialog("No record selected");
+    			}
+    		}
+    	}
+    	);
+    }
+    
     /**
      * Fetches the text contained within a document.
      * @param doc  The document to get the text from.
@@ -354,7 +387,7 @@ public class TestControllerMVC {
 		return s;
     }
     
-    public void testButtonPrintList() {
+    public void testButtonPrintTheList() {
     	view.getButton(8).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     	    	for (Record record: model.getRecordList()) {
