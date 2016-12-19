@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import strongbox.model.Record;
-import strongbox.test.encryption.Encryption;
+import strongbox.encryption.Encryption;
 
 
 
@@ -24,8 +24,8 @@ public class CSV_IO_Test {
 			System.out.println(record);
 		}
 		
-		recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
-		recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
+		//recordlist.add(new Record("Telfort", "telfort.nl" , "gebruiker" , "123456" , "Providers" , "telefoon en internet"));
+		//recordlist.add(new Record("KPN", "kpn.nl" , "gebruiker" , "123456" , "Provider" , "mobiel"));
 	
 		FileWriter writer = null;
 		try {

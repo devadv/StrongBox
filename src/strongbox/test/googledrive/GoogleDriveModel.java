@@ -1,18 +1,21 @@
 package strongbox.test.googledrive;
 
-import java.io.BufferedReader;
+
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import strongbox.encryption.Encryption;
+import strongbox.model.Record;
+import strongbox.test.io.csv.CSVInputOutput;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -70,6 +73,7 @@ public class GoogleDriveModel {
 			System.exit(1);
 		}
 	}
+	static ArrayList<Record> records = new ArrayList<>();
 
 	/**
 	 * Creates an authorized Credential object.
@@ -148,6 +152,7 @@ public class GoogleDriveModel {
 		System.out.println("File ID: " + file.getId());
 
 	}
+	
 
 	public static void listAppFolder() throws IOException {
 		Drive service = getDriveService();
@@ -156,7 +161,7 @@ public class GoogleDriveModel {
 				.setFields("nextPageToken, files(id, name)").setPageSize(10)
 				.execute();
 		for (File file : files.getFiles()) {
-			System.out.printf("Found file: %s (%s)\n", file.getName(),
+			System.out.printf("Found file: %s (%s), \n", file.getName(),
 					file.getId());
 
 		}
@@ -183,9 +188,7 @@ public class GoogleDriveModel {
 
 	public static void updateDataFile(String fileID) throws IOException {
 
-		/*	if(fileID != ""){
-			deleteDataFile(fileID);
-		}*/
+		
 		Drive service = getDriveService();
 		File file = new File();
 		file.setTrashed(true);
@@ -201,10 +204,45 @@ public class GoogleDriveModel {
 		OutputStream outputStream = new ByteArrayOutputStream();
 		service.files().get(fileId)
 		        .executeMediaAndDownloadTo(outputStream);
+		String cvsSplitBy = ",";
+		Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
 		Scanner input = new Scanner(outputStream.toString());
 		while(input.hasNextLine()){
-			System.out.println("Line: " +input.nextLine());
+			// separator
+			String[] item = input.nextLine().split(cvsSplitBy);
+			Record record = new Record(item[0], item[1], item[2], item[3],
+					item[4], item[5]);
+			records.add(record);
 		}
+		
+		
+		
+		
+	}
+	public void writeRecordToLocalFile(){
+		Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
+		CSVInputOutput io = new CSVInputOutput();
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter("res/data.csv");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		io.writeFile(writer, records);
+		try {
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public ArrayList<Record> getRecords(){
+		return records;
 		
 	}
 
@@ -234,8 +272,10 @@ public class GoogleDriveModel {
 			// listAppFolder();
 			//deleteDataFile("1BrVOUnYcsPdvicb77dWe0GNav9x0PflmcTHZk9WyQF9q");
 			getFileID();
-			downloadDateFile(getFileID());
-			//updateDataFile(getFileID());
+			//downloadDateFile(getFileID());
+			//System.out.println(records.toString());
+			updateDataFile(getFileID());
+			
 			//listAppFolder();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
