@@ -22,7 +22,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 17-12-2016
+ * @version 19-12-2016
  */
 public class TestControllerMVC {
 
@@ -190,7 +190,7 @@ public class TestControllerMVC {
      * record which is about to be made.
      */
     public void addCancelListener() {
-    	view.getButton(2).addActionListener(new ActionListener() {
+    	view.getButton(7).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if (view.showConfirmDialog("Discard changes?")) {
 
@@ -227,7 +227,7 @@ public class TestControllerMVC {
      * or to save changes to an existing record.
      */
     public void addSaveListener() {
-    	view.getButton(3).addActionListener(new ActionListener() {
+    	view.getButton(6).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			try {
     				String[] fieldValues = new String[6];
@@ -275,7 +275,7 @@ public class TestControllerMVC {
      * be deleted (ask user for confirmation) from the records-list.
      */
     public void addDeleteListener() {
-    	view.getButton(4).addActionListener(new ActionListener() {
+    	view.getButton(2).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
     				String title = view.getRecordView().getSelectedValue();
@@ -307,7 +307,7 @@ public class TestControllerMVC {
      * can be deleted with one click on a button (but ask user for confirmation)
      */
     public void addDeleteAllListener() {
-    	view.getButton(5).addActionListener(new ActionListener() {
+    	view.getButton(3).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
 				if (view.showConfirmDialog("Are you sure you want to" + 
 						" delete ALL records?")) {
@@ -317,6 +317,27 @@ public class TestControllerMVC {
     		}
     	}
         );	
+    }
+    
+    /**
+     * Add an ActionListener to the 'Eye' button so the user can show or hide
+     * the password. Bullet symbols (U+2022) are used to mask the password.
+     */
+    public void addEyeButtonListener() {
+    	view.getButton(4).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+    				if (!showPassword) {
+    					pwField.setEchoChar((char)0);
+    					showPassword = true;
+    				}
+    				else {
+    					pwField.setEchoChar('•');
+    					showPassword = false;
+    				}
+    		}
+    	}
+    	);
     }
     
     /**
@@ -342,28 +363,6 @@ public class TestControllerMVC {
     			recordData.clear();
     			for (String recordTitle: model.search(getDocumentText(doc))) {
     				recordData.addElement(recordTitle);
-    			}
-    		}
-    	}
-    	);
-    }
-    
-    public void addEyeButtonListener() {
-    	view.getButton(6).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    			if (record != null) {
-    				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
-    				if (!showPassword) {
-    					pwField.setEchoChar((char)0);
-    					showPassword = true;
-    				}
-    				else {
-    					pwField.setEchoChar('•');
-    					showPassword = false;
-    				}
-    			}
-    			else {
-    				view.showMessageDialog("No record selected");
     			}
     		}
     	}
