@@ -22,7 +22,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 19-12-2016
+ * @version 20-12-2016
  */
 public class TestControllerMVC {
 
@@ -259,8 +259,8 @@ public class TestControllerMVC {
     			}
     			catch (IllegalArgumentException exc) {
     				view.showMessageDialog("There was a problem with the data" +
-    						" you entered in the textfields. \n" +
-    						"Most likely cause of the problem: You entered a " +
+    						" you entered. \n" + "Most likely cause of the " + 
+    						"problem: You entered a " +
     						"title that is already in use \n" + 
     						"or you left one of the fields blank (you can " +
     						"leave \"note\" blank).", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
@@ -321,7 +321,7 @@ public class TestControllerMVC {
     
     /**
      * Add an ActionListener to the 'Eye' button so the user can show or hide
-     * the password. Bullet symbols (U+2022) are used to mask the password.
+     * the password. Bullet symbols are used to mask the password.
      */
     public void addEyeButtonListener() {
     	view.getButton(4).addActionListener(new ActionListener() {
@@ -332,7 +332,7 @@ public class TestControllerMVC {
     					showPassword = true;
     				}
     				else {
-    					pwField.setEchoChar('•');
+    					pwField.setEchoChar('â€¢');
     					showPassword = false;
     				}
     		}

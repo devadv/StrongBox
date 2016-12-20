@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 19-12-2016
+ * @version 20-12-2016
  */
 public class GUI extends JFrame 
 {
@@ -35,16 +35,34 @@ public class GUI extends JFrame
         super("StrongBox");
         JPanel framePanel = (JPanel)getContentPane();
         framePanel.setLayout(new GridBagLayout());
-
-        JPanel mainPanel = new JPanel(new FlowLayout());
-        framePanel.add(mainPanel);
+        
+        JPanel mainBorderPanel = new JPanel(new BorderLayout());
+        framePanel.add(mainBorderPanel);
+      
+        JPanel mainPanel = new JPanel(new GridLayout(1, 0));
+        mainBorderPanel.add(mainPanel, BorderLayout.CENTER);
+        
+        JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        mainBorderPanel.add(flowPanelTop, BorderLayout.NORTH);
+        
+        JPanel leftTopFlowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel rightTopFlowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        flowPanelTop.add(leftTopFlowPanel);
+        flowPanelTop.add(rightTopFlowPanel);
 
         JPanel folderPanel = new JPanel(new BorderLayout()); // panel for the folders
         JPanel recordPanel = new JPanel(new BorderLayout()); // panel for the records
         JPanel detailPanel = new JPanel(new BorderLayout()); // panel for the record's details
-
-        mainPanel.add(folderPanel);
-        mainPanel.add(recordPanel);
+        
+        JPanel leftBorderPanel = new JPanel(new BorderLayout());
+        JPanel leftGridPanel = new JPanel(new GridLayout(1, 0));
+        leftBorderPanel.add(leftGridPanel, BorderLayout.CENTER);
+        
+        leftGridPanel.add(folderPanel);
+        leftGridPanel.add(recordPanel);
+        
+        mainPanel.add(leftBorderPanel);
         mainPanel.add(detailPanel);
 
         scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
@@ -57,10 +75,11 @@ public class GUI extends JFrame
 
         // search box
         JPanel searchPanel = new JPanel(new FlowLayout());
-        recordPanel.add(searchPanel, BorderLayout.NORTH);
+        leftTopFlowPanel.add(searchPanel, BorderLayout.NORTH);
         searchPanel.add(new JLabel("Search: "));
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
+        searchPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
 
         JPanel temp = new JPanel(new GridLayout(0, 1));
         recordPanel.add(temp, BorderLayout.SOUTH);
@@ -69,18 +88,16 @@ public class GUI extends JFrame
         temp.add(makeButton("Delete selected record"));    // buttons (2)
         temp.add(makeButton("Delete ALL records"));        // buttons (3)
         
-        // record details panel
-        JPanel flowContainer = new JPanel(new FlowLayout());
-        JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
-        fieldPanel.setBorder(new MatteBorder(3, 3, 3, 3, Color.GREEN));
+         // record details panel
+        JPanel boxPanel = new JPanel();
+        boxPanel.setLayout(new BoxLayout(boxPanel, BoxLayout.Y_AXIS));
+        boxPanel.setBorder(new MatteBorder(3, 3, 3, 3, Color.GREEN));
         for (int i = 0; i < 6; i++) {
-        	// TRY component.setMaximumSize(new Dimension(x, y)); WITH BOX-LAYOUT [19-12-2016]
-        	JPanel flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        	JPanel flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
           	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
-        	//flowPanel.setAlignmentY(JComponent.BOTTOM_ALIGNMENT);
         	flowPanel.add(makeLabel(labels[i]));
-        	fieldPanel.add(flowPanel);
-        	flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        	boxPanel.add(flowPanel);
+        	flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
         	if (i == 3) {
         		flowPanel.add(makePasswordField());
@@ -90,21 +107,25 @@ public class GUI extends JFrame
         	else {
         		flowPanel.add(makeField());
         	}
-        	fieldPanel.add(flowPanel);
+        	boxPanel.add(flowPanel);
+          	JPanel smallFlowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        	smallFlowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.CYAN));
+        	boxPanel.add(smallFlowPanel);
         	if (i == 5) {
         		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        		flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
         		flowPanel.add(makeButton("Save record"));               // buttons (6)
         		flowPanel.add(makeButton("Cancel / Discard Changes"));  // buttons (7)
-        		fieldPanel.add(flowPanel);
+        		boxPanel.add(flowPanel);
         	}
         }
-        flowContainer.add(fieldPanel);
-        detailPanel.add(flowContainer, BorderLayout.CENTER);
+        detailPanel.add(boxPanel, BorderLayout.CENTER);
         
         folderPanel.add(makeButton("Print ArrayList: records"), BorderLayout.SOUTH);// buttons(8)
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
+        //setResizable(false);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -118,25 +139,31 @@ public class GUI extends JFrame
 
     public JLabel makeLabel(String labelText) {
     	JLabel label = new JLabel(labelText);
-    	label.setBorder(new MatteBorder(18, 2, 2, 2, Color.RED));
-    	//label.setVerticalAlignment(SwingConstants.BOTTOM);
+    	label.setBorder(new MatteBorder(19, 2, 2, 2, Color.RED));
         return label;
     }
     
     public JTextField makeField() {
-        field = new JTextField("Test field with enough space for long string");
+        field = new JTextField("34_Charactersssssssszzzzzzzzzzzzzz", 28);
         field.setEditable(false);
+        enlargeFont(field);
         field.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
     	fields.add(field);
         return field;
     }
     
     public JTextField makePasswordField() {
-        field = new JPasswordField("Password test field with lots of space");
+        field = new JPasswordField("34_Charactersssssssszzzzzzzzzzzzzz", 28);
         field.setEditable(false);
+        enlargeFont(field);
         field.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
     	fields.add(field);
         return field;
+    }
+    
+    private void enlargeFont(JTextField field) {
+     	Font changedFont = field.getFont().deriveFont(Font.BOLD, (float)13.5);
+     	field.setFont(changedFont);
     }
         
     public void showMessageDialog(String message) {
