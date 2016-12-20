@@ -82,6 +82,8 @@ public class Model implements iModel {
 	public ArrayList<Record> getRecordList() {
 		return records;
 	}
+	
+	
 
 	/**
 	 * Get a record based on it's title.
@@ -258,6 +260,10 @@ public class Model implements iModel {
 				e.printStackTrace();
 			}
 		}
+	}
+	public void writeRecordsToFile(ArrayList<Record> records) {
+		this.records = records;
+		writeRecordsToFile();
 	}
 
 	/**
