@@ -7,6 +7,8 @@ import strongbox.view.GUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -22,7 +24,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 20-12-2016
+ * @version 21-12-2016
  */
 public class TestControllerMVC {
 
@@ -33,6 +35,7 @@ public class TestControllerMVC {
 	private boolean edit = false; // True if we are editing an existing record.
 	
 	private boolean showPassword = false;
+	private char echoChar;
 	
     private DefaultListModel<String> folderData = new DefaultListModel<>();
     private DefaultListModel<String> recordData = new DefaultListModel<>();
@@ -73,7 +76,9 @@ public class TestControllerMVC {
 		
 		addEyeButtonListener();
 		
-		testButtonPrintTheList();
+		addInfoListener();
+		
+		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
 
 	}
 
@@ -332,7 +337,7 @@ public class TestControllerMVC {
     					showPassword = true;
     				}
     				else {
-    					pwField.setEchoChar('•');
+    					pwField.setEchoChar(echoChar);
     					showPassword = false;
     				}
     		}
@@ -386,13 +391,25 @@ public class TestControllerMVC {
 		return s;
     }
     
-    public void testButtonPrintTheList() {
-    	view.getButton(8).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    	    	for (Record record: model.getRecordList()) {
-    	        	System.out.println(record.toString());
-    	        	System.out.println();
-    	        	}
+    public void addInfoListener() {
+    	view.getInfoLabel().addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
+    			view.getInfoLabel().setIcon(view.getIcons().get(0));
+    			view.showMessageDialog("StrongBox v1.0\n" +
+    					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
+    					"www.github.com/devadv/StrongBox");
+    		}
+    		public void mouseEntered(MouseEvent e) {
+    			view.getInfoLabel().setIcon(view.getIcons().get(1));
+    		}
+    		public void mouseExited(MouseEvent e) {
+    			view.getInfoLabel().setIcon(view.getIcons().get(0));
+    		}
+    		public void mousePressed(MouseEvent e) {
+    			view.getInfoLabel().setIcon(view.getIcons().get(2));
+    		}
+    		public void mouseReleased(MouseEvent e) {
+    			view.getInfoLabel().setIcon(view.getIcons().get(0));
     		}
     	}
     	);
