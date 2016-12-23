@@ -1,5 +1,6 @@
 package strongbox.controller;
 
+import strongbox.login.PropertiesModel;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
@@ -24,22 +25,25 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 21-12-2016
+ * @version 23-12-2016
  */
 public class TestControllerMVC {
 
 	private Model model;
 	private GUI view;
 	
+    private DefaultListModel<String> folderData = new DefaultListModel<>();
+    private DefaultListModel<String> recordData = new DefaultListModel<>();
+	
 	private Record record; // The currently selected or last selected record.
 	private boolean edit = false; // True if we are editing an existing record.
 	
 	private boolean showPassword = false;
 	private char echoChar;
-	
-    private DefaultListModel<String> folderData = new DefaultListModel<>();
-    private DefaultListModel<String> recordData = new DefaultListModel<>();
-	
+
+	//Currently used to make method generatePassphrase(int length) available
+	private PropertiesModel propModel = new PropertiesModel();
+    
     /**
      * Constructor
      */
@@ -76,7 +80,9 @@ public class TestControllerMVC {
 		
 		addEyeButtonListener();
 		
-		addInfoListener();
+		addDiceButtonListener();
+		
+		addInfoButtonListener();
 		
 		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
 
@@ -230,14 +236,25 @@ public class TestControllerMVC {
     /**
      * Add an ActionListener to the 'Save' button so a new record can be saved
      * or to save changes to an existing record.
+     * @throws IllegalArgumentException if user typed comma's into one of the fields.
      */
     public void addSaveListener() {
     	view.getButton(6).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
+
+    			boolean commaFound = false;
+
+    			String[] fieldValues = new String[6];
+    			for (int i = 0; i < fieldValues.length; i++) {
+    				fieldValues[i] = view.getFields().get(i).getText();
+    				if (fieldValues[i].contains(",")) {
+    					commaFound = true;
+    				}
+    			}
+
     			try {
-    				String[] fieldValues = new String[6];
-    				for (int i = 0; i < fieldValues.length; i++) {
-    					fieldValues[i] = view.getFields().get(i).getText();
+    				if (commaFound) {
+    					throw new IllegalArgumentException();
     				}
 
     				if (edit) { // This is an existing record
@@ -248,6 +265,8 @@ public class TestControllerMVC {
     							fieldValues[2], fieldValues[3], fieldValues[4], 
     							fieldValues[5]);
     				}
+
+    				// Save to data.csv here
 
     				view.showMessageDialog("Record Saved");
 
@@ -264,11 +283,12 @@ public class TestControllerMVC {
     			}
     			catch (IllegalArgumentException exc) {
     				view.showMessageDialog("There was a problem with the data" +
-    						" you entered. \n" + "Most likely cause of the " + 
-    						"problem: You entered a " +
-    						"title that is already in use \n" + 
-    						"or you left one of the fields blank (you can " +
-    						"leave \"note\" blank).", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
+    						" you entered. \n\n" + "Most likely cause of the " + 
+    						"problem: \n\n-You entered a " +
+    						"title that is already in use (when making a new record)\n" + 
+    						"-You left one of the fields blank (you may opt to " +
+    						"leave \"note\" blank)\n" +
+    						"-You used comma's", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
     			}
     		}
     	}
@@ -346,6 +366,28 @@ public class TestControllerMVC {
     }
     
     /**
+     * Add an ActionListener to the 'Dice' button so a random password can be
+     * generated. Also show the slider which can be used to set the length.
+     */
+    public void addDiceButtonListener() {
+    	view.getButton(5).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			//view.showMessageDialogButtons("blub");
+    			view.showDialog();
+    		    /*
+    			if () {
+
+    			}
+    			else {
+        			//propModel.generatePassphrase(int length)
+    			}
+    			*/
+    		}
+    	}
+    	);
+    }
+    
+    /**
      * Add a DocumentListener to the search field and define it's behavior.
      */
     public void addSearchListener() {
@@ -375,6 +417,10 @@ public class TestControllerMVC {
     }
     
     /**
+     * Add a DocumentListener to the textfields 
+     */
+    
+    /**
      * Fetches the text contained within a document.
      * @param doc  The document to get the text from.
      * @throws BadLocationException if a portion of the given range was not 
@@ -391,13 +437,17 @@ public class TestControllerMVC {
 		return s;
     }
     
-    public void addInfoListener() {
+    /**
+     * Listener for 'About' button.
+     */
+    public void addInfoButtonListener() {
     	view.getInfoLabel().addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.getInfoLabel().setIcon(view.getIcons().get(0));
     			view.showMessageDialog("StrongBox v1.0\n" +
     					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
-    					"www.github.com/devadv/StrongBox");
+    					"www.github.com/devadv/StrongBox\n\n" +
+    					"verhaaltje over jasypt, connectie met google drive.");
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getInfoLabel().setIcon(view.getIcons().get(1));

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 21-12-2016
+ * @version 23-12-2016
  */
 public class GUI extends JFrame {
 	
@@ -33,6 +33,11 @@ public class GUI extends JFrame {
     private ImageIcon info2;
     private ImageIcon info3;
     private ArrayList<ImageIcon> icons = new ArrayList<>();
+    
+//    private JLabel pwStrength1 = new JLabel("Strength: ");
+//    private JLabel pwStrength2 = new JLabel("Average");
+    
+    //JSlider slider = new JSlider(1, 48, 16);
 
     /**
      * Constructor for objects of class GUI
@@ -51,12 +56,6 @@ public class GUI extends JFrame {
         
         JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         mainBorderPanel.add(flowPanelTop, BorderLayout.NORTH);
-        
-        JPanel leftFlowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel rightFlowPanelTop = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
-        flowPanelTop.add(leftFlowPanelTop);
-        flowPanelTop.add(rightFlowPanelTop);
 
         JPanel folderPanel = new JPanel(new BorderLayout()); // panel for the folders
         JPanel recordPanel = new JPanel(new BorderLayout()); // panel for the records
@@ -86,14 +85,14 @@ public class GUI extends JFrame {
 
         JPanel temp = new JPanel(new GridLayout(0, 1));
         recordPanel.add(temp, BorderLayout.SOUTH);
-        leftFlowPanelTop.add(makeButton("Create new record"));         // buttons (0)
-        leftFlowPanelTop.add(makeButton("Edit selected record"));      // buttons (1)
-        leftFlowPanelTop.add(makeButton("Delete selected record"));    // buttons (2)
-        leftFlowPanelTop.add(makeButton("Delete ALL records"));        // buttons (3)
+        flowPanelTop.add(makeButton("Create new record"));        // buttons (0)
+        flowPanelTop.add(makeButton("Edit selected record"));     // buttons (1)
+        flowPanelTop.add(makeButton("Delete selected record"));   // buttons (2)
+        flowPanelTop.add(makeButton("Delete ALL records"));       // buttons (3)
         
         // search box
         JPanel searchPanel = new JPanel(new FlowLayout());
-        leftFlowPanelTop.add(searchPanel, BorderLayout.NORTH);
+        flowPanelTop.add(searchPanel, BorderLayout.NORTH);
         searchPanel.add(new JLabel("Search: "));
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
@@ -140,7 +139,7 @@ public class GUI extends JFrame {
         icons.add(info3);
         infoLabel = new JLabel(info1);
         infoLabel.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
-        rightFlowPanelTop.add(infoLabel);
+        flowPanelTop.add(infoLabel);
         infoLabel.setToolTipText("About StrongBox");
                 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -164,7 +163,7 @@ public class GUI extends JFrame {
     }
     
     public JTextField makeField() {
-        field = new JTextField("34_Charactersssssssszzzzzzzzzzzzzz", 28);
+        field = new JTextField("34_Charactersssssssszzzzzzzzzzzzzz", 29);
         field.setEditable(false);
         enlargeFont(field);
         field.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
@@ -173,7 +172,7 @@ public class GUI extends JFrame {
     }
     
     public JTextField makePasswordField() {
-        field = new JPasswordField("34_Charactersssssssszzzzzzzzzzzzzz", 28);
+        field = new JPasswordField("34_Charactersssssssszzzzzzzzzzzzzz", 29);
         field.setEditable(false);
         enlargeFont(field);
         field.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
@@ -185,7 +184,23 @@ public class GUI extends JFrame {
      	Font changedFont = comp.getFont().deriveFont(Font.BOLD, (float)13.5);
      	comp.setFont(changedFont);
     }
-        
+    
+    /////////////////////////////////////////////////
+    public void showMessageDialogButtons(String message) {
+    	JOptionPane.showMessageDialog(fields.get(4), message);
+    }
+    
+    public void showDialog() {
+    	JDialog dialog = new JDialog(this, "Hello", true);
+    	JLabel label = new JLabel("Helloooooooo");
+    	label.setBorder(new MatteBorder(8, 8, 8, 8, Color.RED));
+    	dialog.add(label);
+    	dialog.pack();
+    	dialog.setLocationRelativeTo(null);
+    	dialog.setVisible(true);
+    }
+    /////////////////////////////////////////////////
+    
     public void showMessageDialog(String message) {
     	JOptionPane.showMessageDialog(this, message);
     }
