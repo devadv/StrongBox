@@ -199,9 +199,6 @@ public class GUI extends JFrame {
     }
     
     /////////////////////////////////////////////////
-    public void showMessageDialogButtons(String message) {
-    	JOptionPane.showMessageDialog(fields.get(4), message);
-    }
     
     public void showDialog() {
     	JDialog dialog = new JDialog(this, "Hello", true);

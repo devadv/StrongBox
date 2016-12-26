@@ -391,20 +391,12 @@ public class TestControllerMVC {
      * Add a MouseListener to the 'Dice' button so a random password can be
      * generated. Also show the slider which can be used to set the length.
      */
+    /*
     public void addDiceButtonListener() {
     	view.getIconLabel(1).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.getIconLabel(1).setIcon(view.getIcon(2));
-    			//view.showMessageDialogButtons("blub");
     			view.showDialog();
-    		    /*
-    			if () {
-
-    			}
-    			else {
-        			//propModel.generatePassphrase(int length)
-    			}
-    			*/
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconLabel(1).setIcon(view.getIcon(3));
@@ -421,6 +413,7 @@ public class TestControllerMVC {
     	}
     	);
     }
+    */
     
     /**
      * Add an ActionListener to the 'Dice' button so the user can generate a
