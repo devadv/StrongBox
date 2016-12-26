@@ -128,7 +128,7 @@ public class PropertiesModel {
 	 * @return passphrase 
 	 */
 	
-	public String generatePassphrase(int length) {
+	public static String generatePassphrase(int length) {
 
 		String passphrase = new String();
 		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
