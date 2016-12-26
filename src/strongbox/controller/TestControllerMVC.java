@@ -25,7 +25,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 23-12-2016
+ * @version 26-12-2016
  */
 public class TestControllerMVC {
 
@@ -129,11 +129,13 @@ public class TestControllerMVC {
     					record = model.getRecord(view.getRecordView().getSelectedValue());
     					String[] fields = model.getRecordFields(record);
     					for (int i = 0; i < 6; i++) {
+    						view.setDarkGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText(fields[i]);
     					}
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
+    						view.setDullGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
     				}
@@ -157,9 +159,11 @@ public class TestControllerMVC {
     			view.getFolderView().setEnabled(false);
     			view.getRecordView().setEnabled(false);
     			view.getSearchBox().setEnabled(false);
+    			view.setDullGrayColor(view.getSearchLabel());
     			for (JTextField field: view.getFields()) {
-    				field.setEditable(true);
+    				field.setEditable(true);   
     				field.setText("");
+    				view.setDarkGrayColor(field);
        			}
     			view.getFields().get(0).grabFocus();
     		}
@@ -182,6 +186,7 @@ public class TestControllerMVC {
     				view.getFolderView().setEnabled(false);
     				view.getRecordView().setEnabled(false);
     				view.getSearchBox().setEnabled(false);
+    				view.setDullGrayColor(view.getSearchLabel());
     				for (JTextField field: view.getFields()) {
     					field.setEditable(true);
     				}
@@ -201,7 +206,7 @@ public class TestControllerMVC {
      * record which is about to be made.
      */
     public void addCancelListener() {
-    	view.getButton(7).addActionListener(new ActionListener() {
+    	view.getButton(5).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if (view.showConfirmDialog("Discard changes?")) {
 
@@ -211,6 +216,7 @@ public class TestControllerMVC {
     				view.getFolderView().setEnabled(true);
     				view.getRecordView().setEnabled(true);
     				view.getSearchBox().setEnabled(true);
+    				view.setDarkGrayColor(view.getSearchLabel());
 
     				try {
     					view.getRecordView().setSelectedValue(record.getTitle(), true);
@@ -221,6 +227,7 @@ public class TestControllerMVC {
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
+    						view.setDullGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
     				}
@@ -239,7 +246,7 @@ public class TestControllerMVC {
      * @throws IllegalArgumentException if user typed comma's into one of the fields.
      */
     public void addSaveListener() {
-    	view.getButton(6).addActionListener(new ActionListener() {
+    	view.getButton(4).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
 
     			boolean commaFound = false;
@@ -276,6 +283,7 @@ public class TestControllerMVC {
     				view.getFolderView().setEnabled(true);
     				view.getRecordView().setEnabled(true);
     				view.getSearchBox().setEnabled(true);
+    				view.setDarkGrayColor(view.getSearchLabel());
 
     				initializeFolderData();
     				view.getFolderView().setSelectedValue(fieldValues[4], true);
@@ -345,33 +353,47 @@ public class TestControllerMVC {
     }
     
     /**
-     * Add an ActionListener to the 'Eye' button so the user can show or hide
+     * Add a MouseListener to the 'Eye' button so the user can show or hide
      * the password. Bullet symbols are used to mask the password.
      */
     public void addEyeButtonListener() {
-    	view.getButton(4).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
-    				if (!showPassword) {
-    					pwField.setEchoChar((char)0);
-    					showPassword = true;
-    				}
-    				else {
-    					pwField.setEchoChar(echoChar);
-    					showPassword = false;
-    				}
+    	view.getIconLabel(0).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
+    			view.getIconLabel(0).setIcon(view.getIcon(0));
+				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+				if (!showPassword) {
+					pwField.setEchoChar((char)0);
+					showPassword = true;
+				}
+				else {
+					pwField.setEchoChar(echoChar);
+					showPassword = false;
+				}
+    		}
+    		public void mouseEntered(MouseEvent e) {
+    			view.getIconLabel(0).setIcon(view.getIcon(1));
+    		}
+    		public void mouseExited(MouseEvent e) {
+    			view.getIconLabel(0).setIcon(view.getIcon(0));
+    		}
+    		public void mousePressed(MouseEvent e) {
+    			view.getIconLabel(0).setIcon(view.getIcon(1));
+    		}
+    		public void mouseReleased(MouseEvent e) {
+    			view.getIconLabel(0).setIcon(view.getIcon(0));
     		}
     	}
     	);
     }
     
     /**
-     * Add an ActionListener to the 'Dice' button so a random password can be
+     * Add a MouseListener to the 'Dice' button so a random password can be
      * generated. Also show the slider which can be used to set the length.
      */
     public void addDiceButtonListener() {
-    	view.getButton(5).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
+    	view.getIconLabel(1).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
+    			view.getIconLabel(1).setIcon(view.getIcon(2));
     			//view.showMessageDialogButtons("blub");
     			view.showDialog();
     		    /*
@@ -382,6 +404,18 @@ public class TestControllerMVC {
         			//propModel.generatePassphrase(int length)
     			}
     			*/
+    		}
+    		public void mouseEntered(MouseEvent e) {
+    			view.getIconLabel(1).setIcon(view.getIcon(3));
+    		}
+    		public void mouseExited(MouseEvent e) {
+    			view.getIconLabel(1).setIcon(view.getIcon(2));
+    		}
+    		public void mousePressed(MouseEvent e) {
+    			view.getIconLabel(1).setIcon(view.getIcon(3));
+    		}
+    		public void mouseReleased(MouseEvent e) {
+    			view.getIconLabel(1).setIcon(view.getIcon(2));
     		}
     	}
     	);
@@ -417,10 +451,6 @@ public class TestControllerMVC {
     }
     
     /**
-     * Add a DocumentListener to the textfields 
-     */
-    
-    /**
      * Fetches the text contained within a document.
      * @param doc  The document to get the text from.
      * @throws BadLocationException if a portion of the given range was not 
@@ -438,28 +468,28 @@ public class TestControllerMVC {
     }
     
     /**
-     * Listener for 'About' button.
+     * Listener for 'Info' button.
      */
     public void addInfoButtonListener() {
-    	view.getInfoLabel().addMouseListener(new MouseListener() {
+    	view.getIconLabel(2).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			view.getInfoLabel().setIcon(view.getIcons().get(0));
+    			view.getIconLabel(2).setIcon(view.getIcon(4));
     			view.showMessageDialog("StrongBox v1.0\n" +
     					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
     					"www.github.com/devadv/StrongBox\n\n" +
     					"verhaaltje over jasypt, connectie met google drive.");
     		}
     		public void mouseEntered(MouseEvent e) {
-    			view.getInfoLabel().setIcon(view.getIcons().get(1));
+    			view.getIconLabel(2).setIcon(view.getIcon(5));
     		}
     		public void mouseExited(MouseEvent e) {
-    			view.getInfoLabel().setIcon(view.getIcons().get(0));
+    			view.getIconLabel(2).setIcon(view.getIcon(4));
     		}
     		public void mousePressed(MouseEvent e) {
-    			view.getInfoLabel().setIcon(view.getIcons().get(2));
+    			view.getIconLabel(2).setIcon(view.getIcon(6));
     		}
     		public void mouseReleased(MouseEvent e) {
-    			view.getInfoLabel().setIcon(view.getIcons().get(0));
+    			view.getIconLabel(2).setIcon(view.getIcon(4));
     		}
     	}
     	);

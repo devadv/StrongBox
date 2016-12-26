@@ -24,22 +24,26 @@ public abstract class PasswordView extends JPanel {
 	 * Constructor sets up the default GUI
 	 */
 	public PasswordView() {
-
+		
 		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(300, 70);
-		frame.setLocation(600, 400);
-		JLabel labelPassword = new JLabel("Password: ");
-		passwordField = new JPasswordField(10);
-		button = new JButton("Login");
+		
+		JLabel labelPassword = new JLabel("Password: ");		
+		passwordField = new JPasswordField();
+		JButton button = new JButton("Login");
+		
 		setLayout(null);
-		labelPassword.setBounds(10, 10, 120, 20);
-		passwordField.setBounds(110, 10, 150, 20);
-		button.setBounds(180, 40, 80, 20);
+		labelPassword.setBounds(20, 20, 120, 20);
+		passwordField.setBounds(120, 20, 150, 20);
+		button.setBounds(189, 50, 80, 20);
 		add(labelPassword);
 		add(passwordField);
 		add(button);
-		frame.add(this);
+
+		frame.add(this);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(300, 117);
+		frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
 		frame.setVisible(true);
 
 	}

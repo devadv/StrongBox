@@ -1,6 +1,5 @@
 package strongbox.test.login;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,35 +14,39 @@ import strongbox.view.GUI;
 
 public class Login extends JPanel implements ActionListener{
 	
-	
-	
 	private JTextField passwordField;
 	private JFrame frame;
 	private ConfigProp cProp;
 
 	public Login(ConfigProp cProp) {
+		
 		this.cProp = cProp;
+		
 		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(300, 70);
-		frame.setLocation(600, 400);
-		JLabel labelPassword = new JLabel("Password: ");
-		passwordField = new JPasswordField(10);
+		
+		JLabel labelPassword = new JLabel("Password: ");		
+		passwordField = new JPasswordField();
 		passwordField.addActionListener(this);
 		JButton button = new JButton("Login");
 		button.addActionListener(this);
+		
 		setLayout(null);
-		labelPassword.setBounds(10,10,120,20);
-		passwordField.setBounds(110,10,150,20);
-		button.setBounds(180,40,80,20);
+		labelPassword.setBounds(20, 20, 120, 20);
+		passwordField.setBounds(120, 20, 150, 20);
+		button.setBounds(189, 50, 80, 20);
 		add(labelPassword);
 		add(passwordField);
 		add(button);
-		frame.add(this);
+
+		frame.add(this);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(300, 117);
+		frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
 		frame.setVisible(true);
 		
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -53,8 +56,7 @@ public class Login extends JPanel implements ActionListener{
 			new GUI();
 		}else{
 			frame.dispose();
-		}
-		
+		}		
 		
 	}
 

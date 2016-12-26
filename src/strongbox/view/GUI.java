@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 23-12-2016
+ * @version 26-12-2016
  */
 public class GUI extends JFrame {
 	
@@ -16,23 +16,19 @@ public class GUI extends JFrame {
     private JList<String> recordView = new JList<String>();
     private JScrollPane scrollPane;
 
-    private JButton button;
     private ArrayList<JButton> buttons = new ArrayList<>();
     
-    private JLabel infoLabel;
+    private ArrayList<ImageIcon> icons = new ArrayList<>();
+    private ArrayList<JLabel> iconLabels = new ArrayList<>();
     
     private JTextField field;
     private ArrayList<JTextField> fields = new ArrayList<>();
     
+    private JLabel searchLabel = new JLabel("Search: ");
     private JTextField searchBox;
-    
+
     private String[] labels = new String[] {"Title", "Website Address", 
     		"Email or User Name", "Password", "Folder Name", "Note"};
-    
-    private ImageIcon info1;
-    private ImageIcon info2;
-    private ImageIcon info3;
-    private ArrayList<ImageIcon> icons = new ArrayList<>();
     
 //    private JLabel pwStrength1 = new JLabel("Strength: ");
 //    private JLabel pwStrength2 = new JLabel("Average");
@@ -83,8 +79,6 @@ public class GUI extends JFrame {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         recordPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel temp = new JPanel(new GridLayout(0, 1));
-        recordPanel.add(temp, BorderLayout.SOUTH);
         flowPanelTop.add(makeButton("Create new record"));        // buttons (0)
         flowPanelTop.add(makeButton("Edit selected record"));     // buttons (1)
         flowPanelTop.add(makeButton("Delete selected record"));   // buttons (2)
@@ -93,10 +87,12 @@ public class GUI extends JFrame {
         // search box
         JPanel searchPanel = new JPanel(new FlowLayout());
         flowPanelTop.add(searchPanel, BorderLayout.NORTH);
-        searchPanel.add(new JLabel("Search: "));
+        searchPanel.add(searchLabel);
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
         searchPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
+        
+        makeIcons();
         
          // record details panel
         JPanel boxPanel = new JPanel();
@@ -111,8 +107,8 @@ public class GUI extends JFrame {
         	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
         	if (i == 3) {
         		flowPanel.add(makePasswordField());
-        		flowPanel.add(makeButton("oog"));          // buttons (4)
-        		flowPanel.add(makeButton("dice"));         // buttons (5)
+        		flowPanel.add(makeIconLabel(getIcon(0)));     // iconLabels (0) "eye-button"
+        		flowPanel.add(makeIconLabel(getIcon(2)));     // iconLabels (1) "dice-button"
         	}
         	else {
         		flowPanel.add(makeField());
@@ -121,8 +117,8 @@ public class GUI extends JFrame {
         	if (i == 5) {
         		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         		flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
-        		flowPanel.add(makeButton("Save record"));               // buttons (6)
-        		flowPanel.add(makeButton("Cancel / Discard Changes"));  // buttons (7)
+        		flowPanel.add(makeButton("Save record"));               // buttons (4)
+        		flowPanel.add(makeButton("Cancel / Discard Changes"));  // buttons (5)
         		boxPanel.add(flowPanel);
         	}
         }
@@ -131,17 +127,9 @@ public class GUI extends JFrame {
         enlargeFont(folderView);
         enlargeFont(recordView);
         
-        info1 = new ImageIcon("res/info-icon-01.png");
-        info2 = new ImageIcon("res/info-icon-02.png");
-        info3 = new ImageIcon("res/info-icon-03.png");
-        icons.add(info1);
-        icons.add(info2);
-        icons.add(info3);
-        infoLabel = new JLabel(info1);
-        infoLabel.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
-        flowPanelTop.add(infoLabel);
-        infoLabel.setToolTipText("About StrongBox");
-                
+        flowPanelTop.add(makeIconLabel(getIcon(4)));          // iconLabels (2) "info-button"
+        //infoLabel.setToolTipText("About StrongBox");
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
         //setResizable(false);
@@ -151,7 +139,7 @@ public class GUI extends JFrame {
     }
 
     public JButton makeButton(String text) {
-    	button = new JButton(text);
+    	JButton button = new JButton(text);
     	buttons.add(button);
     	return button;
     }
@@ -159,6 +147,13 @@ public class GUI extends JFrame {
     public JLabel makeLabel(String labelText) {
     	JLabel label = new JLabel(labelText);
     	label.setBorder(new MatteBorder(19, 2, 2, 2, Color.RED));
+        return label;
+    }
+    
+    public JLabel makeIconLabel(ImageIcon icon) {
+    	JLabel label = new JLabel(icon);
+    	label.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
+    	iconLabels.add(label);
         return label;
     }
     
@@ -180,9 +175,27 @@ public class GUI extends JFrame {
         return field;
     }
     
+    private void makeIcons() {
+    	icons.add(new ImageIcon("res/eye-01.png"));  // icons (0)  "black eye"
+    	icons.add(new ImageIcon("res/eye-02.png"));  // icons (1)  "gray eye"
+    	icons.add(new ImageIcon("res/dice-01.png")); // icons (2)  "black dice"
+		icons.add(new ImageIcon("res/dice-02.png")); // icons (3)  "gray dice"		
+    	icons.add(new ImageIcon("res/info-01.png")); // icons (4)  "info button normal"
+		icons.add(new ImageIcon("res/info-02.png")); // icons (5)  "info button on mouse-over"
+    	icons.add(new ImageIcon("res/info-03.png")); // icons (6)  "info button when clicked"
+    }
+    
     private void enlargeFont(JComponent comp) {
      	Font changedFont = comp.getFont().deriveFont(Font.BOLD, (float)13.5);
      	comp.setFont(changedFont);
+    }
+    
+    public void setDarkGrayColor(JComponent comp) {
+    	comp.setForeground(new Color(51, 51, 51));
+    }
+    
+    public void setDullGrayColor(JComponent comp) {
+    	comp.setForeground(new Color(153, 153, 153));
     }
     
     /////////////////////////////////////////////////
@@ -192,8 +205,8 @@ public class GUI extends JFrame {
     
     public void showDialog() {
     	JDialog dialog = new JDialog(this, "Hello", true);
-    	JLabel label = new JLabel("Helloooooooo");
-    	label.setBorder(new MatteBorder(8, 8, 8, 8, Color.RED));
+    	JLabel label = new JLabel("Roll the Dice");
+    	label.setBorder(new MatteBorder(28, 28, 28, 28, Color.RED));
     	dialog.add(label);
     	dialog.pack();
     	dialog.setLocationRelativeTo(null);
@@ -245,12 +258,16 @@ public class GUI extends JFrame {
     	return searchBox;
     }
     
-    public JLabel getInfoLabel() {
-    	return infoLabel;
+    public JLabel getIconLabel(int index) {
+    	return iconLabels.get(index);
     }
     
-    public ArrayList<ImageIcon> getIcons() {
-    	return icons;
+    public ImageIcon getIcon(int index) {
+    	return icons.get(index);
+    }
+    
+    public JLabel getSearchLabel() {
+    	return searchLabel;
     }
     
 }
