@@ -136,11 +136,12 @@ public class Model implements iModel {
 	@Override
 	public ArrayList<String> search(String keyword) {
 		ArrayList<String> titlesByKeyword = new ArrayList<>();
+		keyword = keyword.trim().toLowerCase();
 		for (Record record : records) {
-			if (record.getTitle().contains(keyword)
-					|| record.getAddress().contains(keyword)
-					|| record.getNote().contains(keyword)
-					|| record.getFolder().contains(keyword)) {
+			if (record.getTitle().trim().toLowerCase().contains(keyword)
+					|| record.getAddress().trim().toLowerCase().contains(keyword)
+					|| record.getNote().trim().toLowerCase().contains(keyword)
+					|| record.getFolder().trim().toLowerCase().contains(keyword)) {
 				titlesByKeyword.add(record.getTitle());
 			}
 		}
