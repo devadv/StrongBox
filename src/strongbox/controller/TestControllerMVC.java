@@ -1,5 +1,6 @@
 package strongbox.controller;
 
+import strongbox.login.PropertiesModel;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
@@ -72,6 +73,7 @@ public class TestControllerMVC {
 		addDeleteAllListener();
 		
 		addEyeButtonListener();
+		addDiceButtonListener();
 		
 		testButtonPrintTheList();
 
@@ -338,6 +340,26 @@ public class TestControllerMVC {
     		}
     	}
     	);
+    }
+    
+    /**
+     * Add an ActionListener to the 'Dice' button so the user can generate a
+     * password with 12 characters
+     */
+    public void addDiceButtonListener(){
+    	view.getButton(5).addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+				
+				//  static method generatePassphrase form PropertiesModel
+				String passwd = PropertiesModel.generatePassphrase(12);
+				System.out.println(passwd);
+				pwField.setText(passwd);
+			}
+		});
     }
     
     /**
