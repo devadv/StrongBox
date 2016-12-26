@@ -5,19 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-
-import javax.swing.JOptionPane;
-
 import strongbox.encryption.Encryption;
-import strongbox.model.Model;
 import strongbox.model.Record;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -28,31 +23,29 @@ import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
-public class GoogleDriveModel {
-
+public class GoogleDriveObject {
 	/** Application name. */
-	private static final String APPLICATION_NAME = "StrongBox";
+	private final String APPLICATION_NAME = "StrongBox";
 
 	/** Directory to store user credentials for this application. */
-	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+	private final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".credentials/drive_strongbox");
 
 	/** Global instance of the {@link FileDataStoreFactory}. */
-	private static FileDataStoreFactory DATA_STORE_FACTORY;
+	private FileDataStoreFactory DATA_STORE_FACTORY;
 
 	/** Global instance of the JSON factory. */
-	private static final JsonFactory JSON_FACTORY = JacksonFactory
+	private final JsonFactory JSON_FACTORY = JacksonFactory
 			.getDefaultInstance();
 
 	/** Global instance of the HTTP transport. */
-	private static HttpTransport HTTP_TRANSPORT;
+	private HttpTransport HTTP_TRANSPORT;
 
 	/**
 	 * Global instance of the scopes required by this quickstart.
@@ -60,23 +53,31 @@ public class GoogleDriveModel {
 	 * If modifying these scopes, delete your previously saved credentials at
 	 * ~/.credentials/drive-java-quickstart
 	 */
-	private static final List<String> SCOPES = Arrays.asList(
-			// TODO check scope only with DRIVE_APPDATA
-			DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_FILE,
+	private final List<String> SCOPES = Arrays.asList(
+	// TODO check scope only with DRIVE_APPDATA
+	// DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_FILE,
 			DriveScopes.DRIVE_APPDATA);
 
-	
+	public ArrayList<Record> records = new ArrayList<>();
+	private Drive service;
+	private String fileId;
 
-	static {
+	public GoogleDriveObject() {
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 			DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
-		} catch (Throwable t) {
-			t.printStackTrace();
+			service = getDriveService();
+			if (!hasDatafile()) {
+				createDataFile();
+			} else {
+				System.out.println("Data GoogleDrive Connected");
+			}
+		} catch (GeneralSecurityException | IOException e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
+
 	}
-	static ArrayList<Record> records = new ArrayList<>();
 
 	/**
 	 * Creates an authorized Credential object.
@@ -84,7 +85,7 @@ public class GoogleDriveModel {
 	 * @return an authorized Credential object.
 	 * @throws IOException
 	 */
-	public static Credential authorize() throws IOException {
+	public Credential authorize() throws IOException {
 		// Load client secrets.
 		InputStream in = Quickstart.class
 				.getResourceAsStream("/client_secret_strongbox.json");
@@ -109,116 +110,106 @@ public class GoogleDriveModel {
 	 * @return an authorized Drive client service
 	 * @throws IOException
 	 */
-	public static Drive getDriveService() throws IOException {
+	public Drive getDriveService() throws IOException {
 		Credential credential = authorize();
 		return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
 	}
 
-	public static void createDataFile() {
+	public String getFileID() throws IOException {
 
-		Drive service = null;
-		try {
-			service = getDriveService();
-			File fileMetadata = new File();
-			fileMetadata.setName("data.csv");
-			fileMetadata.setParents(Collections.singletonList("appDataFolder"));
-			File file = service.files().create(fileMetadata).setFields("id")
-					.execute();
-			System.out.println("File ID: " + file.getId());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		return fileId;
 	}
 
-	public static String getFileID() throws IOException {
+	public boolean hasDatafile() throws IOException {
+		boolean dataExist = false;
 
-		Drive service = getDriveService();
-		String fileId = "";
 		FileList files = service.files().list().setSpaces("appDataFolder")
 				.setFields("nextPageToken, files(id, name)").setPageSize(10)
 				.execute();
 		for (File file : files.getFiles()) {
-			System.out.printf("Found file: %s (%s)\n", file.getName(),
-					file.getId());
+			file.getId();
 			if (file.getName().equals("data.csv")) {
-				System.out.println("file exists");
-				fileId = file.getId();
+				this.fileId = file.getId();
+
+				dataExist = true;
 			}
 		}
-		return fileId;
+		return dataExist;
 	}
 
-	public static void downLoadData() {
-		Drive service;
-		try {
-			service = getDriveService();
-			
-			OutputStream outputStream = new ByteArrayOutputStream();
-			service.files().get(getFileID()).executeMediaAndDownloadTo(outputStream);
-			String cvsSplitBy = ",";
-			Scanner input = new Scanner(outputStream.toString());
-			while (input.hasNextLine()) {
-				// separator
-				String[] item = input.nextLine().split(cvsSplitBy);
-				Record record = new Record(item[0], item[1], item[2], item[3],
-						item[4], item[5]);
-				records.add(record);
-			}
-		} catch (IOException e ) {
-			
-			e.printStackTrace();
-		}
+	public void createDataFile() throws IOException {
+
+		File fileMetadata = new File();
+		fileMetadata.setName("data.csv");
+		fileMetadata.setParents(Collections.singletonList("appDataFolder"));
+		File file = service.files().create(fileMetadata).setFields("id")
+				.execute();
+		System.out.println("File ID: " + file.getId());
 
 	}
 
-	public static void uploadData() {
-		Drive service;
-		try {
-			service = getDriveService();
-			Date date = new Date();
-			DateTime dt = new DateTime(date);
-			File file = new File();
-			file.setTrashed(true);
-			file.setModifiedTime(dt);
-			java.io.File filePath = new java.io.File("res/data.csv");
-			FileContent mediaContent = new FileContent("text/csv", filePath);
+	public void downloadData() throws IOException {
 
-			File updatefile = service.files().update(getFileID(), file, mediaContent).execute();
-			
-			System.out.println("File ID: " + updatefile.getId());
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		OutputStream outputStream = new ByteArrayOutputStream();
+		service.files().get(getFileID())
+				.executeMediaAndDownloadTo(outputStream);
+		String cvsSplitBy = ",";
+		Scanner input = new Scanner(outputStream.toString());
+		while (input.hasNextLine()) {
+			// separator
+			String[] item = input.nextLine().split(cvsSplitBy);
+			Record record = new Record(item[0], item[1], item[2], item[3],
+					item[4], item[5]);
+			records.add(record);
 		}
+		input.close();
+	}
+
+	public void uploadData() throws IOException {
+
 		
+		File file = new File();
+		file.setTrashed(true);
+		java.io.File filePath = new java.io.File("res/data.csv");
+		FileContent mediaContent = new FileContent("text/csv", filePath);
+		service.files()
+				.update(getFileID(), file, mediaContent).execute();
+		System.out.println("Data uploaded!");
 	}
 
-	public static ArrayList<Record> getRecords() {
+	public void deleteDataFile() throws IOException {
+		//TODO 
+		service.files().delete(fileId).execute();
+
+
+	}
+
+	public ArrayList<Record> getRecords() {
 		return records;
 
 	}
 
-	public static void deleteData() {
-		System.out.println("Data deleted!");
-	}
-
 	public static void main(String[] args) {
+
 		Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
-		GoogleDriveModel.downLoadData();
-		//System.out.println(GoogleDriveModel.getRecords());
-		Model model = new Model();
-		model.writeRecordsToFile(GoogleDriveModel.getRecords());
-		System.out.println(model.getRecordList().toString());
-		//model.createNewRecord("Kaasboer", "kaas.nl", "boertje", "karnemelk12", "Food", "boerenkaas");
-		model.createNewRecord("Groenteboer", "groeten.nl", "boertje", "komkommer12", "Food", "bio");
-		model.writeRecordsToFile();
-		uploadData();
-		GoogleDriveModel.downLoadData();
-		System.out.println(GoogleDriveModel.getRecords());
+		GoogleDriveObject gdo = new GoogleDriveObject();
+
+		try {
+
+			gdo.downloadData();
+			for (Record record : gdo.getRecords()) {
+				System.out.println(record.toString());
+			}
+			//gdo.uploadData();
+			//gdo.deleteDataFile();
+			//System.out.println(gdo.hasDatafile());
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
 	}
 
 }

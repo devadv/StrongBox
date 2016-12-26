@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 public class LoginController {
 
 	private PropertiesModel model;
-	private PasswordView view;
 	private boolean access = false;
 	private String password;
 
