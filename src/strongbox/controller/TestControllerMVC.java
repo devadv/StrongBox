@@ -40,9 +40,6 @@ public class TestControllerMVC {
 	
 	private boolean showPassword = false;
 	private char echoChar;
-
-	//Currently used to make method generatePassphrase(int length) available
-	private PropertiesModel propModel = new PropertiesModel();
     
     /**
      * Constructor
@@ -58,8 +55,6 @@ public class TestControllerMVC {
 		model.readRecordsFromFile();
 		
 		view = new GUI();
-		
-		//createTestRecords();
 		
 		initializeFolderData();
 		
@@ -150,8 +145,8 @@ public class TestControllerMVC {
      * Add an ActionListener to the 'Create new record' button.
      */
     public void addRecordCreationListener() {
-    	view.getButton(0).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
+    	view.getIconLabel(0).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
     			view.showMessageDialog("Please enter the details of the new " + 
     					"record in the textfields to the right. \n" +
     					"A new folder will be created if needed. " +
@@ -168,6 +163,18 @@ public class TestControllerMVC {
        			}
     			view.getFields().get(0).grabFocus();
     		}
+    		public void mouseEntered(MouseEvent e) {
+    			
+    		}
+    		public void mouseExited(MouseEvent e) {
+
+    		}
+    		public void mousePressed(MouseEvent e) {
+
+    		}
+    		public void mouseReleased(MouseEvent e) {
+
+    		}
     	}
     	);
     }
@@ -176,8 +183,8 @@ public class TestControllerMVC {
      * Add an ActionListener to the 'Edit' button.
      */
     public void addEditListener() {
-    	view.getButton(1).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
+    	view.getIconLabel(1).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
     				view.showMessageDialog("Please enter the changes you wish " + 
     						"to make in the textfields to the right. \n" +
@@ -197,48 +204,20 @@ public class TestControllerMVC {
         			view.showMessageDialog("No record selected");
         		}
     		}
-    	}
-        );
-    }
-    
-    /**
-     * Add an ActionListener to the 'Cancel' button so changes being made to an
-     * existing record can be discarded or to cancel the creation of a new
-     * record which is about to be made.
-     */
-    public void addCancelListener() {
-    	view.getButton(5).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    			if (view.showConfirmDialog("Discard changes?")) {
+    		public void mouseEntered(MouseEvent e) {
+    			
+    		}
+    		public void mouseExited(MouseEvent e) {
 
-    				for (JTextField field: view.getFields()) {
-    					field.setEditable(false);
-    				}        			
-    				view.getFolderView().setEnabled(true);
-    				view.getRecordView().setEnabled(true);
-    				view.getSearchBox().setEnabled(true);
-    				view.setDarkGrayColor(view.getSearchLabel());
+    		}
+    		public void mousePressed(MouseEvent e) {
 
-    				try {
-    					view.getRecordView().setSelectedValue(record.getTitle(), true);
-    					String[] fields = model.getRecordFields(record);
-    					for (int i = 0; i < 6; i++) {
-    						view.getFields().get(i).setText(fields[i]);
-    					}
-    				}
-    				catch (NullPointerException exc) {
-    					for (int i = 0; i < 6; i++) {
-    						view.setDullGrayColor(view.getFields().get(i));
-    						view.getFields().get(i).setText("No record selected");
-    					}
-    				}
-    			}
-    			else {
-    				// Do nothing
-    			}
+    		}
+    		public void mouseReleased(MouseEvent e) {
+
     		}
     	}
-    	);
+        );
     }
     
     /**
@@ -247,7 +226,7 @@ public class TestControllerMVC {
      * @throws IllegalArgumentException if user typed comma's into one of the fields.
      */
     public void addSaveListener() {
-    	view.getButton(4).addActionListener(new ActionListener() {
+    	view.getButton(0).addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
 
     			boolean commaFound = false;
@@ -305,12 +284,52 @@ public class TestControllerMVC {
     }
     
     /**
+     * Add an ActionListener to the 'Cancel' button so changes being made to an
+     * existing record can be discarded or to cancel the creation of a new
+     * record which is about to be made.
+     */
+    public void addCancelListener() {
+    	view.getButton(1).addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if (view.showConfirmDialog("Discard changes?")) {
+
+    				for (JTextField field: view.getFields()) {
+    					field.setEditable(false);
+    				}        			
+    				view.getFolderView().setEnabled(true);
+    				view.getRecordView().setEnabled(true);
+    				view.getSearchBox().setEnabled(true);
+    				view.setDarkGrayColor(view.getSearchLabel());
+
+    				try {
+    					view.getRecordView().setSelectedValue(record.getTitle(), true);
+    					String[] fields = model.getRecordFields(record);
+    					for (int i = 0; i < 6; i++) {
+    						view.getFields().get(i).setText(fields[i]);
+    					}
+    				}
+    				catch (NullPointerException exc) {
+    					for (int i = 0; i < 6; i++) {
+    						view.setDullGrayColor(view.getFields().get(i));
+    						view.getFields().get(i).setText("No record selected");
+    					}
+    				}
+    			}
+    			else {
+    				// Do nothing
+    			}
+    		}
+    	}
+    	);
+    }
+    
+    /**
      * Add an ActionListener to the 'delete' button so selected records can
      * be deleted (ask user for confirmation) from the records-list.
      */
     public void addDeleteListener() {
-    	view.getButton(2).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
+    	view.getIconLabel(2).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
     				String title = view.getRecordView().getSelectedValue();
     				if (view.showConfirmDialog("Are you sure you want to" + 
@@ -332,6 +351,18 @@ public class TestControllerMVC {
     				view.showMessageDialog("No record selected");
     			}
     		}
+    		public void mouseEntered(MouseEvent e) {
+    			
+    		}
+    		public void mouseExited(MouseEvent e) {
+
+    		}
+    		public void mousePressed(MouseEvent e) {
+
+    		}
+    		public void mouseReleased(MouseEvent e) {
+
+    		}
     	}
     	);
     }
@@ -341,16 +372,28 @@ public class TestControllerMVC {
      * can be deleted with one click on a button (but ask user for confirmation)
      */
     public void addDeleteAllListener() {
-    	view.getButton(3).addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
+    	view.getIconLabel(3).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
 				if (view.showConfirmDialog("Are you sure you want to" + 
 						" delete ALL records?")) {
 					model.deleteAll();
 					initializeFolderData();
 				}
     		}
+    		public void mouseEntered(MouseEvent e) {
+    			
+    		}
+    		public void mouseExited(MouseEvent e) {
+
+    		}
+    		public void mousePressed(MouseEvent e) {
+
+    		}
+    		public void mouseReleased(MouseEvent e) {
+
+    		}
     	}
-        );	
+    	);
     }
     
     /**
@@ -358,9 +401,9 @@ public class TestControllerMVC {
      * the password. Bullet symbols are used to mask the password.
      */
     public void addEyeButtonListener() {
-    	view.getIconLabel(0).addMouseListener(new MouseListener() {
+    	view.getIconLabel(4).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			view.getIconLabel(0).setIcon(view.getIcon(0));
+    			view.getIconLabel(4).setIcon(view.getIcon(7));
 				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
 				if (!showPassword) {
 					pwField.setEchoChar((char)0);
@@ -372,16 +415,16 @@ public class TestControllerMVC {
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
-    			view.getIconLabel(0).setIcon(view.getIcon(1));
+    			view.getIconLabel(4).setIcon(view.getIcon(8));
     		}
     		public void mouseExited(MouseEvent e) {
-    			view.getIconLabel(0).setIcon(view.getIcon(0));
+    			view.getIconLabel(4).setIcon(view.getIcon(7));
     		}
     		public void mousePressed(MouseEvent e) {
-    			view.getIconLabel(0).setIcon(view.getIcon(1));
+    			view.getIconLabel(4).setIcon(view.getIcon(8));
     		}
     		public void mouseReleased(MouseEvent e) {
-    			view.getIconLabel(0).setIcon(view.getIcon(0));
+    			view.getIconLabel(4).setIcon(view.getIcon(7));
     		}
     	}
     	);
@@ -391,48 +434,31 @@ public class TestControllerMVC {
      * Add a MouseListener to the 'Dice' button so a random password can be
      * generated. Also show the slider which can be used to set the length.
      */
-    /*
+    
     public void addDiceButtonListener() {
-    	view.getIconLabel(1).addMouseListener(new MouseListener() {
+    	view.getIconLabel(5).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			view.getIconLabel(1).setIcon(view.getIcon(2));
-    			view.showDialog();
+    			view.getIconLabel(5).setIcon(view.getIcon(9));
+    			JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+    			//  static method generatePassphrase form PropertiesModel
+    			String passwd = PropertiesModel.generatePassphrase(12);
+    			pwField.setText(passwd);
+    			view.showDialog("Just put 12 random characters in password field");
     		}
     		public void mouseEntered(MouseEvent e) {
-    			view.getIconLabel(1).setIcon(view.getIcon(3));
+    			view.getIconLabel(5).setIcon(view.getIcon(10));
     		}
     		public void mouseExited(MouseEvent e) {
-    			view.getIconLabel(1).setIcon(view.getIcon(2));
+    			view.getIconLabel(5).setIcon(view.getIcon(9));
     		}
     		public void mousePressed(MouseEvent e) {
-    			view.getIconLabel(1).setIcon(view.getIcon(3));
+    			view.getIconLabel(5).setIcon(view.getIcon(10));
     		}
     		public void mouseReleased(MouseEvent e) {
-    			view.getIconLabel(1).setIcon(view.getIcon(2));
+    			view.getIconLabel(5).setIcon(view.getIcon(9));
     		}
     	}
     	);
-    }
-    */
-    
-    /**
-     * Add an ActionListener to the 'Dice' button so the user can generate a
-     * password with 12 characters
-     */
-    public void addDiceButtonListener(){
-    	view.getButton(5).addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
-				
-				//  static method generatePassphrase form PropertiesModel
-				String passwd = PropertiesModel.generatePassphrase(12);
-				System.out.println(passwd);
-				pwField.setText(passwd);
-			}
-		});
     }
     
     /**
@@ -485,36 +511,29 @@ public class TestControllerMVC {
      * Listener for 'Info' button.
      */
     public void addInfoButtonListener() {
-    	view.getIconLabel(2).addMouseListener(new MouseListener() {
+    	view.getIconLabel(6).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			view.getIconLabel(2).setIcon(view.getIcon(4));
+    			view.getIconLabel(6).setIcon(view.getIcon(4));
     			view.showMessageDialog("StrongBox v1.0\n" +
     					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
     					"www.github.com/devadv/StrongBox\n\n" +
     					"verhaaltje over jasypt, connectie met google drive.");
     		}
     		public void mouseEntered(MouseEvent e) {
-    			view.getIconLabel(2).setIcon(view.getIcon(5));
+    			view.getIconLabel(6).setIcon(view.getIcon(5));
     		}
     		public void mouseExited(MouseEvent e) {
-    			view.getIconLabel(2).setIcon(view.getIcon(4));
+    			view.getIconLabel(6).setIcon(view.getIcon(4));
     		}
     		public void mousePressed(MouseEvent e) {
-    			view.getIconLabel(2).setIcon(view.getIcon(6));
+    			view.getIconLabel(6).setIcon(view.getIcon(6));
     		}
     		public void mouseReleased(MouseEvent e) {
-    			view.getIconLabel(2).setIcon(view.getIcon(4));
+    			view.getIconLabel(6).setIcon(view.getIcon(4));
     		}
     	}
     	);
     }
-    
-	public void createTestRecords() {
-		model.createNewRecord("Telfort", "telfort.nl", "ikke", "1234567", "Providers", "telefoon en internet");
-		model.createNewRecord("KPN", "kpn.nl", "gebruiker", "123kpn", "Providers", "mobiel");
-		model.createNewRecord("Bol", "bol.com", "mij", "krenteBOL", "Webwinkels", "groot aanbod boeken");
-		model.createNewRecord("GitHub", "github.com", "octopussy", "pwGood", "Programmeren", "versie-control en teamwork");
-	}
 	
 	public static void main(String[] args) {
 
