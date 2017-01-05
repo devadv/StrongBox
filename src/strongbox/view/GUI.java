@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 26-12-2016
+ * @version 03-01-2017
  */
 public class GUI extends JFrame {
 	
@@ -20,6 +20,7 @@ public class GUI extends JFrame {
     
     private ArrayList<ImageIcon> icons = new ArrayList<>();
     private ArrayList<JLabel> iconLabels = new ArrayList<>();
+    private ArrayList<JLabel> iconLabelTexts = new ArrayList<JLabel>();
     
     private JTextField field;
     private ArrayList<JTextField> fields = new ArrayList<>();
@@ -27,7 +28,7 @@ public class GUI extends JFrame {
     private JLabel searchLabel = new JLabel("Search: ");
     private JTextField searchBox;
 
-    private String[] labels = new String[] {"Title", "Website Address", 
+    private String[] fieldLabels = new String[] {"Title", "Website Address",
     		"Email or User Name", "Password", "Folder Name", "Note"};
     
 //    private JLabel pwStrength1 = new JLabel("Strength: ");
@@ -71,21 +72,49 @@ public class GUI extends JFrame {
         
         scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 448));   // X still needs tweaking??? 448 for Y is right though..
+        scrollPane.setPreferredSize(new Dimension(224, 418));
         folderPanel.add(scrollPane, BorderLayout.CENTER);
 
 
         scrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 448));   // X still needs tweaking??? 448 for Y is right though..
+        scrollPane.setPreferredSize(new Dimension(224, 418));
         recordPanel.add(scrollPane, BorderLayout.CENTER);
 
         makeIcons();
+        
+        //////////////////////////////////
+        
+        JPanel buttonGrid = new JPanel(new GridLayout(1, 4));
 
-        flowPanelTop.add(makeIconLabel(getIcon(0)));  // iconLabels (0)   "Create new record"
-        flowPanelTop.add(makeIconLabel(getIcon(1)));  // iconLabels (1)   "Edit selected record"
-        flowPanelTop.add(makeIconLabel(getIcon(2)));  // iconLabels (2)   "Delete selected record"
-        flowPanelTop.add(makeIconLabel(getIcon(3)));  // iconLabels (3)   "Delete ALL records"
+        String[] iconLabelStrings = {"New", "Edit", "Delete", "Delete ALL"};
+
+        for (int i = 0; i < 4; i++) {
+        	JPanel container = new JPanel(new BorderLayout());
+        	JPanel flowPanel = new JPanel();
+        	flowPanel.add(makeIconLabel(getIcon(i)));
+        	container.add(flowPanel, BorderLayout.CENTER);
+        	flowPanel = new JPanel();
+        	JLabel label = new JLabel(iconLabelStrings[i]);
+        	iconLabelTexts.add(label);
+        	flowPanel.add(label);
+        	container.add(flowPanel, BorderLayout.SOUTH);
+        	buttonGrid.add(container);
+        }
+        
+        flowPanelTop.add(buttonGrid);
+        
+        // iconLabelTexts (0) "New"
+        // iconLabelTexts (1) "Edit"
+        // iconLabelTexts (2) "Delete"
+        // iconLabelTexts (3) "Delete ALL"
+        
+//        flowPanelTop.add(makeIconLabel(getIcon(0)));  // iconLabels (0)   "Create new record"
+//        flowPanelTop.add(makeIconLabel(getIcon(1)));  // iconLabels (1)   "Edit selected record"
+//        flowPanelTop.add(makeIconLabel(getIcon(2)));  // iconLabels (2)   "Delete selected record"
+//        flowPanelTop.add(makeIconLabel(getIcon(3)));  // iconLabels (3)   "Delete ALL records"
+        
+        //////////////////////////////////
         
         // search box
         JPanel searchPanel = new JPanel(new FlowLayout());
@@ -102,7 +131,7 @@ public class GUI extends JFrame {
         for (int i = 0; i < 6; i++) {
         	JPanel flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));        	
           	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
-        	flowPanel.add(makeLabel(labels[i]));
+        	flowPanel.add(makeLabel(fieldLabels[i]));
         	boxPanel.add(flowPanel);
         	flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));        	
         	if (i == 3) {
@@ -112,7 +141,7 @@ public class GUI extends JFrame {
         		flowPanel.add(makeIconLabel(getIcon(9)));     // iconLabels (5) "dice-button"
         	}
         	else {
-            	flowPanel.setBorder(new MatteBorder(4, 2, 4, 2, Color.ORANGE));
+            	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
         		flowPanel.add(makeField());
         	}
         	boxPanel.add(flowPanel);
@@ -140,11 +169,13 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
+    /* Currently (03-01-2017) not in use!
     public JButton makeIconButton(ImageIcon icon) {
     	JButton button = new JButton(icon);
     	buttons.add(button);
     	return button;
     }
+    */
     
     public JButton makeTextButton(String text) {
     	JButton button = new JButton(text);
@@ -184,11 +215,10 @@ public class GUI extends JFrame {
     }
     
     private void makeIcons() {
-    	
     	icons.add(new ImageIcon("res/new.png"));            // icons (0)  "new record"
     	icons.add(new ImageIcon("res/edit.png"));           // icons (1)  "edit record"
     	icons.add(new ImageIcon("res/delete.png"));         // icons (2)  "delete record"
-    	icons.add(new ImageIcon("res/radioactive.png"));    // icons (3)  "delete all records"		
+    	icons.add(new ImageIcon("res/trash.png"));          // icons (3)  "delete all records"		
     	icons.add(new ImageIcon("res/info-01.png"));        // icons (4)  "info button normal"
 		icons.add(new ImageIcon("res/info-02.png"));        // icons (5)  "info button on mouse-over"
     	icons.add(new ImageIcon("res/info-03.png"));        // icons (6)  "info button when clicked"    	
@@ -274,6 +304,10 @@ public class GUI extends JFrame {
     
     public ImageIcon getIcon(int index) {
     	return icons.get(index);
+    }
+    
+    public ArrayList<JLabel> getIconLabelTexts() {
+    	return iconLabelTexts;
     }
     
     public JLabel getSearchLabel() {

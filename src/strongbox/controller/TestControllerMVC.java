@@ -25,7 +25,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 26-12-2016
+ * @version 03-01-2017
  */
 public class TestControllerMVC {
 
@@ -164,10 +164,10 @@ public class TestControllerMVC {
     			view.getFields().get(0).grabFocus();
     		}
     		public void mouseEntered(MouseEvent e) {
-    			
+    			view.setDullGrayColor(view.getIconLabelTexts().get(0));
     		}
     		public void mouseExited(MouseEvent e) {
-
+    			view.setDarkGrayColor(view.getIconLabelTexts().get(0));
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -205,10 +205,10 @@ public class TestControllerMVC {
         		}
     		}
     		public void mouseEntered(MouseEvent e) {
-    			
+    			view.setDullGrayColor(view.getIconLabelTexts().get(1));
     		}
     		public void mouseExited(MouseEvent e) {
-
+    			view.setDarkGrayColor(view.getIconLabelTexts().get(1));
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -352,10 +352,10 @@ public class TestControllerMVC {
     			}
     		}
     		public void mouseEntered(MouseEvent e) {
-    			
+    			view.setDullGrayColor(view.getIconLabelTexts().get(2));
     		}
     		public void mouseExited(MouseEvent e) {
-
+    			view.setDarkGrayColor(view.getIconLabelTexts().get(2));
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -381,10 +381,10 @@ public class TestControllerMVC {
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
-    			
+    			view.setDullGrayColor(view.getIconLabelTexts().get(3));
     		}
     		public void mouseExited(MouseEvent e) {
-
+    			view.setDarkGrayColor(view.getIconLabelTexts().get(3));
     		}
     		public void mousePressed(MouseEvent e) {
 
