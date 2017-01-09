@@ -1,6 +1,5 @@
 package strongbox.controller;
 
-import strongbox.login.PropertiesModel;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
@@ -10,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Scanner;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -26,7 +24,7 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 03-01-2017
+ * @version 09-01-2017
  */
 public class TestControllerMVC {
 
@@ -48,12 +46,12 @@ public class TestControllerMVC {
 	public TestControllerMVC() {
 			
 		model = new Model();
-		//model.setMasterPassword("12345"); // Password from login controller
-		//model.readProperties();
-		//StrongTextEncryptor enc = new StrongTextEncryptor();
-		//enc.setPassword(model.getMasterpassword());
-		//Encryption encryption = new Encryption(enc.decrypt(model.getPassphrase()));
-		//model.readRecordsFromFile();
+		model.setMasterPassword("12345"); // Password from login controller
+		model.readProperties();
+		StrongTextEncryptor enc = new StrongTextEncryptor();
+		enc.setPassword(model.getMasterpassword());
+		Encryption encryption = new Encryption(enc.decrypt(model.getPassphrase()));
+		model.readRecordsFromFile();
 		
 		view = new GUI();
 		
@@ -129,12 +127,14 @@ public class TestControllerMVC {
     						view.setDarkGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText(fields[i]);
     					}
+						view.getStrengthLabel().setText("" + PasswordSafe.getScore(record.getPassword()));
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
     						view.setDullGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
+						view.getStrengthLabel().setText("N/A");
     				}
     			}
     		}
@@ -434,17 +434,18 @@ public class TestControllerMVC {
     /**
      * Add a MouseListener to the 'Dice' button so a random password can be
      * generated. Also show the slider which can be used to set the length.
-     */
-    
+     */    
     public void addDiceButtonListener() {
     	view.getIconLabel(5).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.getIconLabel(5).setIcon(view.getIcon(9));
-    			JPasswordField pwField = (JPasswordField)view.getFields().get(3);
-    			//  static method generatePassphrase form PropertiesModel
-    			String passwd = PropertiesModel.generatePassphrase(12);
-    			pwField.setText(passwd);
-    			view.showDialog("Just put 12 random characters in password field");
+    			if (record != null) {
+    				view.getFields().get(3).setText(PasswordSafe.generatePassphrase(12));
+    				view.getStrengthLabel().setText("" + PasswordSafe.getScore(view.getFields().get(3).getText()));
+    			}
+    			else {
+    				view.showMessageDialog("No record selected");
+    			}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconLabel(5).setIcon(view.getIcon(10));
@@ -535,156 +536,10 @@ public class TestControllerMVC {
     	}
     	);
     }
-    
-    public void pwStrength(String pw) {
-    	// see http://www.passwordmeter.com/
-    	
-    	/*
-   	        Minimum requirements for passwords: 
-   	        - length of 8 chars
-   	        3/4 of the following:
-   	        - Uppercase Letters
-            - Lowercase Letters
-            - Numbers
-            - Symbols
-    	 */
-    	
-    	int score = 0; // password safety score (range 0-100)
-    	int types = 0; // the number of different types of chars (range 0-4)
-
-    	int nLowerCase = 0; // the number of lowercase letters found 
-    	int nUpperCase = 0; // the number of uppercase letters found 
-    	int nDigit = 0;     // the number of digits (numbers) found 
-    	int nSymbol = 0;    // the number of symbols (no letters or digits) found
-    	
-    	boolean lowerCaseLetterFound = false;
-    	boolean upperCaseLetterFound = false;
-    	boolean digitFound = false;
-    	boolean symbolFound = false;
-    	
-    	///// Minimum requirements
-    	if (pw.length() < 8) {
-    		// pw too short
-    	}
-    	
-    	for (int i = 0; i < pw.length(); i++) {    		
-    		char ch = pw.charAt(i);    		
-    		if (Character.isLetter(ch) && Character.isLowerCase(ch)) {
-    			nLowerCase++;
-    			if (! lowerCaseLetterFound) {
-    				types++;
-    			}
-    			lowerCaseLetterFound = true;
-    		}
-    		if (Character.isLetter(ch) && Character.isUpperCase(ch)) {
-    			nUpperCase++;
-    			if (! upperCaseLetterFound) {
-    				types++;
-    			}
-    			upperCaseLetterFound = true;
-    		}
-    		if (Character.isDigit(ch) && digitFound == false) {
-    			nDigit++;
-    			if (! digitFound) {
-    				types++;
-    			}
-    			digitFound = true;
-    		}
-    		if (pw.trim().length() != 0 && Character.isLetter(ch) == false &&
-    				Character.isDigit(ch) == false) {
-    			nSymbol++;
-    			if (! symbolFound) {
-    				types++;
-    			}
-    			symbolFound = true;
-    		}
-    		// password should have at least three of these types
-    	}
-    	/////
-    	
-    	
-    	// Additions to score:
-    	
-    	// Number of Characters Score
-    	score += pw.length() * 4;
-    	
-    	// Lowercase Letters Score
-    	score += (pw.length() - nLowerCase) * 2;
-    	
-    	// Uppercase Letters Score
-    	score += (pw.length() - nUpperCase) * 2;
-    	
-    	// Digits Score
-    	score += nDigit * 4;
-    	
-    	// Symbols Score
-    	score += nSymbol * 6;
-    	
-    	// Middle Numbers or Symbols Score
-    	if (pw.length() >= 3) {
-    		String sub = pw.substring(1, pw.length() - 2);
-    		int middleNoS = 0;
-    		for (int i = 0; i < sub.length(); i++) {
-    			char ch = sub.charAt(i);
-    			if (Character.isDigit(ch) || 
-    					( ! Character.isDigit(ch) && ! Character.isLetter(ch) ) ) {
-    				middleNoS++;
-    			}
-    		}
-    		score += middleNoS *2;
-    	}
-    	
-    	// Requirements Score (range 0-5)
-    	int reqScore = 0;
-    	if (pw.length() >= 8) {
-    		reqScore++;
-    	}
-    	if (lowerCaseLetterFound) {
-    		reqScore++;
-    	}
-    	if (upperCaseLetterFound) {
-    		reqScore++;
-    	}
-    	if (digitFound) {
-    		reqScore++;
-    	}
-    	if (symbolFound) {
-    		reqScore++;
-    	}
-    	score += reqScore * 2;
-    	/////
-    	
-    	
-    	// Deductions to score:
-    	
-    	// Letters Only Penalty
-    	if (! digitFound && ! symbolFound) {
-    		score -= pw.length();
-    	}
-    	
-    	// Numbers Only Penalty
-    	if (! lowerCaseLetterFound && ! upperCaseLetterFound && ! symbolFound) {
-    		score -= pw.length();
-    	}
-    	
-    	// Repeat Characters Penalty (Case Insensitive)
-    	String pwLettersLowerCased = pw.toLowerCase();
-    	char[] pwChars = pwLettersLowerCased.toCharArray();
-    	for (int i = 0; i < pwChars.length; i++) {    		
-    		//////////////////if (pwChars[i].equals())
-    	}
-    }
-    
-    public void scannuh() {
-    	Scanner sc = new Scanner(System.in);
-    	String s = sc.next();
-    	System.out.println("String entered was " + s);
-    }
 	
 	public static void main(String[] args) {
 
 		TestControllerMVC tosti = new TestControllerMVC();
-		tosti.scannuh();
 
 	}
 }

@@ -7,12 +7,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.StrongTextEncryptor;
+
+import strongbox.controller.PasswordSafe;
 
 
 public class PropertiesModel {
@@ -20,7 +22,6 @@ public class PropertiesModel {
 	private File file;
 	private StrongTextEncryptor stringEncryptor;
 	private EncryptableProperties prop;
-	private String passphrase;
 
 	public PropertiesModel() {
 		stringEncryptor = new StrongTextEncryptor();
@@ -66,7 +67,7 @@ public class PropertiesModel {
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
 			prop.setProperty("masterkey", encryptPasswd);
 			prop.setProperty("passphrase",
-					stringEncryptor.encrypt(generatePassphrase((32))));
+					stringEncryptor.encrypt(PasswordSafe.generatePassphrase((32))));
 			prop.store(output, null);
 
 		} catch (IOException e) {
@@ -121,27 +122,6 @@ public class PropertiesModel {
 		}
 		return login;
 
-	}
-	/**
-	 * for making a password or phassphrase 
-	 * @param length
-	 * @return passphrase 
-	 */
-	
-	public String generatePassphrase(int length) {
-
-		String passphrase = new String();
-		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		String alphabet_lc = "abcdefghijklmnopqrstuvwxyz";
-		String signs = "!@#$%^&*";
-		String numbers = "0123456789";
-		String totalchars = alphabet + alphabet_lc + signs + numbers;
-		SecureRandom random = new SecureRandom();
-		int n = totalchars.length();
-		for (int i = 0; i < length; i++) {
-			passphrase = passphrase + totalchars.charAt(random.nextInt(n));
-		}
-		return passphrase;
 	}
 
 }

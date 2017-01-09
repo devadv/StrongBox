@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 03-01-2017
+ * @version 09-01-2017
  */
 public class GUI extends JFrame {
 	
@@ -52,6 +52,7 @@ public class GUI extends JFrame {
         mainBorderPanel.add(mainPanel, BorderLayout.CENTER);
         
         JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        flowPanelTop.setBorder(new MatteBorder(12, 2, 2, 2, Color.ORANGE));
         mainBorderPanel.add(flowPanelTop, BorderLayout.NORTH);
 
         JPanel folderPanel = new JPanel(new BorderLayout()); // panel for the folders
@@ -72,13 +73,13 @@ public class GUI extends JFrame {
         
         scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 418));
+        scrollPane.setPreferredSize(new Dimension(224, 428));
         folderPanel.add(scrollPane, BorderLayout.CENTER);
 
 
         scrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 418));
+        scrollPane.setPreferredSize(new Dimension(224, 428));
         recordPanel.add(scrollPane, BorderLayout.CENTER);
 
         makeIconList();
@@ -125,7 +126,7 @@ public class GUI extends JFrame {
         	if (i == 3) {
         		strength = makeLabel("Strength:");
         		flowPanel.add(strength);
-        		pwStrength = makeLabel("100 (Excellent)");
+        		pwStrength = makeLabel("N/A");
         		flowPanel.add(pwStrength);
         	}
         	boxPanel.add(flowPanel);
@@ -133,8 +134,11 @@ public class GUI extends JFrame {
         	if (i == 3) {
             	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
         		flowPanel.add(makePasswordField());
-        		flowPanel.add(makeIconButton(getIcon(7)));     // iconButtons (4) "eye-button"
-        		flowPanel.add(makeIconButton(getIcon(9)));     // iconButtons (5) "dice-button"
+        		flowPanel.add(Box.createHorizontalStrut(2));
+        		flowPanel.add(makeIconButton(getIcon(7)));    // iconButtons (4) "eye-button"
+        		flowPanel.add(Box.createHorizontalStrut(1));
+        		flowPanel.add(makeIconButton(getIcon(9)));    // iconButtons (5) "dice-button"
+        		flowPanel.add(Box.createHorizontalStrut(1));
         	}
         	else {
             	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
@@ -142,10 +146,14 @@ public class GUI extends JFrame {
         	}
         	boxPanel.add(flowPanel);
         	if (i == 5) {
-        		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));            	
-        		flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
-        		flowPanel.add(makeTextButton("Save record"));                // buttons (0)
-        		flowPanel.add(makeTextButton("Cancel / Discard Changes"));   // buttons (1)
+        		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));            	
+        		flowPanel.setBorder(new MatteBorder(6, 2, 2, 2, Color.RED));
+        		JPanel saveCancelGrid = new JPanel(new GridLayout(1, 2, 6, 0));
+        		saveCancelGrid.add(makeTextButton("Save"));       // buttons (0)
+        		getButton(0).setToolTipText("Save Record");
+        		saveCancelGrid.add(makeTextButton("Cancel"));     // buttons (1)
+        		getButton(1).setToolTipText("Cancel or Discard Changes");
+        		flowPanel.add(saveCancelGrid);
         		boxPanel.add(flowPanel);
         	}
         }
@@ -182,7 +190,7 @@ public class GUI extends JFrame {
 
     public JLabel makeLabel(String labelText) {
     	JLabel label = new JLabel(labelText);
-    	label.setBorder(new MatteBorder(19, 2, 2, 2, Color.RED));
+    	label.setBorder(new MatteBorder(19, 0, 2, 0, Color.RED));
         return label;
     }
     
@@ -237,19 +245,6 @@ public class GUI extends JFrame {
     public void setDullGrayColor(JComponent comp) {
     	comp.setForeground(new Color(153, 153, 153));
     }
-    
-    /////////////////////////////////////////////////
-    
-    public void showDialog(String message) {
-    	JDialog dialog = new JDialog(this, "Let's Roll the Dice!", true);
-    	JLabel label = new JLabel(message);
-    	label.setBorder(new MatteBorder(28, 28, 28, 28, Color.RED));
-    	dialog.add(label);
-    	dialog.pack();
-    	dialog.setLocationRelativeTo(null);
-    	dialog.setVisible(true);
-    }
-    /////////////////////////////////////////////////
     
     public void showMessageDialog(String message) {
     	JOptionPane.showMessageDialog(this, message);
@@ -309,6 +304,10 @@ public class GUI extends JFrame {
     
     public JLabel getSearchLabel() {
     	return searchLabel;
+    }
+    
+    public JLabel getStrengthLabel() {
+    	return pwStrength;
     }
     
 }
