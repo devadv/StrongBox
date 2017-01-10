@@ -72,12 +72,12 @@ public class TestControllerMVC {
 		addDeleteListener();
 		addDeleteAllListener();
 		
+		addAboutButtonListener();
+		
 		addEyeButtonListener();
 		addDiceButtonListener();
 		
-		addDiceButtonListener();
-		
-		addInfoButtonListener();
+		//addPassWordListener();
 		
 		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
 
@@ -127,7 +127,7 @@ public class TestControllerMVC {
     						view.setDarkGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText(fields[i]);
     					}
-						view.getStrengthLabel().setText("" + PasswordSafe.getScore(record.getPassword()));
+						view.getStrengthLabel().setText(PasswordSafe.getScore(record.getPassword()));
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
@@ -146,7 +146,7 @@ public class TestControllerMVC {
      * Add an ActionListener to the 'Create new record' button.
      */
     public void addRecordCreationListener() {
-    	view.getIconLabel(0).addMouseListener(new MouseListener() {
+    	view.getIconButton(0).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.showMessageDialog("Please enter the details of the new " + 
     					"record in the textfields to the right. \n" +
@@ -184,7 +184,7 @@ public class TestControllerMVC {
      * Add an ActionListener to the 'Edit' button.
      */
     public void addEditListener() {
-    	view.getIconLabel(1).addMouseListener(new MouseListener() {
+    	view.getIconButton(1).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
     				view.showMessageDialog("Please enter the changes you wish " + 
@@ -254,7 +254,7 @@ public class TestControllerMVC {
     							fieldValues[5]);
     				}
 
-    				// Save to data.csv here
+    				// TODO Save to data.csv here
 
     				view.showMessageDialog("Record Saved");
 
@@ -329,7 +329,7 @@ public class TestControllerMVC {
      * be deleted (ask user for confirmation) from the records-list.
      */
     public void addDeleteListener() {
-    	view.getIconLabel(2).addMouseListener(new MouseListener() {
+    	view.getIconButton(2).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
     				String title = view.getRecordView().getSelectedValue();
@@ -373,7 +373,7 @@ public class TestControllerMVC {
      * can be deleted with one click on a button (but ask user for confirmation)
      */
     public void addDeleteAllListener() {
-    	view.getIconLabel(3).addMouseListener(new MouseListener() {
+    	view.getIconButton(3).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
 				if (view.showConfirmDialog("Are you sure you want to" + 
 						" delete ALL records?")) {
@@ -402,9 +402,9 @@ public class TestControllerMVC {
      * the password. Bullet symbols are used to mask the password.
      */
     public void addEyeButtonListener() {
-    	view.getIconLabel(4).addMouseListener(new MouseListener() {
+    	view.getIconButton(5).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			view.getIconLabel(4).setIcon(view.getIcon(7));
+    			view.getIconButton(5).setIcon(view.getIcon(5));
 				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
 				if (!showPassword) {
 					pwField.setEchoChar((char)0);
@@ -416,16 +416,16 @@ public class TestControllerMVC {
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
-    			view.getIconLabel(4).setIcon(view.getIcon(8));
+    			view.getIconButton(5).setIcon(view.getIcon(6));
     		}
     		public void mouseExited(MouseEvent e) {
-    			view.getIconLabel(4).setIcon(view.getIcon(7));
+    			view.getIconButton(5).setIcon(view.getIcon(5));
     		}
     		public void mousePressed(MouseEvent e) {
-    			view.getIconLabel(4).setIcon(view.getIcon(8));
+    			view.getIconButton(5).setIcon(view.getIcon(6));
     		}
     		public void mouseReleased(MouseEvent e) {
-    			view.getIconLabel(4).setIcon(view.getIcon(7));
+    			view.getIconButton(5).setIcon(view.getIcon(5));
     		}
     	}
     	);
@@ -436,9 +436,9 @@ public class TestControllerMVC {
      * generated. Also show the slider which can be used to set the length.
      */    
     public void addDiceButtonListener() {
-    	view.getIconLabel(5).addMouseListener(new MouseListener() {
+    	view.getIconButton(6).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			view.getIconLabel(5).setIcon(view.getIcon(9));
+    			view.getIconButton(6).setIcon(view.getIcon(7));
     			if (record != null) {
     				view.getFields().get(3).setText(PasswordSafe.generatePassphrase(12));
     				view.getStrengthLabel().setText("" + PasswordSafe.getScore(view.getFields().get(3).getText()));
@@ -448,16 +448,46 @@ public class TestControllerMVC {
     			}
     		}
     		public void mouseEntered(MouseEvent e) {
-    			view.getIconLabel(5).setIcon(view.getIcon(10));
+    			view.getIconButton(6).setIcon(view.getIcon(8));
     		}
     		public void mouseExited(MouseEvent e) {
-    			view.getIconLabel(5).setIcon(view.getIcon(9));
+    			view.getIconButton(6).setIcon(view.getIcon(7));
     		}
     		public void mousePressed(MouseEvent e) {
-    			view.getIconLabel(5).setIcon(view.getIcon(10));
+    			view.getIconButton(6).setIcon(view.getIcon(8));
     		}
     		public void mouseReleased(MouseEvent e) {
-    			view.getIconLabel(5).setIcon(view.getIcon(9));
+    			view.getIconButton(6).setIcon(view.getIcon(7));
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * Listener for 'About' button.
+     */
+    public void addAboutButtonListener() {
+    	view.getIconButton(4).addMouseListener(new MouseListener() {
+    		public void mouseClicked(MouseEvent e) {
+    			//view.getIconLabel(4).setIcon(view.getIcon(4));
+    			view.showMessageDialog("StrongBox v1.0\n" +
+    					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
+    					"www.github.com/devadv/StrongBox\n\n" +
+    					"verhaaltje over jasypt, connectie met google drive..");
+    		}
+    		public void mouseEntered(MouseEvent e) {
+    			//view.getIconLabel(4).setIcon(view.getIcon(4));
+    			view.setDullGrayColor(view.getIconLabelTexts().get(4));
+    		}
+    		public void mouseExited(MouseEvent e) {
+    			//view.getIconLabel(4).setIcon(view.getIcon(4));
+    			view.setDarkGrayColor(view.getIconLabelTexts().get(4));
+    		}
+    		public void mousePressed(MouseEvent e) {
+    			//view.getIconLabel(4).setIcon(view.getIcon(4));
+    		}
+    		public void mouseReleased(MouseEvent e) {
+    			//view.getIconLabel(4).setIcon(view.getIcon(4));
     		}
     	}
     	);
@@ -492,6 +522,30 @@ public class TestControllerMVC {
     	);
     }
     
+    ///////
+    /**
+     * Add a DocumentListener to the PasswordField to keep the password safety 
+     * score up-to-date as the characters in the PasswordField change. 
+     *
+    public void addPassWordListener() {
+    	final PlainDocument doc = new PlainDocument();
+    	view.getFields().get(3).setDocument(doc);
+    	doc.addDocumentListener(new DocumentListener() {
+    		public void changedUpdate(DocumentEvent e) {
+    			view.getStrengthLabel().setText(PasswordSafe.getScore(getDocumentText(doc)));
+    		}
+    		public void insertUpdate(DocumentEvent e) {
+    			view.getStrengthLabel().setText(PasswordSafe.getScore(getDocumentText(doc)));
+    		}
+    		public void removeUpdate(DocumentEvent e) {
+    			view.getStrengthLabel().setText(PasswordSafe.getScore(getDocumentText(doc)));
+    		}
+    	}
+    	);
+    }
+    */
+    ///////
+    
     /**
      * Fetches the text contained within a document.
      * @param doc  The document to get the text from.
@@ -507,34 +561,6 @@ public class TestControllerMVC {
 			exc.printStackTrace();
 		}
 		return s;
-    }
-    
-    /**
-     * Listener for 'Info' button.
-     */
-    public void addInfoButtonListener() {
-    	view.getIconLabel(6).addMouseListener(new MouseListener() {
-    		public void mouseClicked(MouseEvent e) {
-    			view.getIconLabel(6).setIcon(view.getIcon(4));
-    			view.showMessageDialog("StrongBox v1.0\n" +
-    					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
-    					"www.github.com/devadv/StrongBox\n\n" +
-    					"verhaaltje over jasypt, connectie met google drive.");
-    		}
-    		public void mouseEntered(MouseEvent e) {
-    			view.getIconLabel(6).setIcon(view.getIcon(5));
-    		}
-    		public void mouseExited(MouseEvent e) {
-    			view.getIconLabel(6).setIcon(view.getIcon(4));
-    		}
-    		public void mousePressed(MouseEvent e) {
-    			view.getIconLabel(6).setIcon(view.getIcon(6));
-    		}
-    		public void mouseReleased(MouseEvent e) {
-    			view.getIconLabel(6).setIcon(view.getIcon(4));
-    		}
-    	}
-    	);
     }
 	
 	public static void main(String[] args) {

@@ -29,7 +29,7 @@ public abstract class PasswordView extends JPanel {
 		
 		JLabel labelPassword = new JLabel("Password: ");		
 		passwordField = new JPasswordField();
-		JButton button = new JButton("Login");
+		button = new JButton("Login");
 		
 		setLayout(null);
 		labelPassword.setBounds(20, 20, 120, 20);

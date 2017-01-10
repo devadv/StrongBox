@@ -48,22 +48,26 @@ public class GUI extends JFrame {
         JPanel mainBorderPanel = new JPanel(new BorderLayout());
         framePanel.add(mainBorderPanel);
         
-        JPanel mainPanel = new JPanel(/*new FlowLayout(FlowLayout.LEFT, 25, 25)*/);
+        JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         mainBorderPanel.add(mainPanel, BorderLayout.CENTER);
         
-        JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        flowPanelTop.setBorder(new MatteBorder(12, 2, 2, 2, Color.ORANGE));
+        JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        //flowPanelTop.setBorder(new MatteBorder(16, 2, 0, 2, Color.ORANGE));
+        flowPanelTop.setBorder(new EmptyBorder(16, 2, 0, 2));
         mainBorderPanel.add(flowPanelTop, BorderLayout.NORTH);
 
         JPanel folderPanel = new JPanel(new BorderLayout()); // panel for the folders
         JPanel recordPanel = new JPanel(new BorderLayout()); // panel for the records
         JPanel detailPanel = new JPanel(new BorderLayout()); // panel for the record's details
         
-        folderPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
-        recordPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
-        detailPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.GREEN));
+        //folderPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
+        folderPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+        //recordPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
+        recordPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+        //detailPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.GREEN));
+        detailPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
 
-        JPanel leftGridPanel = new JPanel(new GridLayout(1, 0/*, 25, 25*/));
+        JPanel leftGridPanel = new JPanel(new GridLayout(1, 0, 10, 10));
         
         leftGridPanel.add(folderPanel);
         leftGridPanel.add(recordPanel);
@@ -73,13 +77,13 @@ public class GUI extends JFrame {
         
         scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 428));
+        scrollPane.setPreferredSize(new Dimension(224, 417));
         folderPanel.add(scrollPane, BorderLayout.CENTER);
 
 
         scrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 428));
+        scrollPane.setPreferredSize(new Dimension(224, 417));
         recordPanel.add(scrollPane, BorderLayout.CENTER);
 
         makeIconList();
@@ -114,14 +118,41 @@ public class GUI extends JFrame {
         // iconLabelTexts (2) "Delete"
         // iconLabelTexts (3) "Delete ALL"
         
-                
+        /// search box
+        JPanel searchPanel = new JPanel(new FlowLayout());
+        flowPanelTop.add(searchPanel, BorderLayout.NORTH);
+        searchPanel.add(searchLabel);
+        searchBox = new JTextField(12);
+        searchPanel.add(searchBox);
+        searchPanel.setBorder(new EmptyBorder(8, 152, 22, 184));
+        //searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
+        
+        /// "About" iconButton and textLabel
+        JPanel aboutGrid = new JPanel(new GridLayout(1, 1));
+        JPanel container = new JPanel(new BorderLayout());
+        JPanel flowPanel = new JPanel();
+        flowPanel.add(makeIconButton(getIcon(4)));           // iconButtons (4) "about-button"
+        getIconButton(4).setToolTipText("About StrongBox");
+        container.add(flowPanel, BorderLayout.CENTER);
+        flowPanel = new JPanel();
+        JLabel textLabelAbout = new JLabel("About");             
+        iconLabelTexts.add(textLabelAbout);               // iconLabelTexts (4) "About"
+        flowPanel.add(textLabelAbout);
+        container.add(flowPanel, BorderLayout.SOUTH);
+        aboutGrid.add(container);
+        flowPanelTop.add(aboutGrid);
+        
+        
         /// record details panel
         JPanel boxPanel = new JPanel();
         boxPanel.setLayout(new BoxLayout(boxPanel, BoxLayout.Y_AXIS));
         boxPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         for (int i = 0; i < 6; i++) {
-        	JPanel flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));        	
-          	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
+        	flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            flowPanel.setBackground(Color.WHITE);
+        	flowPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+          	//flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
+        	flowPanel.add(Box.createHorizontalStrut(2));
         	flowPanel.add(makeLabel(fieldLabels[i]));
         	if (i == 3) {
         		strength = makeLabel("Strength:");
@@ -130,28 +161,32 @@ public class GUI extends JFrame {
         		flowPanel.add(pwStrength);
         	}
         	boxPanel.add(flowPanel);
-        	flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));        	
+        	flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            flowPanel.setBackground(Color.WHITE);
+    		flowPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+        	//flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
+        	flowPanel.add(Box.createHorizontalStrut(2));
         	if (i == 3) {
-            	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
         		flowPanel.add(makePasswordField());
-        		flowPanel.add(Box.createHorizontalStrut(2));
-        		flowPanel.add(makeIconButton(getIcon(7)));    // iconButtons (4) "eye-button"
-        		flowPanel.add(Box.createHorizontalStrut(1));
-        		flowPanel.add(makeIconButton(getIcon(9)));    // iconButtons (5) "dice-button"
-        		flowPanel.add(Box.createHorizontalStrut(1));
+        		flowPanel.add(Box.createHorizontalStrut(5));
+        		flowPanel.add(makeIconButton(getIcon(5)));    // iconButtons (5) "eye-button"
+        		flowPanel.add(Box.createHorizontalStrut(4));
+        		flowPanel.add(makeIconButton(getIcon(7)));    // iconButtons (6) "dice-button"
+        		flowPanel.add(Box.createHorizontalStrut(3));
         	}
         	else {
-            	flowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.ORANGE));
         		flowPanel.add(makeField());
         	}
         	boxPanel.add(flowPanel);
         	if (i == 5) {
-        		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));            	
-        		flowPanel.setBorder(new MatteBorder(6, 2, 2, 2, Color.RED));
+        		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+                flowPanel.setBackground(Color.WHITE);
+        		flowPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
+        		//flowPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
         		JPanel saveCancelGrid = new JPanel(new GridLayout(1, 2, 6, 0));
-        		saveCancelGrid.add(makeTextButton("Save"));       // buttons (0)
+        		saveCancelGrid.add(makeTextButton("Save"));       // buttons (0) "save"
         		getButton(0).setToolTipText("Save Record");
-        		saveCancelGrid.add(makeTextButton("Cancel"));     // buttons (1)
+        		saveCancelGrid.add(makeTextButton("Cancel"));     // buttons (1) "cancel"
         		getButton(1).setToolTipText("Cancel or Discard Changes");
         		flowPanel.add(saveCancelGrid);
         		boxPanel.add(flowPanel);
@@ -159,21 +194,9 @@ public class GUI extends JFrame {
         }
         detailPanel.add(boxPanel, BorderLayout.CENTER);
         
-        
-        /// search box
-        JPanel searchPanel = new JPanel(new FlowLayout());
-        flowPanelTop.add(searchPanel, BorderLayout.NORTH);
-        searchPanel.add(searchLabel);
-        searchBox = new JTextField(12);
-        searchPanel.add(searchBox);
-        searchPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
-        
         enlargeFont(folderView);
         enlargeFont(recordView);
-        
-        flowPanelTop.add(makeIconButton(getIcon(4)));          // iconButtons (6) "info-button"
-        //infoLabel.setToolTipText("About StrongBox");
-        
+        	
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
         //setResizable(false);
@@ -190,31 +213,35 @@ public class GUI extends JFrame {
 
     public JLabel makeLabel(String labelText) {
     	JLabel label = new JLabel(labelText);
-    	label.setBorder(new MatteBorder(19, 0, 2, 0, Color.RED));
+    	label.setBorder(new EmptyBorder(19, 0, 2, 0));
+    	//label.setBorder(new MatteBorder(19, 0, 2, 0, Color.RED));
         return label;
     }
     
     public JLabel makeIconButton(ImageIcon icon) {
     	JLabel label = new JLabel(icon);
-    	//label.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
     	iconButtons.add(label);
         return label;
     }
     
     public JTextField makeField() {
-        field = new JTextField("34_Charactersssssssszzzzzzzzzzzzzz", 29);
+        field = new JTextField("34_Charactersssssssszzzzzzzzzzzzzz", 26);
         field.setEditable(false);
         enlargeFont(field);
-        field.setBorder(new MatteBorder(0, 0, 2, 0, Color.MAGENTA));
+        field.setBackground(Color.WHITE);
+        field.setBorder(new MatteBorder(0, 0, 2, 0, new Color(51, 51, 51)));
+        //field.setBorder(new MatteBorder(0, 0, 2, 0, Color.MAGENTA));
     	fields.add(field);
         return field;
     }
     
     public JTextField makePasswordField() {
-        field = new JPasswordField("34_Charactersssssssszzzzzzzzzzzzzz", 29);
+        field = new JPasswordField("34_Charactersssssssszzzzzzzzzzzzzz", 26);
         field.setEditable(false);
         enlargeFont(field);
-        field.setBorder(new MatteBorder(0, 0, 2, 0, Color.MAGENTA));
+        field.setBackground(Color.WHITE);
+        field.setBorder(new MatteBorder(0, 0, 2, 0, new Color(51, 51, 51)));
+        //field.setBorder(new MatteBorder(0, 0, 2, 0, Color.MAGENTA));
     	fields.add(field);
         return field;
     }
@@ -224,13 +251,11 @@ public class GUI extends JFrame {
     	icons.add(new ImageIcon("res/edit.png"));           // icons (1)  "edit record"
     	icons.add(new ImageIcon("res/delete.png"));         // icons (2)  "delete record"
     	icons.add(new ImageIcon("res/trash.png"));          // icons (3)  "delete all records"		
-    	icons.add(new ImageIcon("res/info-01.png"));        // icons (4)  "info button normal"
-		icons.add(new ImageIcon("res/info-02.png"));        // icons (5)  "info button on mouse-over"
-    	icons.add(new ImageIcon("res/info-03.png"));        // icons (6)  "info button when clicked"    	
-    	icons.add(new ImageIcon("res/eye-01.png"));         // icons (7)  "black eye"
-    	icons.add(new ImageIcon("res/eye-02.png"));         // icons (8)  "gray eye"
-    	icons.add(new ImageIcon("res/dice-01.png"));        // icons (9)  "black dice"
-		icons.add(new ImageIcon("res/dice-02.png"));        // icons (10)  "gray dice"
+    	icons.add(new ImageIcon("res/about.png"));          // icons (4)  "about button normal" 	
+    	icons.add(new ImageIcon("res/eye-01.png"));         // icons (5)  "black eye"
+    	icons.add(new ImageIcon("res/eye-02.png"));         // icons (6)  "gray eye"
+    	icons.add(new ImageIcon("res/dice-01.png"));        // icons (7)  "black dice"
+		icons.add(new ImageIcon("res/dice-02.png"));        // icons (8)  "gray dice"
     }
     
     private void enlargeFont(JComponent comp) {
@@ -290,7 +315,7 @@ public class GUI extends JFrame {
     	return searchBox;
     }
     
-    public JLabel getIconLabel(int index) {
+    public JLabel getIconButton(int index) {
     	return iconButtons.get(index);
     }
     

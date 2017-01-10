@@ -52,7 +52,7 @@ public class PasswordSafe {
      * @param  pw     The password to get the safety score from
 	 * @return score  The safety score (0 = very weak), (100 = excellent)
      */
-    public static int getScore(String pw) {
+    public static String getScore(String pw) {
 
         int score = 0; // password safety score (range 0-100)
         int types = 0; // the number of different types of chars (range 0-4)
@@ -289,7 +289,9 @@ public class PasswordSafe {
         score = 100;
         }
         
+        String scoreString = "" + score;
+        
         // FINALLY!
-        return score;
+        return scoreString;
     }
 }
