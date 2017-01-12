@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.properties.EncryptableProperties;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 import strongbox.controller.PasswordSafe;
@@ -20,11 +21,11 @@ import strongbox.controller.PasswordSafe;
 public class PropertiesModel {
 
 	private File file;
-	private StrongTextEncryptor stringEncryptor;
+	private BasicTextEncryptor stringEncryptor;
 	private EncryptableProperties prop;
 
 	public PropertiesModel() {
-		stringEncryptor = new StrongTextEncryptor();
+		stringEncryptor = new BasicTextEncryptor();
 		prop = new EncryptableProperties(stringEncryptor);
 	}
 
@@ -94,7 +95,7 @@ public class PropertiesModel {
 	 */
 
 	public boolean checkLogin(String userInputpasswd) {
-		StrongTextEncryptor stringEncryptor = new StrongTextEncryptor();
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		boolean login = false;
 		stringEncryptor.setPassword(userInputpasswd);
 		InputStream input;
