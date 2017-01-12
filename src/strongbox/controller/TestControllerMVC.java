@@ -5,6 +5,7 @@ import strongbox.model.Record;
 import strongbox.encryption.Encryption;
 import strongbox.view.GUI;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,7 +19,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
 import org.jasypt.util.text.StrongTextEncryptor;
@@ -63,7 +67,7 @@ public class TestControllerMVC {
 		addFolderListener();
 		addRecordListener();
 
-		addSearchListener();
+
 		
 		addRecordCreationListener();
 		addEditListener();
@@ -76,6 +80,10 @@ public class TestControllerMVC {
 		
 		addEyeButtonListener();
 		addDiceButtonListener();
+
+		addSearchListener();
+        initSearchBox();
+        initialSearchListener();
 		
 		//addPassWordListener();
 		
@@ -522,6 +530,39 @@ public class TestControllerMVC {
     	);
     }
     
+    public void initSearchBox() {
+    	Document doc = view.getSearchBox().getDocument();
+    	view.getSearchBox().setForeground(Color.RED);
+    	try {
+    		doc.insertString(0, "Search", null);
+    	}
+    	catch (BadLocationException exc) {
+    		exc.printStackTrace();
+    	}
+    }
+    
+    public void initialSearchListener() {
+    	final Document doc = (PlainDocument)view.getSearchBox().getDocument();
+    	doc.addDocumentListener(new DocumentListener() {
+    		public void changedUpdate(DocumentEvent e) {
+    			if (view.getSearchBox().getForeground() == Color.RED); {
+    				view.getSearchBox().setForeground(Color.GREEN);
+    			}
+    		}
+    		public void insertUpdate(DocumentEvent e) {
+    			if (view.getSearchBox().getForeground() == Color.RED); {
+    				view.getSearchBox().setForeground(Color.GREEN);
+    			}
+    		}
+    		public void removeUpdate(DocumentEvent e) {
+    			if (view.getSearchBox().getForeground() == Color.RED); {
+    				view.getSearchBox().setForeground(Color.GREEN);
+    			}
+    		}
+    	}
+    	);
+    }
+    
     ///////
     /**
      * Add a DocumentListener to the PasswordField to keep the password safety 
@@ -552,7 +593,7 @@ public class TestControllerMVC {
      * @throws BadLocationException if a portion of the given range was not 
      *         a valid part of the document.
      */
-    private String getDocumentText(PlainDocument doc) {
+    private String getDocumentText(Document doc) {
 		String s = "";
 		try {
 			s = doc.getText(0, doc.getLength());
