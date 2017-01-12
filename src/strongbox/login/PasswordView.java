@@ -2,6 +2,7 @@ package strongbox.login;
 
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,6 +21,10 @@ public abstract class PasswordView extends JPanel {
 	protected JTextField passwordField;
 	protected JFrame frame;
 	protected JButton button;
+	protected JLabel labelPassword;
+	protected JLabel msg;
+	protected JLabel image;
+	protected ImageIcon pict_small;
 	/**
 	 * Constructor sets up the default GUI
 	 */
@@ -27,21 +32,19 @@ public abstract class PasswordView extends JPanel {
 
 		frame = new JFrame();
 		
-		JLabel labelPassword = new JLabel("Password: ");		
 		passwordField = new JPasswordField();
 		button = new JButton("Login");
+		labelPassword = new JLabel("Password: ");
+		msg = new JLabel("Welcome to StrongBox: ");
+		ImageIcon pict = new ImageIcon("res/box.png");
+		pict_small = new ImageIcon("res/box_small.png");
+		image = new JLabel(pict);
 		
 		setLayout(null);
-		labelPassword.setBounds(20, 20, 120, 20);
-		passwordField.setBounds(120, 20, 150, 20);
-		button.setBounds(189, 50, 80, 20);
-		add(labelPassword);
-		add(passwordField);
-		add(button);
-
+		
 		frame.add(this);		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(300, 117);
+		
 		frame.setLocationRelativeTo(null);
         frame.setResizable(false);
 		frame.setVisible(true);
