@@ -20,15 +20,17 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 09-01-2017
+ * @version 13-01-2017
  */
 public class TestControllerMVC {
 
@@ -52,7 +54,7 @@ public class TestControllerMVC {
 		model = new Model();
 		model.setMasterPassword("12345"); // Password from login controller
 		model.readProperties();
-		StrongTextEncryptor enc = new StrongTextEncryptor();
+		BasicTextEncryptor enc = new BasicTextEncryptor();
 		enc.setPassword(model.getMasterpassword());
 		Encryption encryption = new Encryption(enc.decrypt(model.getPassphrase()));
 		model.readRecordsFromFile();
@@ -67,8 +69,6 @@ public class TestControllerMVC {
 		addFolderListener();
 		addRecordListener();
 
-
-		
 		addRecordCreationListener();
 		addEditListener();
 		addCancelListener();
@@ -247,7 +247,7 @@ public class TestControllerMVC {
     					commaFound = true;
     				}
     			}
-
+    			
     			try {
     				if (commaFound) {
     					throw new IllegalArgumentException();
@@ -262,7 +262,7 @@ public class TestControllerMVC {
     							fieldValues[5]);
     				}
 
-    				// TODO Save to data.csv here
+    				model.writeRecordsToFile();
 
     				view.showMessageDialog("Record Saved");
 
@@ -346,6 +346,7 @@ public class TestControllerMVC {
     					record = model.getRecord(title);
     					String folder = record.getFolder();
     					model.delete(record);
+    					model.writeRecordsToFile();
     					initializeFolderData();
     					recordData.clear();
     					for (String recordTitle: model.getTitlesByFolder(folder)) {
@@ -386,6 +387,7 @@ public class TestControllerMVC {
 				if (view.showConfirmDialog("Are you sure you want to" + 
 						" delete ALL records?")) {
 					model.deleteAll();
+					model.writeRecordsToFile();
 					initializeFolderData();
 				}
     		}
@@ -542,20 +544,22 @@ public class TestControllerMVC {
     }
     
     public void initialSearchListener() {
-    	final Document doc = (PlainDocument)view.getSearchBox().getDocument();
+    	final Document doc = view.getSearchBox().getDocument();
     	doc.addDocumentListener(new DocumentListener() {
     		public void changedUpdate(DocumentEvent e) {
-    			if (view.getSearchBox().getForeground() == Color.RED); {
+    			/*
+    			if (view.getSearchBox().getForeground() == Color.RED) {
     				view.getSearchBox().setForeground(Color.GREEN);
     			}
+    			*/
     		}
     		public void insertUpdate(DocumentEvent e) {
-    			if (view.getSearchBox().getForeground() == Color.RED); {
+    			if (view.getSearchBox().getForeground() == Color.RED) {
     				view.getSearchBox().setForeground(Color.GREEN);
     			}
     		}
     		public void removeUpdate(DocumentEvent e) {
-    			if (view.getSearchBox().getForeground() == Color.RED); {
+    			if (view.getSearchBox().getForeground() == Color.RED) {
     				view.getSearchBox().setForeground(Color.GREEN);
     			}
     		}

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 import strongbox.model.Model;
-import strongbox.test.encryption.Encryption;
+import strongbox.encryption.Encryption;
 
 public class TestModel {
 

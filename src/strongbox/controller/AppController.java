@@ -17,12 +17,7 @@ public class AppController {
 		System.out.println(decryptedpassphrase);
 		Encryption enPassphrase = new Encryption(decryptedpassphrase);
 		model.readRecordsFromFile();
-		System.out.println(model.getRecordList());
-		
-		
-		
-		
-		
-		
+		System.out.println(model.getRecordList());		
+				
 	}
 }

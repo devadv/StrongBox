@@ -6,7 +6,7 @@ import strongbox.controller.AppController;
 import strongbox.login.LoginController;
 import strongbox.login.PropertiesModel;
 import strongbox.model.Model;
-import strongbox.test.encryption.Encryption;
+import strongbox.encryption.Encryption;
 
 public class TestWhileLoop {
 

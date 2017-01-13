@@ -77,13 +77,13 @@ public class GUI extends JFrame {
         
         scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 417));
+        scrollPane.setPreferredSize(new Dimension(224, 420));
         folderPanel.add(scrollPane, BorderLayout.CENTER);
 
 
         scrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 417));
+        scrollPane.setPreferredSize(new Dimension(224, 420));
         recordPanel.add(scrollPane, BorderLayout.CENTER);
 
         makeIconList();
@@ -125,7 +125,7 @@ public class GUI extends JFrame {
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
         searchPanel.setBorder(new EmptyBorder(8, 152, 22, 184));
-        //searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
+        searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
         
         /// "About" iconButton and textLabel
         JPanel aboutGrid = new JPanel(new GridLayout(1, 1));
