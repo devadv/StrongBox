@@ -15,7 +15,7 @@ import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
-import strongbox.controller.PasswordSafe;
+import strongbox.util.PasswordSafe;
 
 
 public class PropertiesModel {

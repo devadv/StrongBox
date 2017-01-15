@@ -1,6 +1,7 @@
 package strongbox.main;
 
-import strongbox.controller.AppController;
+
+import strongbox.controller.Controller;
 import strongbox.login.LoginController;
 import strongbox.login.PropertiesModel;
 import strongbox.model.Model;
@@ -45,7 +46,7 @@ public class StartApp {
 						}
 					Model model = new Model();
 					model.setMasterPassword(login.getPassword());
-					AppController app = new AppController(model);
+					Controller app = new Controller(model);
 				}
 			}
 		};

@@ -77,13 +77,13 @@ public class GUI extends JFrame {
         
         scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 420));
+        scrollPane.setPreferredSize(new Dimension(224, 417));
         folderPanel.add(scrollPane, BorderLayout.CENTER);
 
 
         scrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 420));
+        scrollPane.setPreferredSize(new Dimension(224, 417));
         recordPanel.add(scrollPane, BorderLayout.CENTER);
 
         makeIconList();
@@ -125,7 +125,7 @@ public class GUI extends JFrame {
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
         searchPanel.setBorder(new EmptyBorder(8, 152, 22, 184));
-        searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
+        //searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
         
         /// "About" iconButton and textLabel
         JPanel aboutGrid = new JPanel(new GridLayout(1, 1));
@@ -181,8 +181,8 @@ public class GUI extends JFrame {
         	if (i == 5) {
         		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
                 flowPanel.setBackground(Color.WHITE);
-        		flowPanel.setBorder(new EmptyBorder(10, 2, 2, 2));
-        		//flowPanel.setBorder(new MatteBorder(10, 2, 2, 2, Color.RED));
+        		flowPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
+        		//flowPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
         		JPanel saveCancelGrid = new JPanel(new GridLayout(1, 2, 6, 0));
         		saveCancelGrid.add(makeTextButton("Save"));       // buttons (0) "save"
         		getButton(0).setToolTipText("Save Record");
@@ -213,7 +213,6 @@ public class GUI extends JFrame {
 
     public JLabel makeLabel(String labelText) {
     	JLabel label = new JLabel(labelText);
-    	label.setForeground(new Color(83, 83, 83));
     	label.setBorder(new EmptyBorder(19, 0, 2, 0));
     	//label.setBorder(new MatteBorder(19, 0, 2, 0, Color.RED));
         return label;

@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import org.jasypt.properties.EncryptableProperties;
-import org.jasypt.util.password.StrongPasswordEncryptor;
-import org.jasypt.util.text.StrongTextEncryptor;
+import org.jasypt.util.text.BasicTextEncryptor;
 
-import strongbox.test.encryption.RecordBC;
-import strongbox.test.login.mvc.PropertiesModel;
+
 
 /**
  * A model for managing the application and the handling of records.
@@ -284,8 +282,9 @@ public class Model implements iModel {
 		try {
 
 			br = new BufferedReader(new FileReader(path));
+			
 			while ((line = br.readLine()) != null) {
-
+			
 				// separator
 				String[] item = line.split(cvsSplitBy);
 				createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
@@ -379,7 +378,7 @@ public class Model implements iModel {
 
 		File file = new File("res/config.properties");
 
-		StrongTextEncryptor stringEncryptor = new StrongTextEncryptor();
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(getMasterpassword());
 		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
 

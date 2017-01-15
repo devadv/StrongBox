@@ -3,9 +3,9 @@ package strongbox.controller;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
+import strongbox.util.PasswordSafe;
 import strongbox.view.GUI;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -19,20 +19,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
-import org.jasypt.util.text.BasicTextEncryptor;
-import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 13-01-2017
+ * @version 09-01-2017
  */
-public class TestControllerMVC {
+public class Controller {
 
 	private Model model;
 	private GUI view;
@@ -49,14 +43,16 @@ public class TestControllerMVC {
     /**
      * Constructor
      */
-	public TestControllerMVC() {
-			
-		model = new Model();
-		model.setMasterPassword("12345"); // Password from login controller
+	public Controller(Model model) {
+		//use masterpasswd for encryption	
+		Encryption enMaster = new Encryption(model.getMasterpassword());
+		//read properties from config.properties
 		model.readProperties();
-		BasicTextEncryptor enc = new BasicTextEncryptor();
-		enc.setPassword(model.getMasterpassword());
-		Encryption encryption = new Encryption(enc.decrypt(model.getPassphrase()));
+		//decrypt passphrase
+		String decryptedpassphrase = Encryption.decrypt(model.getPassphrase());
+		//use passphrase
+		Encryption enPassphrase = new Encryption(decryptedpassphrase);
+		
 		model.readRecordsFromFile();
 		
 		view = new GUI();
@@ -69,6 +65,8 @@ public class TestControllerMVC {
 		addFolderListener();
 		addRecordListener();
 
+		addSearchListener();
+		
 		addRecordCreationListener();
 		addEditListener();
 		addCancelListener();
@@ -80,10 +78,6 @@ public class TestControllerMVC {
 		
 		addEyeButtonListener();
 		addDiceButtonListener();
-
-		addSearchListener();
-        initSearchBox();
-        initialSearchListener();
 		
 		//addPassWordListener();
 		
@@ -247,7 +241,7 @@ public class TestControllerMVC {
     					commaFound = true;
     				}
     			}
-    			
+
     			try {
     				if (commaFound) {
     					throw new IllegalArgumentException();
@@ -262,7 +256,7 @@ public class TestControllerMVC {
     							fieldValues[5]);
     				}
 
-    				model.writeRecordsToFile();
+    				// TODO Save to data.csv here
 
     				view.showMessageDialog("Record Saved");
 
@@ -346,7 +340,6 @@ public class TestControllerMVC {
     					record = model.getRecord(title);
     					String folder = record.getFolder();
     					model.delete(record);
-    					model.writeRecordsToFile();
     					initializeFolderData();
     					recordData.clear();
     					for (String recordTitle: model.getTitlesByFolder(folder)) {
@@ -387,7 +380,6 @@ public class TestControllerMVC {
 				if (view.showConfirmDialog("Are you sure you want to" + 
 						" delete ALL records?")) {
 					model.deleteAll();
-					model.writeRecordsToFile();
 					initializeFolderData();
 				}
     		}
@@ -532,41 +524,6 @@ public class TestControllerMVC {
     	);
     }
     
-    public void initSearchBox() {
-    	Document doc = view.getSearchBox().getDocument();
-    	view.getSearchBox().setForeground(Color.RED);
-    	try {
-    		doc.insertString(0, "Search", null);
-    	}
-    	catch (BadLocationException exc) {
-    		exc.printStackTrace();
-    	}
-    }
-    
-    public void initialSearchListener() {
-    	final Document doc = view.getSearchBox().getDocument();
-    	doc.addDocumentListener(new DocumentListener() {
-    		public void changedUpdate(DocumentEvent e) {
-    			/*
-    			if (view.getSearchBox().getForeground() == Color.RED) {
-    				view.getSearchBox().setForeground(Color.GREEN);
-    			}
-    			*/
-    		}
-    		public void insertUpdate(DocumentEvent e) {
-    			if (view.getSearchBox().getForeground() == Color.RED) {
-    				view.getSearchBox().setForeground(Color.GREEN);
-    			}
-    		}
-    		public void removeUpdate(DocumentEvent e) {
-    			if (view.getSearchBox().getForeground() == Color.RED) {
-    				view.getSearchBox().setForeground(Color.GREEN);
-    			}
-    		}
-    	}
-    	);
-    }
-    
     ///////
     /**
      * Add a DocumentListener to the PasswordField to keep the password safety 
@@ -597,7 +554,7 @@ public class TestControllerMVC {
      * @throws BadLocationException if a portion of the given range was not 
      *         a valid part of the document.
      */
-    private String getDocumentText(Document doc) {
+    private String getDocumentText(PlainDocument doc) {
 		String s = "";
 		try {
 			s = doc.getText(0, doc.getLength());
@@ -608,9 +565,4 @@ public class TestControllerMVC {
 		return s;
     }
 	
-	public static void main(String[] args) {
-
-		TestControllerMVC tosti = new TestControllerMVC();
-
-	}
 }
