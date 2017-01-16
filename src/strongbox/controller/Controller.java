@@ -44,6 +44,8 @@ public class Controller {
      * Constructor
      */
 	public Controller(Model model) {
+		
+		this.model = model;
 		//use masterpasswd for encryption	
 		Encryption enMaster = new Encryption(model.getMasterpassword());
 		//read properties from config.properties
@@ -256,7 +258,9 @@ public class Controller {
     							fieldValues[5]);
     				}
 
-    				// TODO Save to data.csv here
+    				//Save to data.csv 
+    	
+    				model.writeRecordsToFile();
 
     				view.showMessageDialog("Record Saved");
 
@@ -340,6 +344,7 @@ public class Controller {
     					record = model.getRecord(title);
     					String folder = record.getFolder();
     					model.delete(record);
+    					model.writeRecordsToFile();
     					initializeFolderData();
     					recordData.clear();
     					for (String recordTitle: model.getTitlesByFolder(folder)) {
@@ -380,6 +385,7 @@ public class Controller {
 				if (view.showConfirmDialog("Are you sure you want to" + 
 						" delete ALL records?")) {
 					model.deleteAll();
+					model.writeRecordsToFile();
 					initializeFolderData();
 				}
     		}
