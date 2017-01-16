@@ -8,13 +8,14 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 09-01-2017
+ * @version 15-01-2017
  */
 public class GUI extends JFrame {
 	
     private JList<String> folderView = new JList<String>();
     private JList<String> recordView = new JList<String>();
-    private JScrollPane scrollPane;
+    private JScrollPane folderScrollPane;
+    private JScrollPane recordScrollPane;
 
     private ArrayList<JButton> buttons = new ArrayList<>();
     
@@ -24,9 +25,9 @@ public class GUI extends JFrame {
     
     private JTextField field;
     private ArrayList<JTextField> fields = new ArrayList<>();
-    
-    private JLabel searchLabel = new JLabel("Search: ");
+
     private JTextField searchBox;
+    private JLabel searchLabel;
 
     private String[] fieldLabels = new String[] {"Title", "Website Address",
     		"Email or User Name", "Password", "Folder Name", "Note"};
@@ -75,16 +76,16 @@ public class GUI extends JFrame {
         mainPanel.add(leftGridPanel);
         mainPanel.add(detailPanel);
         
-        scrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+        folderScrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 420));
-        folderPanel.add(scrollPane, BorderLayout.CENTER);
+        //folderScrollPane.setPreferredSize(new Dimension(224, 420));
+        folderPanel.add(folderScrollPane, BorderLayout.CENTER);
 
 
-        scrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        recordScrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(224, 420));
-        recordPanel.add(scrollPane, BorderLayout.CENTER);
+        //recordScrollPane.setPreferredSize(new Dimension(224, 420));
+        recordPanel.add(recordScrollPane, BorderLayout.CENTER);
 
         makeIconList();
         
@@ -119,20 +120,22 @@ public class GUI extends JFrame {
         // iconLabelTexts (3) "Delete ALL"
         
         /// search box
-        JPanel searchPanel = new JPanel(new FlowLayout());
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 5));
         flowPanelTop.add(searchPanel, BorderLayout.NORTH);
+        searchLabel = new JLabel(getIcon(14));
         searchPanel.add(searchLabel);
+        searchPanel.add(Box.createHorizontalStrut(5));
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
         searchPanel.setBorder(new EmptyBorder(8, 152, 22, 184));
-        searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
+        //searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
         
         /// "About" iconButton and textLabel
         JPanel aboutGrid = new JPanel(new GridLayout(1, 1));
         JPanel container = new JPanel(new BorderLayout());
         JPanel flowPanel = new JPanel();
         flowPanel.add(makeIconButton(getIcon(4)));           // iconButtons (4) "about-button"
-        getIconButton(4).setToolTipText("About StrongBox");
+        //getIconButton(4).setToolTipText("About StrongBox");
         container.add(flowPanel, BorderLayout.CENTER);
         flowPanel = new JPanel();
         JLabel textLabelAbout = new JLabel("About");             
@@ -201,6 +204,9 @@ public class GUI extends JFrame {
         //setSize(300, 320);
         //setResizable(false);
         pack();
+        folderScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
+        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
+        pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -248,15 +254,22 @@ public class GUI extends JFrame {
     }
     
     private void makeIconList() {
-    	icons.add(new ImageIcon("res/new.png"));            // icons (0)  "new record"
-    	icons.add(new ImageIcon("res/edit.png"));           // icons (1)  "edit record"
-    	icons.add(new ImageIcon("res/delete.png"));         // icons (2)  "delete record"
-    	icons.add(new ImageIcon("res/trash.png"));          // icons (3)  "delete all records"		
+    	icons.add(new ImageIcon("res/new.png"));            // icons (0)  "new record normal"
+    	icons.add(new ImageIcon("res/edit.png"));           // icons (1)  "edit record normal"
+    	icons.add(new ImageIcon("res/delete.png"));         // icons (2)  "delete record normal"
+    	icons.add(new ImageIcon("res/trash.png"));          // icons (3)  "delete ALL records normal"		
     	icons.add(new ImageIcon("res/about.png"));          // icons (4)  "about button normal" 	
     	icons.add(new ImageIcon("res/eye-01.png"));         // icons (5)  "black eye"
     	icons.add(new ImageIcon("res/eye-02.png"));         // icons (6)  "gray eye"
     	icons.add(new ImageIcon("res/dice-01.png"));        // icons (7)  "black dice"
-		icons.add(new ImageIcon("res/dice-02.png"));        // icons (8)  "gray dice"
+		icons.add(new ImageIcon("res/dice-02.png"));        // icons (8)  "gray dice"		
+    	icons.add(new ImageIcon("res/new-gray.png"));       // icons (9)  "new record grayscale"
+    	icons.add(new ImageIcon("res/edit-gray.png"));      // icons (10) "edit record grayscale"
+    	icons.add(new ImageIcon("res/delete-gray.png"));    // icons (11) "delete record grayscale"
+    	icons.add(new ImageIcon("res/trash-gray.png"));     // icons (12) "delete ALL records grayscale"		
+    	icons.add(new ImageIcon("res/about-gray.png"));     // icons (13) "about button grayscale"
+    	icons.add(new ImageIcon("res/magnifier-01.png"));   // icons (14) "black magnifier icon"
+    	icons.add(new ImageIcon("res/magnifier-02.png"));   // icons (15) "gray magnifier icon"
     }
     
     private void enlargeFont(JComponent comp) {
@@ -266,6 +279,10 @@ public class GUI extends JFrame {
     
     public void setDarkGrayColor(JComponent comp) {
     	comp.setForeground(new Color(51, 51, 51));
+    }
+
+    public void setPlainGrayColor(JComponent comp) {
+    	comp.setForeground(Color.GRAY); // 128, 128, 128
     }
     
     public void setDullGrayColor(JComponent comp) {
@@ -327,13 +344,21 @@ public class GUI extends JFrame {
     public ArrayList<JLabel> getIconLabelTexts() {
     	return iconLabelTexts;
     }
-    
+
     public JLabel getSearchLabel() {
     	return searchLabel;
     }
     
     public JLabel getStrengthLabel() {
     	return pwStrength;
+    }
+
+    public JScrollPane getFolderScrollPane() {
+    	return folderScrollPane;
+    }
+    
+    public JScrollPane getRecordScrollPane() {
+    	return recordScrollPane;
     }
     
 }
