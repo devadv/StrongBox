@@ -374,6 +374,8 @@ public class Model implements iModel {
 
 	}
 
+	//XXX  write javadoc
+	 
 	public void readProperties() {
 
 		File file = new File("res/config.properties");

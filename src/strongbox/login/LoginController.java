@@ -62,6 +62,7 @@ public class LoginController {
 							System.exit(1);
 						}
 						System.out.println("Wrong password try again");
+						view.passwordField.setText("");
 					}
 
 				}

@@ -71,14 +71,17 @@ public class Controller {
 		
 		addRecordCreationListener();
 		addEditListener();
+		//FIXME hide buttons not in edit mode
 		addCancelListener();
 		addSaveListener();
 		addDeleteListener();
+		
 		addDeleteAllListener();
 		
 		addAboutButtonListener();
 		
 		addEyeButtonListener();
+		//TODO dice button show in editmode
 		addDiceButtonListener();
 		
 		//addPassWordListener();
@@ -324,6 +327,8 @@ public class Controller {
     			}
     			else {
     				// Do nothing
+    				
+    				
     			}
     		}
     	}

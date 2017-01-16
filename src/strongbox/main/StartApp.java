@@ -12,12 +12,13 @@ import strongbox.model.Model;
  * @author ben
  *
  */
+//TODO checks for untouched code
 
 public class StartApp {
 	Object lock = new Object();
 
 	public StartApp() {
-
+		
 		PropertiesModel prop = new PropertiesModel();
 		final LoginController login = new LoginController(prop);
 
