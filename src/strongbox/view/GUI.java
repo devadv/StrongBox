@@ -78,24 +78,11 @@ public class GUI extends JFrame {
         
         folderScrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-<<<<<<< HEAD
-        scrollPane.setPreferredSize(new Dimension(224, 417));
-        folderPanel.add(scrollPane, BorderLayout.CENTER);
-=======
-        //folderScrollPane.setPreferredSize(new Dimension(224, 420));
         folderPanel.add(folderScrollPane, BorderLayout.CENTER);
->>>>>>> refs/heads/development
-
 
         recordScrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-<<<<<<< HEAD
-        scrollPane.setPreferredSize(new Dimension(224, 417));
-        recordPanel.add(scrollPane, BorderLayout.CENTER);
-=======
-        //recordScrollPane.setPreferredSize(new Dimension(224, 420));
         recordPanel.add(recordScrollPane, BorderLayout.CENTER);
->>>>>>> refs/heads/development
 
         makeIconList();
         
@@ -241,7 +228,7 @@ public class GUI extends JFrame {
     }
     
     public JTextField makeField() {
-        field = new JTextField("34_Charactersssssssszzzzzzzzzzzzzz", 26);
+        field = new JTextField("", 26);
         field.setEditable(false);
         enlargeFont(field);
         field.setBackground(Color.WHITE);
@@ -252,7 +239,7 @@ public class GUI extends JFrame {
     }
     
     public JTextField makePasswordField() {
-        field = new JPasswordField("34_Charactersssssssszzzzzzzzzzzzzz", 26);
+        field = new JPasswordField("", 26);
         field.setEditable(false);
         enlargeFont(field);
         field.setBackground(Color.WHITE);

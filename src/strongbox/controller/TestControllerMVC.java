@@ -3,6 +3,7 @@ package strongbox.controller;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
+import strongbox.util.PasswordSafe;
 import strongbox.view.GUI;
 
 import java.awt.Color;
