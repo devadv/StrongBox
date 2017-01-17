@@ -9,15 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
-
-import strongbox.login.PropertiesModel;
-
 
 
 /**
@@ -34,6 +30,7 @@ public class Model implements iModel {
 
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
+	private static String path = DATA_STORE_DIR + "/data.csv";
 
 
 	/**
@@ -271,7 +268,7 @@ public class Model implements iModel {
 	@Override
 	public void readRecordsFromFile() {
 		
-		readFile( DATA_STORE_DIR + "/data.csv");
+		readFile(path);
 	}
 
 	/**
@@ -334,7 +331,7 @@ public class Model implements iModel {
 		FileWriter writer = null;
 		
 			try {
-				writer = new FileWriter("res/data.csv");
+				writer = new FileWriter(path);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -398,7 +395,7 @@ public class Model implements iModel {
 	 
 	public void readProperties() {
 
-		File file = new File( DATA_STORE_DIR +"/config.properties");
+		File file = new File(DATA_STORE_DIR +"/config.properties");
 
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(getMasterpassword());

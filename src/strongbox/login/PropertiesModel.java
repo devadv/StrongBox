@@ -25,7 +25,7 @@ public class PropertiesModel {
 	
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
-	
+	private String path = DATA_STORE_DIR + "/config.properties";
 	private File file;
 	private BasicTextEncryptor stringEncryptor;
 	private EncryptableProperties prop;
@@ -42,7 +42,7 @@ public class PropertiesModel {
 	 */
 	public boolean checkMasterKeyExists() {
 		boolean keyExist = false;
-		file = new File(DATA_STORE_DIR + "/config.properties");
+		file = new File(path);
 		try {
 			Scanner input = new Scanner(file);
 			input.nextLine();
@@ -54,6 +54,13 @@ public class PropertiesModel {
 			keyExist = false;
 		} catch (FileNotFoundException e) {
 			keyExist = false;
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		return keyExist;
 	}
@@ -68,9 +75,9 @@ public class PropertiesModel {
 
 		OutputStream output = null;
 		stringEncryptor.setPassword(masterpasswd);
-
+		
 		try {
-			output = new FileOutputStream(DATA_STORE_DIR+"/config.properties");
+			output = new FileOutputStream(path);
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
 			prop.setProperty("masterkey", encryptPasswd);
 			prop.setProperty("passphrase",
