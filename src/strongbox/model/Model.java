@@ -16,6 +16,8 @@ import java.util.TreeSet;
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
 
+import strongbox.login.PropertiesModel;
+
 
 
 /**
@@ -29,6 +31,10 @@ public class Model implements iModel {
 	private ArrayList<Record> records;
 	private String masterpassword;
 	private String passphrase;
+
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+
 
 	/**
 	 * Constructor for the model.
@@ -265,7 +271,7 @@ public class Model implements iModel {
 	@Override
 	public void readRecordsFromFile() {
 		
-		readFile("res/data.csv");
+		readFile( DATA_STORE_DIR + "/data.csv");
 	}
 
 	/**
@@ -392,7 +398,7 @@ public class Model implements iModel {
 	 
 	public void readProperties() {
 
-		File file = new File("res/config.properties");
+		File file = new File( DATA_STORE_DIR +"/config.properties");
 
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(getMasterpassword());

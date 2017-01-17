@@ -20,6 +20,12 @@ import strongbox.util.PasswordSafe;
 
 public class PropertiesModel {
 
+	
+/** Directory to store user data for this application. */
+	
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	
 	private File file;
 	private BasicTextEncryptor stringEncryptor;
 	private EncryptableProperties prop;
@@ -36,7 +42,7 @@ public class PropertiesModel {
 	 */
 	public boolean checkMasterKeyExists() {
 		boolean keyExist = false;
-		file = new File("res/config.properties");
+		file = new File(DATA_STORE_DIR + "/config.properties");
 		try {
 			Scanner input = new Scanner(file);
 			input.nextLine();
@@ -64,7 +70,7 @@ public class PropertiesModel {
 		stringEncryptor.setPassword(masterpasswd);
 
 		try {
-			output = new FileOutputStream("res/config.properties");
+			output = new FileOutputStream(DATA_STORE_DIR+"/config.properties");
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
 			prop.setProperty("masterkey", encryptPasswd);
 			prop.setProperty("passphrase",
