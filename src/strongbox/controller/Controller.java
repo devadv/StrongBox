@@ -7,8 +7,12 @@ import strongbox.util.PasswordSafe;
 import strongbox.view.GUI;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.FocusEvent;
@@ -89,6 +93,8 @@ public class Controller {
 		addSearchFocusListener();
 		
         initSearchBox();
+        
+        copyPasswordToClipboard();
 		
 		//addPassWordListener();
 		
@@ -107,6 +113,24 @@ public class Controller {
         view.getIconButton(6).repaint();
 
 	}
+	  
+	  public void copyPasswordToClipboard(){
+		  view.getFields().get(3).addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO give message passwd copied to clipboard
+				super.mouseClicked(e);
+				String pw = view.getFields().get(3).getText();
+				System.out.println(pw);
+				StringSelection stringSelection = new StringSelection(pw);
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(stringSelection, null);
+				
+			}		  
+		});
+		  	
+	    }
 
 	/**
 	 * Initialize (or update) the folderData ListModel by retrieving each unique
@@ -700,6 +724,8 @@ public class Controller {
 		}
 		return s;
     }
+    
+  
 	
     /**
      * 
