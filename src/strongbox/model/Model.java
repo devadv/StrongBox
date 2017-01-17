@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -263,7 +264,7 @@ public class Model implements iModel {
 	 */
 	@Override
 	public void readRecordsFromFile() {
-
+		
 		readFile("res/data.csv");
 	}
 
@@ -279,39 +280,41 @@ public class Model implements iModel {
 		String line = "";
 		String cvsSplitBy = ",";
 		records = new ArrayList<>();
-
-		try {
-
-			br = new BufferedReader(new FileReader(path));
-			
-			while ((line = br.readLine()) != null) {
-				
-				//FIXME Problems arise when note-field is left empty (allowed) by user
-				//and when the program wants to read data.csv again when starting.
-				//java.lang.ArrayIndexOutOfBoundsException: 5
-				//so writer should write item[5] even if empty somehow.
-				//and reader should be able to notice.
-				
-				// separator
-				String[] item = line.split(cvsSplitBy);
-				createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
-			}
-		}
-
-		catch (FileNotFoundException e) {
-			System.out.println(" File not found " + e);
-			//FIXME Empty data.csv file should be made if it doesn't exist when masterkey is set.
-			//This prevents having to supply an empty data.csv file along with
-			//the program to new users/locations. Currently program always crashes
-			//if it can't find data.csv!!!
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		} finally {
+		File file = new File(path);
+		if(file.exists()){
 			try {
-				br.close();
+				br = new BufferedReader(new FileReader(path));
+				
+				while ((line = br.readLine()) != null) {
+			
+					//FIXME Problems arise when note-field is left empty (allowed) by user
+					//and when the program wants to read data.csv again when starting.
+					//java.lang.ArrayIndexOutOfBoundsException: 5
+					//so writer should write item[5] even if empty somehow.
+					//and reader should be able to notice.
+					
+					// separator
+					String[] item = line.split(cvsSplitBy);
+					createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
+				}
+			}
+	
+			catch (FileNotFoundException e) {
+				System.out.println(" File not found " + e);		
 			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}else{ 
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				System.out.println("File data.csv could not be created");
 				e.printStackTrace();
 			}
 		}
