@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 15-01-2017
+ * @version 17-01-2017
  */
 public class GUI extends JFrame {
 	
@@ -78,10 +78,12 @@ public class GUI extends JFrame {
         
         folderScrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        folderPanel.add(folderScrollPane, BorderLayout.CENTER);
+        folderScrollPane.setPreferredSize(new Dimension(224, 420));
 
+        folderPanel.add(folderScrollPane, BorderLayout.CENTER);
         recordScrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        recordScrollPane.setPreferredSize(new Dimension(224, 420));
         recordPanel.add(recordScrollPane, BorderLayout.CENTER);
 
         makeIconList();
@@ -180,10 +182,11 @@ public class GUI extends JFrame {
         	boxPanel.add(flowPanel);
         	if (i == 5) {
         		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-                flowPanel.setBackground(Color.WHITE);
+        	    flowPanel.setBackground(Color.WHITE);
         		flowPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
         		//flowPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
         		JPanel saveCancelGrid = new JPanel(new GridLayout(1, 2, 6, 0));
+        		saveCancelGrid.setBackground(Color.WHITE);
         		saveCancelGrid.add(makeTextButton("Save"));       // buttons (0) "save"
         		getButton(0).setToolTipText("Save Record");
         		saveCancelGrid.add(makeTextButton("Cancel"));     // buttons (1) "cancel"
@@ -196,6 +199,11 @@ public class GUI extends JFrame {
         
         enlargeFont(folderView);
         enlargeFont(recordView);
+        
+        //TODO Create Black JLayer (with opacity 50% or so) covering everything 
+        //except the record-details panel. This JLayer should be hidden in normal
+        //mode and shown in edit-mode (a visual guidance to draw the user's 
+        //attention to the record-details panel and away from the rest).
         	
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
@@ -233,6 +241,7 @@ public class GUI extends JFrame {
         enlargeFont(field);
         field.setBackground(Color.WHITE);
         field.setBorder(new MatteBorder(0, 0, 2, 0, new Color(51, 51, 51)));
+        //field.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
         //field.setBorder(new MatteBorder(0, 0, 2, 0, Color.MAGENTA));
     	fields.add(field);
         return field;
@@ -244,6 +253,7 @@ public class GUI extends JFrame {
         enlargeFont(field);
         field.setBackground(Color.WHITE);
         field.setBorder(new MatteBorder(0, 0, 2, 0, new Color(51, 51, 51)));
+        //field.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
         //field.setBorder(new MatteBorder(0, 0, 2, 0, Color.MAGENTA));
     	fields.add(field);
         return field;

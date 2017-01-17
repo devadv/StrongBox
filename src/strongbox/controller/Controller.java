@@ -6,10 +6,13 @@ import strongbox.encryption.Encryption;
 import strongbox.util.PasswordSafe;
 import strongbox.view.GUI;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -19,12 +22,18 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
+import org.jasypt.util.text.BasicTextEncryptor;
+import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 09-01-2017
+ * @version 17-01-2017
  */
 public class Controller {
 
@@ -44,8 +53,9 @@ public class Controller {
      * Constructor
      */
 	public Controller(Model model) {
-		
+			
 		this.model = model;
+		
 		//use masterpasswd for encryption	
 		Encryption enMaster = new Encryption(model.getMasterpassword());
 		//read properties from config.properties
@@ -56,7 +66,7 @@ public class Controller {
 		Encryption enPassphrase = new Encryption(decryptedpassphrase);
 		
 		model.readRecordsFromFile();
-		
+				
 		view = new GUI();
 		
 		initializeFolderData();
@@ -67,26 +77,34 @@ public class Controller {
 		addFolderListener();
 		addRecordListener();
 
-		addSearchListener();
-		
-		addRecordCreationListener();
-		addEditListener();
-		//FIXME hide buttons not in edit mode
-		addCancelListener();
 		addSaveListener();
-		addDeleteListener();
-		
-		addDeleteAllListener();
-		
-		addAboutButtonListener();
+		addCancelListener();
 		
 		addEyeButtonListener();
-		//TODO dice button show in editmode
+		//TODO dice button show only in editmode
 		addDiceButtonListener();
+
+		addSearchListener();
+		
+		addSearchFocusListener();
+		
+        initSearchBox();
 		
 		//addPassWordListener();
 		
 		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
+		
+		//((AbstractDocument) view.getSearchBox().getDocument()).setDocumentFilter(new SearchFilter(view.getSearchBox()));
+		 
+		view.getFolderView().grabFocus();
+		
+		setEnableNormalMode(true);
+		setEnableEditMode(false);
+		
+		// Next two lines prevent buggy, glitchy, inexplicable visual errors 
+		// that SOMETIMES happen for these icons when they're rendered in linux
+        view.getIconButton(5).repaint();
+        view.getIconButton(6).repaint();
 
 	}
 
@@ -138,7 +156,7 @@ public class Controller {
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
-    						view.setDullGrayColor(view.getFields().get(i));
+    						view.setPlainGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
 						view.getStrengthLabel().setText("N/A");
@@ -147,6 +165,72 @@ public class Controller {
     		}
     	}
     	);
+    }
+    
+    /**
+     * Enable or disable the scrollpanes with the JLists, and the 5 buttons
+     * plus searchbox at the top. Toggle icon- and color-state as well.
+     * @param b  If true these components are enabled, if false they are disabled.
+     *           Also toggle icons and colors accordingly.
+     */
+    public void setEnableNormalMode(boolean b) {
+    	view.getFolderScrollPane().setEnabled(b);
+    	view.getRecordScrollPane().setEnabled(b);
+    	view.getFolderView().setEnabled(b);
+    	view.getRecordView().setEnabled(b);
+    	view.getSearchBox().setEnabled(b);
+    	if (b) {
+    		addRecordCreationListener();
+    		addEditListener();
+    		addDeleteListener();
+    		addDeleteAllListener();
+    		addAboutButtonListener();
+        	for (int i = 0; i < 5; i++) {
+        		view.getIconButton(i).setIcon(view.getIcon(i));
+        	}
+        	view.getSearchLabel().setIcon(view.getIcon(14));
+    	}
+    	else {
+        	for (int i = 0; i < 5; i++) {
+        		view.getIconButton(i).removeMouseListener(view.getIconButton(i).getMouseListeners()[0]);
+        		view.getIconButton(i).setIcon(view.getIcon(i + 9));
+        	}
+        	view.getSearchLabel().setIcon(view.getIcon(15));
+    	}
+    }  
+
+    /**
+     * Enable or disable the "dice" button, the save and cancel buttons,
+     * the textfields and toggle the text color under the buttons.
+     * @param b  If true these components are enabled, if false they are disabled.
+     *           Also toggle icons and colors accordingly.
+     */
+    public void setEnableEditMode(boolean b) {
+
+    	view.getButton(0).setVisible(b);
+    	view.getButton(0).setEnabled(b);
+    	view.getButton(1).setVisible(b);
+    	view.getButton(1).setEnabled(b);
+    	
+    	for (JTextField field: view.getFields()) {
+    		field.setEditable(b);   
+    		view.setDarkGrayColor(field);
+    	}
+    	if (b) {
+    		addDiceButtonListener();
+    		//view.getIconButton(6).setIcon(view.getIcon(7));
+    		for (int i = 0; i < view.getIconLabelTexts().size(); i++) {
+    			view.setDullGrayColor(view.getIconLabelTexts().get(i));
+    		}
+    		view.getFields().get(0).grabFocus();
+    	}
+    	else {
+        	view.getIconButton(6).removeMouseListener(view.getIconButton(6).getMouseListeners()[0]);
+        	//view.getIconButton(6).setIcon(view.getIcon(8));
+    		for (int i = 0; i < view.getIconLabelTexts().size(); i++) {
+    			view.setDarkGrayColor(view.getIconLabelTexts().get(i));
+    		}
+    	}
     }
 
     /**
@@ -160,16 +244,13 @@ public class Controller {
     					"A new folder will be created if needed. " +
     					"Click \"Save\" once you are done.");
     			edit = false;
-    			view.getFolderView().setEnabled(false);
-    			view.getRecordView().setEnabled(false);
-    			view.getSearchBox().setEnabled(false);
-    			view.setDullGrayColor(view.getSearchLabel());
-    			for (JTextField field: view.getFields()) {
-    				field.setEditable(true);   
+    			
+    			setEnableNormalMode(false);
+    			setEnableEditMode(true);
+    			
+    			for (JTextField field: view.getFields()) {   
     				field.setText("");
-    				view.setDarkGrayColor(field);
        			}
-    			view.getFields().get(0).grabFocus();
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(0));
@@ -199,14 +280,10 @@ public class Controller {
     						"A new folder will be created if needed. " +
     						"Click \"Save\" once you are done.");
     				edit = true;
-    				view.getFolderView().setEnabled(false);
-    				view.getRecordView().setEnabled(false);
-    				view.getSearchBox().setEnabled(false);
-    				view.setDullGrayColor(view.getSearchLabel());
-    				for (JTextField field: view.getFields()) {
-    					field.setEditable(true);
-    				}
-    				view.getFields().get(0).grabFocus();
+    				
+        			setEnableNormalMode(false);
+        			setEnableEditMode(true);
+
     			}
         		else {
         			view.showMessageDialog("No record selected");
@@ -246,7 +323,7 @@ public class Controller {
     					commaFound = true;
     				}
     			}
-
+    			
     			try {
     				if (commaFound) {
     					throw new IllegalArgumentException();
@@ -261,22 +338,17 @@ public class Controller {
     							fieldValues[5]);
     				}
 
-    				//Save to data.csv 
-    	
     				model.writeRecordsToFile();
 
     				view.showMessageDialog("Record Saved");
-
-    				for (JTextField field: view.getFields()) {
-    					field.setEditable(false);
-    				}
-    				view.getFolderView().setEnabled(true);
-    				view.getRecordView().setEnabled(true);
-    				view.getSearchBox().setEnabled(true);
-    				view.setDarkGrayColor(view.getSearchLabel());
+    				
+        			setEnableNormalMode(true);
+        			setEnableEditMode(false);
 
     				initializeFolderData();
+    				initSearchBox();
     				view.getFolderView().setSelectedValue(fieldValues[4], true);
+    				view.getRecordView().grabFocus();
     				view.getRecordView().setSelectedValue(fieldValues[0], true);
     			}
     			catch (IllegalArgumentException exc) {
@@ -303,13 +375,8 @@ public class Controller {
     		public void actionPerformed(ActionEvent e) {
     			if (view.showConfirmDialog("Discard changes?")) {
 
-    				for (JTextField field: view.getFields()) {
-    					field.setEditable(false);
-    				}        			
-    				view.getFolderView().setEnabled(true);
-    				view.getRecordView().setEnabled(true);
-    				view.getSearchBox().setEnabled(true);
-    				view.setDarkGrayColor(view.getSearchLabel());
+        			setEnableNormalMode(true);
+        			setEnableEditMode(false);
 
     				try {
     					view.getRecordView().setSelectedValue(record.getTitle(), true);
@@ -320,15 +387,13 @@ public class Controller {
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
-    						view.setDullGrayColor(view.getFields().get(i));
+    						view.setPlainGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
     				}
     			}
     			else {
     				// Do nothing
-    				
-    				
     			}
     		}
     	}
@@ -486,7 +551,7 @@ public class Controller {
     			view.showMessageDialog("StrongBox v1.0\n" +
     					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
     					"www.github.com/devadv/StrongBox\n\n" +
-    					"verhaaltje over jasypt, connectie met google drive..");
+    					"blablabla, uitleg programma en zo..");
     		}
     		public void mouseEntered(MouseEvent e) {
     			//view.getIconLabel(4).setIcon(view.getIcon(4));
@@ -507,32 +572,92 @@ public class Controller {
     }
     
     /**
-     * Add a DocumentListener to the search field and define it's behavior.
+     * Add a DocumentListener to the search field and implement the methods.
      */
     public void addSearchListener() {
     	final PlainDocument doc = new PlainDocument();
     	view.getSearchBox().setDocument(doc);
     	doc.addDocumentListener(new DocumentListener() {
     		public void changedUpdate(DocumentEvent e) {
-    			recordData.clear();
-    			for (String recordTitle: model.search(getDocumentText(doc))) {
-    				recordData.addElement(recordTitle);
-    			}
+    			goSearch(doc);
     		}
     		public void insertUpdate(DocumentEvent e) {
-    			recordData.clear();
-    			for (String recordTitle: model.search(getDocumentText(doc))) {
-    				recordData.addElement(recordTitle);
-    			}
+    			goSearch(doc);
     		}
     		public void removeUpdate(DocumentEvent e) {
-    			recordData.clear();
-    			for (String recordTitle: model.search(getDocumentText(doc))) {
-    				recordData.addElement(recordTitle);
+    			goSearch(doc);
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * Implementation of the search process used by the "SearchListener" above.
+     * Also handles updating of the JLists' view if matches are found.
+     * @param doc  The document of which it's content will be used to search 
+     *             the list with records.
+     */
+    private void goSearch(Document doc) {
+    	recordData.clear();
+    	for (String recordTitle: model.search(getDocumentText(doc))) {
+    		recordData.addElement(recordTitle);
+    	}
+    	/*
+    	if (doc.getLength() > 0) {
+    		if (recordData.size() > 0) {
+    			view.getRecordView().setSelectedIndex(0);
+    			String folder = model.getRecord(view.getRecordView().getSelectedValue()).getFolder();
+    			view.getFolderView().setSelectedValue(folder, true);
+    			view.getRecordView().setSelectedIndex(0);
+    		}
+    	}
+    	*/
+    }
+    
+    public void addSearchFocusListener() {
+    	view.getSearchBox().addFocusListener(new FocusListener() {
+    		public void focusGained(FocusEvent e) {
+    			if(view.getSearchBox().getText().trim().equals("Search")
+    					&& view.getSearchBox().getForeground().getRed() == 153
+    					&& view.getSearchBox().getForeground().getGreen() == 153
+    					&& view.getSearchBox().getForeground().getBlue() == 153) {
+    				view.setDarkGrayColor(view.getSearchBox());
+    				view.getSearchBox().setText("");
+    			}
+    			else {
+    				//do nothing
+    			}
+    		}
+
+    		public void focusLost(FocusEvent e) {
+    			if(view.getSearchBox().getForeground() == Color.GREEN
+    					&& recordData.size() == 0) {
+    				view.getSearchBox().setForeground(Color.RED);
+    				view.getSearchBox().setText("Search");
+    			}
+    			else {
+    				//do nothing
     			}
     		}
     	}
     	);
+    }
+    
+    /**
+     * 
+     */
+    public void initSearchBox() {
+    	Document doc = view.getSearchBox().getDocument();
+    	view.setDullGrayColor(view.getSearchBox());
+    	try {
+    		if (doc.getLength() > 0) {
+    			doc.remove(0, doc.getLength());
+    		}
+    		doc.insertString(0, "Search", null);
+    	}
+    	catch (BadLocationException exc) {
+    		exc.printStackTrace();
+    	}
     }
     
     ///////
@@ -565,7 +690,7 @@ public class Controller {
      * @throws BadLocationException if a portion of the given range was not 
      *         a valid part of the document.
      */
-    private String getDocumentText(PlainDocument doc) {
+    private String getDocumentText(Document doc) {
 		String s = "";
 		try {
 			s = doc.getText(0, doc.getLength());
@@ -576,4 +701,36 @@ public class Controller {
 		return s;
     }
 	
+    /**
+     * 
+     */
+    public class SearchFilter extends DocumentFilter {
+    	
+    	private JTextField field;
+    	
+        public SearchFilter(JTextField field) {
+            this.field = field;
+        }
+    	
+        @Override
+        public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+            System.out.println("insert");
+            view.getSearchBox().setText("");
+            super.insertString(fb, offset, text, attr);
+        }
+        
+        @Override
+        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            System.out.println("remove");
+            view.getSearchBox().setText("");
+            super.remove(fb, offset, length);
+        }
+        
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+        	System.out.println("replace");        	
+        	super.replace(fb, offset, length, text, attrs);
+        }
+    }
+    
 }
