@@ -127,7 +127,17 @@ public class Controller {
 				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clpbrd.setContents(stringSelection, null);
 				
-			}		  
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Maybe is mouse entered useful
+				super.mouseEntered(e);
+				
+				System.out.println("Mouse over");
+			}	
+			
+			
 		});
 		  	
 	    }

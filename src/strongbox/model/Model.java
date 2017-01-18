@@ -290,14 +290,17 @@ public class Model implements iModel {
 				
 				while ((line = br.readLine()) != null) {
 			
-					//FIXME Problems arise when note-field is left empty (allowed) by user
-					//and when the program wants to read data.csv again when starting.
-					//java.lang.ArrayIndexOutOfBoundsException: 5
-					//so writer should write item[5] even if empty somehow.
-					//and reader should be able to notice.
+					//workaround: if note is empty, set text to String "empty"
+					// and while reading String "empty" set it to ""
+					//-- write "" is not working
+					//TODO maybe there is a better solution to empty note
 					
 					// separator
 					String[] item = line.split(cvsSplitBy);
+					if(item[5].equals("empty")){
+						item[5]="";
+					}
+										
 					createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
 				}
 			}
@@ -380,7 +383,14 @@ public class Model implements iModel {
 		s += separator;
 		s += record.getFolder();
 		s += separator;
-		s += record.getNote();
+		if(record.getNote().isEmpty()){
+			s +="empty";
+			
+		}else{
+			s += record.getNote();
+		}
+			
+		
 		s += "\n";
 		try {
 			writer.append(s);
