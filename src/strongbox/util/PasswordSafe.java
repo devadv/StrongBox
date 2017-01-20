@@ -1,5 +1,6 @@
 package strongbox.util;
 
+import java.awt.Color;
 import java.security.SecureRandom;
 
 /**
@@ -7,7 +8,7 @@ import java.security.SecureRandom;
  * 1) Generate a random password with a specified length.
  * 2) A 'password meter' to give a score to a password indicating it's safety.
  * 
- * @version 09-01-2017
+ * @version 18-01-2017
  */
 public class PasswordSafe {
 	
@@ -52,7 +53,7 @@ public class PasswordSafe {
      * @param  pw     The password to get the safety score from
 	 * @return score  The safety score (0 = very weak), (100 = excellent)
      */
-    public static String getScore(String pw) {
+    public static int getScore(String pw) {
 
         int score = 0; // password safety score (range 0-100)
         int types = 0; // the number of different types of chars (range 0-4)
@@ -289,9 +290,77 @@ public class PasswordSafe {
         score = 100;
         }
         
-        String scoreString = "" + score;
+        if (pw.length() > 1 && score == 0) {
+        	score = 1;
+        }
+        
+        if (pw.length() > 2 && pw.length() < 8) {
+        	score += pw.length() - 2;
+        }
         
         // FINALLY!
-        return scoreString;
+        return score;
     }
+    
+    /**
+     * Return a color based on the PasswordScore. Bad score returns dark red,
+     * high score returns dark green.
+     * 
+     * Yellow-ish colors in RGB scheme are made with both red and green at max 
+     * value (or both at high values).
+     * 
+     * Within the RGB scheme the starting values are: 
+     * red = 164, green = 0, blue = 0 (blue always stays at zero)
+     * 
+     * The movements (imagine RGB-sliders) of the colors are:
+     * 
+     * 1st movement: red value starts moving up to it's max (254)
+     * 2nd movement: green value starts moving up to 211
+     * 3rd movement: red value starts moving down to it's minimum (2)
+     * 4rd movement: green value starts moving down to 162
+     * 
+     * In total this are 606 steps so this can be mapped nicely with the 101
+     * possible different PasswordScores, it's just a multiplier of 6. This is 
+     * also the reason why red or green are always incremented or decremented 
+     * with 6 in the loop below as i is incremented by 1.
+     */
+    public static Color getScoreColor(int pwScore) {
+        int r = 164;
+        int g = 0;
+        int b = 0;
+        Color color = Color.BLACK;
+        		
+        for (int i = 0; i < 101; i++) {
+
+        	if (r < 250 && i <= 14) {
+        		if (i == pwScore) {
+        			color = new Color(r, g, b);
+        		}
+        		r += 6;
+        	}
+
+            if (r == 254 && i > 14 && g < 206) {
+        		if (i == pwScore) {
+        			color = new Color(r, g, b);
+        		}
+                g += 6;
+            }
+
+            if (g == 210 && i > 49  && r > 5) {
+        		if (i == pwScore) {
+        			color = new Color(r, g, b);
+        		}
+                r -= 6;
+            }
+
+            if (r == 2 && i > 91) {
+        		if (i == pwScore) {
+        			color = new Color(r, g, b);
+        		}
+                g -= 6;
+            }
+        }
+        return color;
+    }
+    
 }

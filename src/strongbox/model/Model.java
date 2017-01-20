@@ -19,7 +19,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 /**
  * A model for managing the application and the handling of records.
  * 
- * @version 17-12-2016
+ * @version 19-12-2016
  */
 
 public class Model implements iModel {
@@ -289,18 +289,16 @@ public class Model implements iModel {
 				br = new BufferedReader(new FileReader(path));
 				
 				while ((line = br.readLine()) != null) {
-			
-					//workaround: if note is empty, set text to String "empty"
-					// and while reading String "empty" set it to ""
-					//-- write "" is not working
-					//TODO maybe there is a better solution to empty note
 					
 					// separator
-					String[] item = line.split(cvsSplitBy);
-					if(item[5].equals("empty")){
-						item[5]="";
+					String[] fields = line.split(cvsSplitBy);
+					String[] item = new String[6];
+					for (int i = 0; i < fields.length; i++) {
+						item[i] = fields[i];
 					}
-										
+					if (fields.length == 5) { // Note was left empty by user
+						item[5] = "";
+					}
 					createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
 				}
 			}
@@ -383,14 +381,7 @@ public class Model implements iModel {
 		s += separator;
 		s += record.getFolder();
 		s += separator;
-		if(record.getNote().isEmpty()){
-			s +="empty";
-			
-		}else{
-			s += record.getNote();
-		}
-			
-		
+		s += record.getNote();
 		s += "\n";
 		try {
 			writer.append(s);

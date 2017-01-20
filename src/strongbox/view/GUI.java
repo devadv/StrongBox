@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 17-01-2017
+ * @version 19-01-2017
  */
 public class GUI extends JFrame {
 	
@@ -158,8 +158,10 @@ public class GUI extends JFrame {
         	flowPanel.add(makeLabel(fieldLabels[i]));
         	if (i == 3) {
         		strength = makeLabel("Strength:");
+        		strength.setVisible(false);
         		flowPanel.add(strength);
         		pwStrength = makeLabel("N/A");
+        		pwStrength.setVisible(false);
         		flowPanel.add(pwStrength);
         	}
         	boxPanel.add(flowPanel);
@@ -355,8 +357,12 @@ public class GUI extends JFrame {
     	return searchLabel;
     }
     
-    public JLabel getStrengthLabel() {
+    public JLabel getStrengthScoreLabel() {
     	return pwStrength;
+    }
+    
+    public JLabel getStrengthTextLabel() {
+    	return strength;
     }
 
     public JScrollPane getFolderScrollPane() {

@@ -37,7 +37,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 17-01-2017
+ * @version 19-01-2017
  */
 public class Controller {
 
@@ -96,11 +96,9 @@ public class Controller {
         
         copyPasswordToClipboard();
 		
-		//addPassWordListener();
-		
 		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
 		
-		//((AbstractDocument) view.getSearchBox().getDocument()).setDocumentFilter(new SearchFilter(view.getSearchBox()));
+		((AbstractDocument) view.getFields().get(3).getDocument()).setDocumentFilter(new PasswordFilter(view.getFields().get(3)));
 		 
 		view.getFolderView().grabFocus();
 		
@@ -114,8 +112,8 @@ public class Controller {
 
 	}
 	  
-	  public void copyPasswordToClipboard(){
-		  view.getFields().get(3).addMouseListener(new MouseAdapter() {
+	public void copyPasswordToClipboard(){
+		view.getFields().get(3).addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -126,21 +124,18 @@ public class Controller {
 				StringSelection stringSelection = new StringSelection(pw);
 				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clpbrd.setContents(stringSelection, null);
-				
-			}
 
+			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Maybe is mouse entered useful
 				super.mouseEntered(e);
-				
+
 				System.out.println("Mouse over");
 			}	
-			
-			
 		});
-		  	
-	    }
+
+	}
 
 	/**
 	 * Initialize (or update) the folderData ListModel by retrieving each unique
@@ -186,14 +181,14 @@ public class Controller {
     						view.setDarkGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText(fields[i]);
     					}
-						view.getStrengthLabel().setText(PasswordSafe.getScore(record.getPassword()));
+						view.getStrengthScoreLabel().setText("" + PasswordSafe.getScore(record.getPassword()));
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
     						view.setPlainGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
-						view.getStrengthLabel().setText("N/A");
+						view.getStrengthScoreLabel().setText("N/A");
     				}
     			}
     		}
@@ -222,7 +217,7 @@ public class Controller {
         	for (int i = 0; i < 5; i++) {
         		view.getIconButton(i).setIcon(view.getIcon(i));
         	}
-        	view.getSearchLabel().setIcon(view.getIcon(14));
+        	view.getSearchLabel().setIcon(view.getIcon(14));        	
     	}
     	else {
         	for (int i = 0; i < 5; i++) {
@@ -231,6 +226,7 @@ public class Controller {
         	}
         	view.getSearchLabel().setIcon(view.getIcon(15));
     	}
+    	view.getSearchLabel().repaint();
     }  
 
     /**
@@ -418,12 +414,19 @@ public class Controller {
     					for (int i = 0; i < 6; i++) {
     						view.getFields().get(i).setText(fields[i]);
     					}
+        				initSearchBox();
+        				view.getFolderView().grabFocus();
+        				view.getFolderView().setSelectedIndex(0);
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
     						view.setPlainGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
+        				initSearchBox();
+        				view.getFolderView().grabFocus();
+        				view.getFolderView().setSelectedIndex(0);
+
     				}
     			}
     			else {
@@ -521,10 +524,14 @@ public class Controller {
 				if (!showPassword) {
 					pwField.setEchoChar((char)0);
 					showPassword = true;
+					view.getStrengthTextLabel().setVisible(true);
+					view.getStrengthScoreLabel().setVisible(true);
 				}
 				else {
 					pwField.setEchoChar(echoChar);
 					showPassword = false;
+					view.getStrengthTextLabel().setVisible(false);
+					view.getStrengthScoreLabel().setVisible(false);
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
@@ -551,13 +558,8 @@ public class Controller {
     	view.getIconButton(6).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(7));
-    			if (record != null) {
-    				view.getFields().get(3).setText(PasswordSafe.generatePassphrase(12));
-    				view.getStrengthLabel().setText("" + PasswordSafe.getScore(view.getFields().get(3).getText()));
-    			}
-    			else {
-    				view.showMessageDialog("No record selected");
-    			}
+    			view.getFields().get(3).setText(PasswordSafe.generatePassphrase(12));
+    			view.getStrengthScoreLabel().setText("" + PasswordSafe.getScore(view.getFields().get(3).getText()));
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(8));
@@ -648,6 +650,9 @@ public class Controller {
     	*/
     }
     
+    /**
+     * 
+     */
     public void addSearchFocusListener() {
     	view.getSearchBox().addFocusListener(new FocusListener() {
     		public void focusGained(FocusEvent e) {
@@ -658,20 +663,10 @@ public class Controller {
     				view.setDarkGrayColor(view.getSearchBox());
     				view.getSearchBox().setText("");
     			}
-    			else {
-    				//do nothing
-    			}
     		}
 
     		public void focusLost(FocusEvent e) {
-    			if(view.getSearchBox().getForeground() == Color.GREEN
-    					&& recordData.size() == 0) {
-    				view.getSearchBox().setForeground(Color.RED);
-    				view.getSearchBox().setText("Search");
-    			}
-    			else {
-    				//do nothing
-    			}
+
     		}
     	}
     	);
@@ -694,37 +689,13 @@ public class Controller {
     	}
     }
     
-    ///////
-    /**
-     * Add a DocumentListener to the PasswordField to keep the password safety 
-     * score up-to-date as the characters in the PasswordField change. 
-     *
-    public void addPassWordListener() {
-    	final PlainDocument doc = new PlainDocument();
-    	view.getFields().get(3).setDocument(doc);
-    	doc.addDocumentListener(new DocumentListener() {
-    		public void changedUpdate(DocumentEvent e) {
-    			view.getStrengthLabel().setText(PasswordSafe.getScore(getDocumentText(doc)));
-    		}
-    		public void insertUpdate(DocumentEvent e) {
-    			view.getStrengthLabel().setText(PasswordSafe.getScore(getDocumentText(doc)));
-    		}
-    		public void removeUpdate(DocumentEvent e) {
-    			view.getStrengthLabel().setText(PasswordSafe.getScore(getDocumentText(doc)));
-    		}
-    	}
-    	);
-    }
-    */
-    ///////
-    
     /**
      * Fetches the text contained within a document.
      * @param doc  The document to get the text from.
      * @throws BadLocationException if a portion of the given range was not 
      *         a valid part of the document.
      */
-    private String getDocumentText(Document doc) {
+    public static String getDocumentText(Document doc) {
 		String s = "";
 		try {
 			s = doc.getText(0, doc.getLength());
@@ -734,38 +705,50 @@ public class Controller {
 		}
 		return s;
     }
-    
-  
-	
+    	
     /**
-     * 
+     * Use the characters contained in the PasswordField's Document to calculate 
+     * the password safety score.
+     * Keep the text from the pwStrength Label up-to-date with this score and 
+     * also assign an appropriate description and color to the label based
+     * on the score.
      */
-    public class SearchFilter extends DocumentFilter {
+    public class PasswordFilter extends DocumentFilter {
     	
     	private JTextField field;
+    	private Document doc;
+    	private int pwScore;
     	
-        public SearchFilter(JTextField field) {
+        public PasswordFilter(JTextField field) {
             this.field = field;
+            this.doc = field.getDocument();
+            this.pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
         }
-    	
+        
+        public void setStrengthLabel() {
+        	view.getStrengthScoreLabel().setForeground(PasswordSafe.getScoreColor(pwScore));
+        	view.getStrengthScoreLabel().setText("" + pwScore);
+        }
+            	
         @Override
         public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
-            System.out.println("insert");
-            view.getSearchBox().setText("");
             super.insertString(fb, offset, text, attr);
+        	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+        	setStrengthLabel();
         }
         
         @Override
         public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-            System.out.println("remove");
-            view.getSearchBox().setText("");
             super.remove(fb, offset, length);
+        	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+        	setStrengthLabel();
         }
         
         @Override
         public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-        	System.out.println("replace");        	
         	super.replace(fb, offset, length, text, attrs);
+        	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+        	setStrengthLabel();
         }
     }
     
