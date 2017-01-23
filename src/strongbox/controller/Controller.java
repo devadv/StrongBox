@@ -37,6 +37,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
+ * Nothing really changed. Test-push from laptop (23-01-2017)
  * @version 19-01-2017
  */
 public class Controller {
