@@ -159,6 +159,8 @@ public class Controller {
                     	recordData.clear();
                     	for (String recordTitle: model.getTitlesByFolder(view.getFolderView().getSelectedValue())) {
                     		recordData.addElement(recordTitle);
+                    		view.getRecordView().setSelectedValue(recordData.firstElement(),false);
+                    		
                         }
                     }
                 }

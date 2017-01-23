@@ -76,12 +76,12 @@ public class GUI extends JFrame {
         mainPanel.add(leftGridPanel);
         mainPanel.add(detailPanel);
         
-        folderScrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+        folderScrollPane = new JScrollPane(folderView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         folderScrollPane.setPreferredSize(new Dimension(224, 420));
 
         folderPanel.add(folderScrollPane, BorderLayout.CENTER);
-        recordScrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        recordScrollPane = new JScrollPane(recordView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         recordScrollPane.setPreferredSize(new Dimension(224, 420));
         recordPanel.add(recordScrollPane, BorderLayout.CENTER);
