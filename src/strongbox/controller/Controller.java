@@ -38,7 +38,7 @@ import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
  * Nothing really changed. Test-push from laptop (23-01-2017)
- * @version 19-01-2017
+ * @version 24-01-2017
  */
 public class Controller {
 
@@ -106,10 +106,11 @@ public class Controller {
 		setEnableNormalMode(true);
 		setEnableEditMode(false);
 		
-		// Next two lines prevent buggy, glitchy, inexplicable visual errors 
+		// Next few lines prevent buggy, glitchy, inexplicable visual errors 
 		// that SOMETIMES happen for these icons when they're rendered in linux
         view.getIconButton(5).repaint();
         view.getIconButton(6).repaint();
+        view.getSearchLabel().repaint();
 
 	}
 	  
@@ -160,8 +161,7 @@ public class Controller {
                     	recordData.clear();
                     	for (String recordTitle: model.getTitlesByFolder(view.getFolderView().getSelectedValue())) {
                     		recordData.addElement(recordTitle);
-                    		view.getRecordView().setSelectedValue(recordData.firstElement(),false);
-                    		
+                    		view.getRecordView().setSelectedValue(recordData.firstElement(), true);                    		
                         }
                     }
                 }
@@ -220,16 +220,13 @@ public class Controller {
         	for (int i = 0; i < 5; i++) {
         		view.getIconButton(i).setIcon(view.getIcon(i));
         	}
-        	view.getSearchLabel().setIcon(view.getIcon(14));        	
     	}
     	else {
         	for (int i = 0; i < 5; i++) {
         		view.getIconButton(i).removeMouseListener(view.getIconButton(i).getMouseListeners()[0]);
         		view.getIconButton(i).setIcon(view.getIcon(i + 9));
         	}
-        	view.getSearchLabel().setIcon(view.getIcon(15));
-    	}
-    	view.getSearchLabel().repaint();
+    	}    	
     }  
 
     /**
@@ -256,6 +253,7 @@ public class Controller {
     			view.setDullGrayColor(view.getIconLabelTexts().get(i));
     		}
     		view.getFields().get(0).grabFocus();
+        	view.getSearchLabel().setIcon(view.getIcon(15));
     	}
     	else {
         	view.getIconButton(6).removeMouseListener(view.getIconButton(6).getMouseListeners()[0]);
@@ -263,6 +261,7 @@ public class Controller {
     		for (int i = 0; i < view.getIconLabelTexts().size(); i++) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(i));
     		}
+        	view.getSearchLabel().setIcon(view.getIcon(14));
     	}
     }
 
@@ -412,14 +411,19 @@ public class Controller {
         			setEnableEditMode(false);
 
     				try {
-    					view.getRecordView().setSelectedValue(record.getTitle(), true);
+    					int j = view.getRecordView().getSelectedIndex();
     					String[] fields = model.getRecordFields(record);
     					for (int i = 0; i < 6; i++) {
     						view.getFields().get(i).setText(fields[i]);
     					}
         				initSearchBox();
-        				view.getFolderView().grabFocus();
-        				view.getFolderView().setSelectedIndex(0);
+        				view.getRecordView().grabFocus();    					
+                    	recordData.clear();
+                    	for (String recordTitle: model.getTitlesByFolder(view.getFolderView().getSelectedValue())) {
+                    		recordData.addElement(recordTitle);
+                        }
+                		view.getRecordView().setSelectedIndex(j);
+        				
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
@@ -428,8 +432,7 @@ public class Controller {
     					}
         				initSearchBox();
         				view.getFolderView().grabFocus();
-        				view.getFolderView().setSelectedIndex(0);
-
+        				
     				}
     			}
     			else {
@@ -638,19 +641,12 @@ public class Controller {
      */
     private void goSearch(Document doc) {
     	recordData.clear();
-    	for (String recordTitle: model.search(getDocumentText(doc))) {
-    		recordData.addElement(recordTitle);
-    	}
-    	/*
     	if (doc.getLength() > 0) {
-    		if (recordData.size() > 0) {
-    			view.getRecordView().setSelectedIndex(0);
-    			String folder = model.getRecord(view.getRecordView().getSelectedValue()).getFolder();
-    			view.getFolderView().setSelectedValue(folder, true);
-    			view.getRecordView().setSelectedIndex(0);
+    		for (String recordTitle: model.search(getDocumentText(doc))) {
+    			recordData.addElement(recordTitle);
     		}
+    		view.getRecordView().setSelectedIndex(0);
     	}
-    	*/
     }
     
     /**
@@ -676,7 +672,8 @@ public class Controller {
     }
     
     /**
-     * 
+     * Initialize the SearchBox by clearing it's contents if needed and setting 
+     * the default text and color. 
      */
     public void initSearchBox() {
     	Document doc = view.getSearchBox().getDocument();

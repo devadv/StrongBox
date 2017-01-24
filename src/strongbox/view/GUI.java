@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 19-01-2017
+ * @version 24-01-2017
  */
 public class GUI extends JFrame {
 	
@@ -119,11 +119,10 @@ public class GUI extends JFrame {
         // iconLabelTexts (3) "Delete ALL"
         
         /// search box
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 5));
+        JPanel searchPanel = new JPanel(new FlowLayout());
         flowPanelTop.add(searchPanel, BorderLayout.NORTH);
         searchLabel = new JLabel(getIcon(14));
         searchPanel.add(searchLabel);
-        searchPanel.add(Box.createHorizontalStrut(5));
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
         searchPanel.setBorder(new EmptyBorder(8, 152, 22, 184));
