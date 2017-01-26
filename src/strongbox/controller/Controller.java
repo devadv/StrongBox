@@ -22,6 +22,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -37,8 +38,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * Nothing really changed. Test-push from laptop (23-01-2017)
- * @version 24-01-2017
+ * @version 26-01-2017
  */
 public class Controller {
 
@@ -121,18 +121,19 @@ public class Controller {
 			public void mouseClicked(MouseEvent e) {
 				// TODO give message passwd copied to clipboard
 				super.mouseClicked(e);
-				String pw = view.getFields().get(3).getText();
-				System.out.println(pw);
-				StringSelection stringSelection = new StringSelection(pw);
-				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clpbrd.setContents(stringSelection, null);
-
+				if (SwingUtilities.isRightMouseButton(e)) {
+					String pw = view.getFields().get(3).getText();
+					System.out.println(pw);
+					StringSelection stringSelection = new StringSelection(pw);
+					Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clpbrd.setContents(stringSelection, null);
+				}
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Maybe is mouse entered useful
 				super.mouseEntered(e);
-
+				
 				System.out.println("Mouse over");
 			}	
 		});
@@ -158,6 +159,7 @@ public class Controller {
         view.getFolderView().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
+                    	initSearchBox();
                     	recordData.clear();
                     	for (String recordTitle: model.getTitlesByFolder(view.getFolderView().getSelectedValue())) {
                     		recordData.addElement(recordTitle);

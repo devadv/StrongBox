@@ -1,16 +1,20 @@
 package strongbox.view;
 
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
+
 import java.util.ArrayList;
 
 /**
  * Write a description of class GUI here.
  * 
- * @version 24-01-2017
+ * @version 26-01-2017
  */
-public class GUI extends JFrame {
+public class GUI {
+	
+	private JFrame frame;
 	
     private JList<String> folderView = new JList<String>();
     private JList<String> recordView = new JList<String>();
@@ -32,6 +36,9 @@ public class GUI extends JFrame {
     private String[] fieldLabels = new String[] {"Title", "Website Address",
     		"Email or User Name", "Password", "Folder Name", "Note"};
     
+    private JLabel statusLabel;
+    private JLabel statusLabel2;
+    
     private JLabel strength;
     private JLabel pwStrength;
     
@@ -42,14 +49,14 @@ public class GUI extends JFrame {
      */
     public GUI()
     {
-        super("StrongBox");
-        JPanel framePanel = (JPanel)getContentPane();
-        framePanel.setLayout(new GridBagLayout());
+    	frame = new JFrame("StrongBox");
+        frame.setLayout(new GridBagLayout());
         
         JPanel mainBorderPanel = new JPanel(new BorderLayout());
-        framePanel.add(mainBorderPanel);
+        frame.add(mainBorderPanel);
         
-        JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        //mainPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
         mainBorderPanel.add(mainPanel, BorderLayout.CENTER);
         
         JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -61,12 +68,12 @@ public class GUI extends JFrame {
         JPanel recordPanel = new JPanel(new BorderLayout()); // panel for the records
         JPanel detailPanel = new JPanel(new BorderLayout()); // panel for the record's details
         
-        //folderPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.RED));
-        folderPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
-        //recordPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
-        recordPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
-        //detailPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.GREEN));
-        detailPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+        //folderPanel.setBorder(new MatteBorder(2, 2, 0, 2, Color.RED));
+        folderPanel.setBorder(new EmptyBorder(2, 2, 0, 2));
+        //recordPanel.setBorder(new MatteBorder(2, 2, 0, 2, Color.BLUE));
+        recordPanel.setBorder(new EmptyBorder(2, 2, 0, 2));
+        //detailPanel.setBorder(new MatteBorder(2, 2, 0, 2, Color.GREEN));
+        detailPanel.setBorder(new EmptyBorder(2, 2, 0, 2));
 
         JPanel leftGridPanel = new JPanel(new GridLayout(1, 0, 10, 10));
         
@@ -184,10 +191,19 @@ public class GUI extends JFrame {
         	if (i == 5) {
         		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         	    flowPanel.setBackground(Color.WHITE);
-        		flowPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
-        		//flowPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
+        		//flowPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
+        		flowPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
+        		
+        		JPanel soloGrid = new JPanel(new BorderLayout());
+        		statusLabel2 = new JLabel("This the maximum length of the " +
+        		"message.", SwingConstants.LEFT);
+        		statusLabel2.setBorder(new MatteBorder(1, 1, 1, 6, Color.GREEN));
+        		soloGrid.add(statusLabel2, BorderLayout.WEST);
+        		flowPanel.add(soloGrid);
+        		
         		JPanel saveCancelGrid = new JPanel(new GridLayout(1, 2, 6, 0));
         		saveCancelGrid.setBackground(Color.WHITE);
+        		//saveCancelGrid.setBorder(new MatteBorder(1, 1, 1, 1, Color.BLUE));
         		saveCancelGrid.add(makeTextButton("Save"));       // buttons (0) "save"
         		getButton(0).setToolTipText("Save Record");
         		saveCancelGrid.add(makeTextButton("Cancel"));     // buttons (1) "cancel"
@@ -198,6 +214,13 @@ public class GUI extends JFrame {
         }
         detailPanel.add(boxPanel, BorderLayout.CENTER);
         
+        statusLabel = new JLabel("This is a somewhat reasonably long message " +
+        		"for testing purposes. You could even call it rather lengthy.", 
+        		SwingConstants.RIGHT);
+        //statusLabel.setBorder(new MatteBorder(1, 0, 2, 12, Color.RED));
+        statusLabel.setBorder(new EmptyBorder(1, 0, 2, 12));
+        mainBorderPanel.add(statusLabel, BorderLayout.SOUTH);
+        
         enlargeFont(folderView);
         enlargeFont(recordView);
         
@@ -206,15 +229,15 @@ public class GUI extends JFrame {
         //mode and shown in edit-mode (a visual guidance to draw the user's 
         //attention to the record-details panel and away from the rest).
         	
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setSize(300, 320);
         //setResizable(false);
-        pack();
+        frame.pack();
         folderScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
         recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
     
     public JButton makeTextButton(String text) {
@@ -297,16 +320,16 @@ public class GUI extends JFrame {
     }
     
     public void showMessageDialog(String message) {
-    	JOptionPane.showMessageDialog(this, message);
+    	JOptionPane.showMessageDialog(frame, message);
     }
     
     public void showMessageDialog(String message, String title, int messageType) {
-    	JOptionPane.showMessageDialog(this, message, title, messageType);
+    	JOptionPane.showMessageDialog(frame, message, title, messageType);
     }
     
     public boolean showConfirmDialog(String dialogText) {
     	boolean confirm = false;
-    	int n = JOptionPane.showConfirmDialog(this, dialogText , 
+    	int n = JOptionPane.showConfirmDialog(frame, dialogText , 
     			"Select an Option", JOptionPane.YES_NO_OPTION);
 
     	if(n == JOptionPane.YES_OPTION) {
@@ -354,6 +377,10 @@ public class GUI extends JFrame {
 
     public JLabel getSearchLabel() {
     	return searchLabel;
+    }
+    
+    public JLabel getStatusLabel() {
+    	return statusLabel;
     }
     
     public JLabel getStrengthScoreLabel() {

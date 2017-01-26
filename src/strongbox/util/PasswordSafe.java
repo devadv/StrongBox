@@ -68,11 +68,6 @@ public class PasswordSafe {
         boolean digitFound = false;
         boolean symbolFound = false;
 
-        // Minimum requirements
-        if (pw.length() < 8) {
-            // pw too short
-        }
-
         for (int i = 0; i < pw.length(); i++) {    		
             char ch = pw.charAt(i);    		
             if (Character.isLetter(ch) && Character.isLowerCase(ch)) {
@@ -134,7 +129,7 @@ public class PasswordSafe {
                     middleNoS++;
                 }
             }
-            score += middleNoS *2;
+            score += middleNoS * 2;
         }
 
         // Requirements Score (range 0-5)
