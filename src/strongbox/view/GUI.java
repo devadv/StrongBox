@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 26-01-2017
+ * @version 31-01-2017
  */
 public class GUI {
 	
@@ -37,7 +37,6 @@ public class GUI {
     		"Email or User Name", "Password", "Folder Name", "Note"};
     
     private JLabel statusLabel;
-    private JLabel statusLabel2;
     
     private JLabel strength;
     private JLabel pwStrength;
@@ -56,13 +55,15 @@ public class GUI {
         frame.add(mainBorderPanel);
         
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        //mainPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.MAGENTA));
+        //mainPanel.setBorder(new MatteBorder(12, 2, 12, 2, Color.MAGENTA));
+        mainPanel.setBorder(new EmptyBorder(12, 2, 12, 2));
         mainBorderPanel.add(mainPanel, BorderLayout.CENTER);
         
-        JPanel flowPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        //flowPanelTop.setBorder(new MatteBorder(16, 2, 0, 2, Color.ORANGE));
-        flowPanelTop.setBorder(new EmptyBorder(16, 2, 0, 2));
-        mainBorderPanel.add(flowPanelTop, BorderLayout.NORTH);
+        JPanel boxPanelTop = new JPanel();
+        boxPanelTop.setLayout(new BoxLayout(boxPanelTop, BoxLayout.X_AXIS));
+        //boxPanelTop.setBorder(new MatteBorder(16, 3, 3, 3, Color.ORANGE));
+        boxPanelTop.setBorder(new EmptyBorder(16, 3, 3, 3));
+        mainBorderPanel.add(boxPanelTop, BorderLayout.NORTH);
 
         JPanel folderPanel = new JPanel(new BorderLayout()); // panel for the folders
         JPanel recordPanel = new JPanel(new BorderLayout()); // panel for the records
@@ -96,7 +97,9 @@ public class GUI {
         makeIconList();
         
         /// top panel
-        JPanel buttonGrid = new JPanel(new GridLayout(1, 4));
+        JPanel flowContainer = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel buttonGrid = new JPanel(new GridLayout(1, 4, 36, 0));
+        //buttonGrid.setBorder(new MatteBorder(2, 2, 2, 2, Color.GREEN));
 
         String[] iconLabelStrings = {"New", "Edit", "Delete", "Delete ALL"};
 
@@ -113,7 +116,8 @@ public class GUI {
         	buttonGrid.add(container);
         }
         
-        flowPanelTop.add(buttonGrid);
+        flowContainer.add(buttonGrid);
+        boxPanelTop.add(flowContainer);
         
         // iconButtons (0)   "Create new record"
         // iconButtons (1)   "Edit selected record"
@@ -126,17 +130,21 @@ public class GUI {
         // iconLabelTexts (3) "Delete ALL"
         
         /// search box
+        JPanel rightTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        //rightTopPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
         JPanel searchPanel = new JPanel(new FlowLayout());
-        flowPanelTop.add(searchPanel, BorderLayout.NORTH);
+        rightTopPanel.add(searchPanel);
         searchLabel = new JLabel(getIcon(14));
         searchPanel.add(searchLabel);
         searchBox = new JTextField(12);
         searchPanel.add(searchBox);
-        searchPanel.setBorder(new EmptyBorder(8, 152, 22, 184));
-        //searchPanel.setBorder(new MatteBorder(8, 152, 22, 184, Color.RED));
+        searchPanel.setBorder(new EmptyBorder(8, 2, 22, 164));
+        //searchPanel.setBorder(new MatteBorder(8, 2, 22, 164, Color.RED));
         
         /// "About" iconButton and textLabel
         JPanel aboutGrid = new JPanel(new GridLayout(1, 1));
+        //aboutGrid.setBorder(new MatteBorder(5, 5, 5, 10, Color.MAGENTA));
+        aboutGrid.setBorder(new EmptyBorder(5, 5, 5, 10));
         JPanel container = new JPanel(new BorderLayout());
         JPanel flowPanel = new JPanel();
         flowPanel.add(makeIconButton(getIcon(4)));           // iconButtons (4) "about-button"
@@ -148,8 +156,9 @@ public class GUI {
         flowPanel.add(textLabelAbout);
         container.add(flowPanel, BorderLayout.SOUTH);
         aboutGrid.add(container);
-        flowPanelTop.add(aboutGrid);
+        rightTopPanel.add(aboutGrid);
         
+        boxPanelTop.add(rightTopPanel);
         
         /// record details panel
         JPanel boxPanel = new JPanel();
@@ -189,18 +198,23 @@ public class GUI {
         	}
         	boxPanel.add(flowPanel);
         	if (i == 5) {
-        		flowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        	    flowPanel.setBackground(Color.WHITE);
-        		//flowPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
-        		flowPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
+        		JPanel xBoxPanel = new JPanel();
+        		xBoxPanel.setLayout(new BoxLayout(xBoxPanel, BoxLayout.X_AXIS));
+        	    xBoxPanel.setBackground(Color.WHITE);
+        		//xBoxPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
+        		xBoxPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
         		
-        		JPanel soloGrid = new JPanel(new BorderLayout());
-        		statusLabel2 = new JLabel("This the maximum length of the " +
+        		xBoxPanel.add(Box.createHorizontalStrut(11));
+ 
+        		statusLabel = new JLabel("This is a longer message " +
         		"message.", SwingConstants.LEFT);
-        		statusLabel2.setBorder(new MatteBorder(1, 1, 1, 6, Color.GREEN));
-        		soloGrid.add(statusLabel2, BorderLayout.WEST);
-        		flowPanel.add(soloGrid);
+        		//statusLabel2.setBorder(new MatteBorder(1, 1, 1, 6, Color.MAGENTA));
+        		statusLabel.setBorder(new EmptyBorder(1, 1, 1, 6));
+        		xBoxPanel.add(statusLabel, BorderLayout.WEST);
         		
+        		JPanel rightFlowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        	    rightFlowPanel.setBackground(Color.WHITE);
+        		//rightFlowPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.GREEN));
         		JPanel saveCancelGrid = new JPanel(new GridLayout(1, 2, 6, 0));
         		saveCancelGrid.setBackground(Color.WHITE);
         		//saveCancelGrid.setBorder(new MatteBorder(1, 1, 1, 1, Color.BLUE));
@@ -208,18 +222,13 @@ public class GUI {
         		getButton(0).setToolTipText("Save Record");
         		saveCancelGrid.add(makeTextButton("Cancel"));     // buttons (1) "cancel"
         		getButton(1).setToolTipText("Cancel or Discard Changes");
-        		flowPanel.add(saveCancelGrid);
-        		boxPanel.add(flowPanel);
+        		rightFlowPanel.add(saveCancelGrid);
+        		xBoxPanel.add(rightFlowPanel);
+        		
+        		boxPanel.add(xBoxPanel);
         	}
         }
         detailPanel.add(boxPanel, BorderLayout.CENTER);
-        
-        statusLabel = new JLabel("This is a somewhat reasonably long message " +
-        		"for testing purposes. You could even call it rather lengthy.", 
-        		SwingConstants.RIGHT);
-        //statusLabel.setBorder(new MatteBorder(1, 0, 2, 12, Color.RED));
-        statusLabel.setBorder(new EmptyBorder(1, 0, 2, 12));
-        mainBorderPanel.add(statusLabel, BorderLayout.SOUTH);
         
         enlargeFont(folderView);
         enlargeFont(recordView);

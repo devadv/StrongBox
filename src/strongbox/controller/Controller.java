@@ -1,5 +1,6 @@
 package strongbox.controller;
 
+import strongbox.model.Messages;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
@@ -38,7 +39,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 26-01-2017
+ * @version 31-01-2017
  */
 public class Controller {
 
@@ -53,6 +54,8 @@ public class Controller {
 	
 	private boolean showPassword = false;
 	private char echoChar;
+	
+	private Messages messages;
     
     /**
      * Constructor
@@ -73,6 +76,8 @@ public class Controller {
 		model.readRecordsFromFile();
 				
 		view = new GUI();
+		
+		messages = new Messages();
 		
 		initializeFolderData();
 		
@@ -134,8 +139,9 @@ public class Controller {
 				// TODO Maybe is mouse entered useful
 				super.mouseEntered(e);
 				
+				view.getStatusLabel().setText(messages.getStatus(15));
 				System.out.println("Mouse over");
-			}	
+			}
 		});
 
 	}
@@ -273,10 +279,13 @@ public class Controller {
     public void addRecordCreationListener() {
     	view.getIconButton(0).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
+    			/*
     			view.showMessageDialog("Please enter the details of the new " + 
     					"record in the textfields to the right. \n" +
     					"A new folder will be created if needed. " +
     					"Click \"Save\" once you are done.");
+    			*/
+    			view.getStatusLabel().setText(messages.getStatus(9));
     			edit = false;
     			
     			setEnableNormalMode(false);
@@ -288,6 +297,7 @@ public class Controller {
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(0));
+    			view.getStatusLabel().setText(messages.getStatus(0));
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(0));
@@ -309,10 +319,13 @@ public class Controller {
     	view.getIconButton(1).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
-    				view.showMessageDialog("Please enter the changes you wish " + 
+    				/*
+    				 view.showMessageDialog("Please enter the changes you wish " + 
     						"to make in the textfields to the right. \n" +
     						"A new folder will be created if needed. " +
     						"Click \"Save\" once you are done.");
+    				 */
+    				view.getStatusLabel().setText(messages.getStatus(9));
     				edit = true;
     				
         			setEnableNormalMode(false);
@@ -325,6 +338,7 @@ public class Controller {
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(1));
+    			view.getStatusLabel().setText(messages.getStatus(1));
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(1));
@@ -365,16 +379,19 @@ public class Controller {
 
     				if (edit) { // This is an existing record
     					model.setRecordFields(record, fieldValues);
+    					view.getStatusLabel().setText(messages.getStatus(6));
     				}
     				else {  // New record
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
     							fieldValues[2], fieldValues[3], fieldValues[4], 
     							fieldValues[5]);
+    					
+    					view.getStatusLabel().setText(messages.getStatus(5));
     				}
 
     				model.writeRecordsToFile();
 
-    				view.showMessageDialog("Record Saved");
+    				view.getStatusLabel().setText(messages.getStatus(10));
     				
         			setEnableNormalMode(true);
         			setEnableEditMode(false);
@@ -460,6 +477,7 @@ public class Controller {
     					String folder = record.getFolder();
     					model.delete(record);
     					model.writeRecordsToFile();
+    					view.getStatusLabel().setText(messages.getStatus(7));
     					initializeFolderData();
     					recordData.clear();
     					for (String recordTitle: model.getTitlesByFolder(folder)) {
@@ -476,6 +494,7 @@ public class Controller {
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(2));
+    			view.getStatusLabel().setText(messages.getStatus(2));
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(2));
@@ -501,11 +520,13 @@ public class Controller {
 						" delete ALL records?")) {
 					model.deleteAll();
 					model.writeRecordsToFile();
+					view.getStatusLabel().setText(messages.getStatus(8));
 					initializeFolderData();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(3));
+    			view.getStatusLabel().setText(messages.getStatus(3));
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(3));
@@ -600,6 +621,7 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			//view.getIconLabel(4).setIcon(view.getIcon(4));
     			view.setDullGrayColor(view.getIconLabelTexts().get(4));
+    			view.getStatusLabel().setText(messages.getStatus(4));
     		}
     		public void mouseExited(MouseEvent e) {
     			//view.getIconLabel(4).setIcon(view.getIcon(4));
