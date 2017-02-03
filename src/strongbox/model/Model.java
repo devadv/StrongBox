@@ -359,7 +359,6 @@ public class Model implements iModel {
 		for (Record record : arrayList) {
 			writeLine(writer, record);
 		}
-		System.out.println("File saved");
 	}
 	/**
 	 * private method

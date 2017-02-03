@@ -201,13 +201,12 @@ public class GUI {
         		JPanel xBoxPanel = new JPanel();
         		xBoxPanel.setLayout(new BoxLayout(xBoxPanel, BoxLayout.X_AXIS));
         	    xBoxPanel.setBackground(Color.WHITE);
-        		//xBoxPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
-        		xBoxPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
+        		xBoxPanel.setBorder(new EmptyBorder(7, 2, 2, 2));
+        		//xBoxPanel.setBorder(new MatteBorder(7, 2, 2, 2, Color.RED));
         		
         		xBoxPanel.add(Box.createHorizontalStrut(11));
  
-        		statusLabel = new JLabel("This is a longer message " +
-        		"message.", SwingConstants.LEFT);
+        		statusLabel = new JLabel("", SwingConstants.LEFT);
         		//statusLabel2.setBorder(new MatteBorder(1, 1, 1, 6, Color.MAGENTA));
         		statusLabel.setBorder(new EmptyBorder(1, 1, 1, 6));
         		xBoxPanel.add(statusLabel, BorderLayout.WEST);

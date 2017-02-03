@@ -4,6 +4,7 @@ import strongbox.model.Messages;
 import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.encryption.Encryption;
+import strongbox.util.ColorAnim;
 import strongbox.util.PasswordSafe;
 import strongbox.view.GUI;
 
@@ -50,18 +51,23 @@ public class Controller {
     private DefaultListModel<String> recordData = new DefaultListModel<>();
 	
 	private Record record; // The currently selected or last selected record.
+
+	// editMode is true if the user is creating a new record or editing one.
+	private boolean editMode = false;
+	
 	private boolean edit = false; // True if we are editing an existing record.
 	
 	private boolean showPassword = false;
 	private char echoChar;
 	
 	private Messages messages;
+	private ColorAnim anim;
     
     /**
      * Constructor
      */
 	public Controller(Model model) {
-			
+		
 		this.model = model;
 		
 		//use masterpasswd for encryption	
@@ -78,6 +84,9 @@ public class Controller {
 		view = new GUI();
 		
 		messages = new Messages();
+		
+		anim = new ColorAnim();
+		anim.setLabel(view.getStatusLabel());
 		
 		initializeFolderData();
 		
@@ -97,6 +106,8 @@ public class Controller {
 		addSearchListener();
 		
 		addSearchFocusListener();
+		
+		searchBoxMouseListener();
 		
         initSearchBox();
         
@@ -124,11 +135,13 @@ public class Controller {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO give message passwd copied to clipboard
+				
 				super.mouseClicked(e);
-				if (SwingUtilities.isRightMouseButton(e)) {
+				if (SwingUtilities.isRightMouseButton(e) && record != null) {
 					String pw = view.getFields().get(3).getText();
 					System.out.println(pw);
+					view.getStatusLabel().setText(messages.getStatus(14));
+					anim.startTimer();
 					StringSelection stringSelection = new StringSelection(pw);
 					Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 					clpbrd.setContents(stringSelection, null);
@@ -136,11 +149,12 @@ public class Controller {
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Maybe is mouse entered useful
-				super.mouseEntered(e);
 				
-				view.getStatusLabel().setText(messages.getStatus(15));
-				System.out.println("Mouse over");
+				if (record != null) {
+					super.mouseEntered(e);
+					view.getStatusLabel().setText(messages.getStatus(13));
+					anim.startTimer();
+				}
 			}
 		});
 
@@ -244,6 +258,8 @@ public class Controller {
      *           Also toggle icons and colors accordingly.
      */
     public void setEnableEditMode(boolean b) {
+    	
+    	editMode = b;
 
     	view.getButton(0).setVisible(b);
     	view.getButton(0).setEnabled(b);
@@ -279,13 +295,10 @@ public class Controller {
     public void addRecordCreationListener() {
     	view.getIconButton(0).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			/*
-    			view.showMessageDialog("Please enter the details of the new " + 
-    					"record in the textfields to the right. \n" +
-    					"A new folder will be created if needed. " +
-    					"Click \"Save\" once you are done.");
-    			*/
-    			view.getStatusLabel().setText(messages.getStatus(9));
+
+    			view.getStatusLabel().setText(messages.getStatus(7));
+    			anim.startTimer();
+    			
     			edit = false;
     			
     			setEnableNormalMode(false);
@@ -298,6 +311,7 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(0));
     			view.getStatusLabel().setText(messages.getStatus(0));
+    			anim.startTimer();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(0));
@@ -319,13 +333,10 @@ public class Controller {
     	view.getIconButton(1).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
-    				/*
-    				 view.showMessageDialog("Please enter the changes you wish " + 
-    						"to make in the textfields to the right. \n" +
-    						"A new folder will be created if needed. " +
-    						"Click \"Save\" once you are done.");
-    				 */
-    				view.getStatusLabel().setText(messages.getStatus(9));
+
+    				view.getStatusLabel().setText(messages.getStatus(7));
+    				anim.startTimer();
+    				
     				edit = true;
     				
         			setEnableNormalMode(false);
@@ -339,6 +350,7 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(1));
     			view.getStatusLabel().setText(messages.getStatus(1));
+    			anim.startTimer();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(1));
@@ -379,19 +391,17 @@ public class Controller {
 
     				if (edit) { // This is an existing record
     					model.setRecordFields(record, fieldValues);
-    					view.getStatusLabel().setText(messages.getStatus(6));
     				}
     				else {  // New record
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
     							fieldValues[2], fieldValues[3], fieldValues[4], 
     							fieldValues[5]);
-    					
-    					view.getStatusLabel().setText(messages.getStatus(5));
     				}
 
     				model.writeRecordsToFile();
 
-    				view.getStatusLabel().setText(messages.getStatus(10));
+    				view.getStatusLabel().setText(messages.getStatus(8));
+    				anim.startTimer();
     				
         			setEnableNormalMode(true);
         			setEnableEditMode(false);
@@ -435,6 +445,14 @@ public class Controller {
     					for (int i = 0; i < 6; i++) {
     						view.getFields().get(i).setText(fields[i]);
     					}
+    					if (edit) {
+    						view.getStatusLabel().setText(messages.getStatus(9));
+    						anim.startTimer();
+    					}
+    					else {
+    						view.getStatusLabel().setText(messages.getStatus(10));
+    						anim.startTimer();
+    					}
         				initSearchBox();
         				view.getRecordView().grabFocus();    					
                     	recordData.clear();
@@ -477,7 +495,8 @@ public class Controller {
     					String folder = record.getFolder();
     					model.delete(record);
     					model.writeRecordsToFile();
-    					view.getStatusLabel().setText(messages.getStatus(7));
+    					view.getStatusLabel().setText(messages.getStatus(5));
+    					anim.startTimer();
     					initializeFolderData();
     					recordData.clear();
     					for (String recordTitle: model.getTitlesByFolder(folder)) {
@@ -495,6 +514,7 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(2));
     			view.getStatusLabel().setText(messages.getStatus(2));
+    			anim.startTimer();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(2));
@@ -520,13 +540,15 @@ public class Controller {
 						" delete ALL records?")) {
 					model.deleteAll();
 					model.writeRecordsToFile();
-					view.getStatusLabel().setText(messages.getStatus(8));
+					view.getStatusLabel().setText(messages.getStatus(6));
+					anim.startTimer();
 					initializeFolderData();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(3));
     			view.getStatusLabel().setText(messages.getStatus(3));
+    			anim.startTimer();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(3));
@@ -555,16 +577,28 @@ public class Controller {
 					showPassword = true;
 					view.getStrengthTextLabel().setVisible(true);
 					view.getStrengthScoreLabel().setVisible(true);
+					view.getStatusLabel().setText(messages.getStatus(12));
+					anim.startTimer();
 				}
 				else {
 					pwField.setEchoChar(echoChar);
 					showPassword = false;
 					view.getStrengthTextLabel().setVisible(false);
 					view.getStrengthScoreLabel().setVisible(false);
+					view.getStatusLabel().setText(messages.getStatus(11));
+					anim.startTimer();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(6));
+    			if (!showPassword) {
+    				view.getStatusLabel().setText(messages.getStatus(11));
+    				anim.startTimer();
+    			}
+    			else {
+    				view.getStatusLabel().setText(messages.getStatus(12));
+    				anim.startTimer();
+    			}
     		}
     		public void mouseExited(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(5));
@@ -592,6 +626,14 @@ public class Controller {
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(8));
+    			if (editMode) {
+    				view.getStatusLabel().setText(messages.getStatus(15));
+    				anim.startTimer();
+    			}
+    			else {
+    				view.getStatusLabel().setText(messages.getStatus(16));
+    				anim.startTimer();
+    			}
     		}
     		public void mouseExited(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(7));
@@ -622,6 +664,7 @@ public class Controller {
     			//view.getIconLabel(4).setIcon(view.getIcon(4));
     			view.setDullGrayColor(view.getIconLabelTexts().get(4));
     			view.getStatusLabel().setText(messages.getStatus(4));
+    			anim.startTimer();
     		}
     		public void mouseExited(MouseEvent e) {
     			//view.getIconLabel(4).setIcon(view.getIcon(4));
@@ -690,6 +733,23 @@ public class Controller {
 
     		public void focusLost(FocusEvent e) {
 
+    		}
+    	}
+    	);
+    }
+    
+    /**
+     * 
+     */
+    public void searchBoxMouseListener() {
+    	view.getSearchBox().addMouseListener(new MouseAdapter() {
+
+    		@Override
+    		public void mouseEntered(MouseEvent e) {
+
+    			super.mouseEntered(e);
+    			view.getStatusLabel().setText(messages.getStatus(17));
+    			anim.startTimer();
     		}
     	}
     	);
