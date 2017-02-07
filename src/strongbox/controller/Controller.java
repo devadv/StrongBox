@@ -68,6 +68,8 @@ public class Controller {
      */
 	public Controller(Model model) {
 		
+		System.out.println(record);
+		
 		this.model = model;
 		
 		//use masterpasswd for encryption	
@@ -358,7 +360,12 @@ public class Controller {
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(1));
-    			view.getStatusLabel().setText(messages.getStatus(1));
+    			if (record != null) {
+    				view.getStatusLabel().setText(messages.getStatus(1));
+    			}
+    			else {
+    				view.getStatusLabel().setText(messages.getStatus(18));
+    			}
     			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
@@ -523,7 +530,12 @@ public class Controller {
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(2));
-    			view.getStatusLabel().setText(messages.getStatus(2));
+    			if (record != null) {
+    				view.getStatusLabel().setText(messages.getStatus(2));
+    			}
+    			else {
+    				view.getStatusLabel().setText(messages.getStatus(19));
+    			}
     			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {

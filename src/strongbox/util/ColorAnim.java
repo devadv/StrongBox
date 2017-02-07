@@ -92,12 +92,12 @@ public class ColorAnim {
 
     	label.setForeground(new Color(51, 51, 51));
     	r = label.getForeground().getRed();
-    	t1 = System.currentTimeMillis();
+    	t1 = System.currentTimeMillis(); // timestamp used by method below
     	timerSlow.restart();
     }
     
     /**
-     * Start fast fading. But only if slow fading IS running BUT hasn't run any
+     * Start fast fading. But ONLY if slow fading IS running BUT hasn't run any
      * longer then it's initial delay (2800 ms) from the start.
      */
     public void fastFade() {

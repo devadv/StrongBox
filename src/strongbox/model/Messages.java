@@ -35,6 +35,8 @@ public class Messages {
 		statusMessages.add("Generate a random password");          // statusMessages (15)
 		statusMessages.add("Password generation unavailable");     // statusMessages (16)
 		statusMessages.add("Search for records");                  // statusMessages (17)
+		statusMessages.add("Edit a record");                       // statusMessages (18)
+		statusMessages.add("Delete a record");                     // statusMessages (19)
 	}
 	
 	public String getStatus(int index) {
