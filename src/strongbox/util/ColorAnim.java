@@ -10,40 +10,63 @@ import javax.swing.Timer;
 /**
  * This class provides methods to create "color-shifts running along a timer"
  * so the text colors in the program can be animated.
- * @version 31-01-2017
+ * @version 07-02-2017
  */
 public class ColorAnim {
 
-	Timer timer;
+	Timer timerSlow;
+	Timer timerFast;
 	JLabel label;
 	int r;
+	
+	static long t1;
+	static long t2;
 	
 	/**
 	 * Constructor
 	 */
 	public ColorAnim() {
-        timer = new Timer(69, null);
-        addListenerToTimer();
-     	timer.setInitialDelay(2800);
+
+        timerSlow = new Timer(69, null);
+     	timerSlow.setInitialDelay(2800);
+     	
+        timerFast = new Timer(7, null);
+     	timerFast.setInitialDelay(27);
+     	
+        addListenersToTimers();
 	}
 	
 	/**
-	 * Set the JLabel associated with this timer
+	 * Set the JLabel associated with these timed color-shifts
 	 */
 	public void setLabel(JLabel label) {
         this.label = label;
         r = label.getForeground().getRed();
 	}
 	
-    public void addListenerToTimer() {
-        timer.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    fadeToWhite();
-                }
-            }
-        );
+	/**
+	 * Add some action to the timers.
+	 */
+    public void addListenersToTimers() {
+    	timerSlow.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			fadeToWhite();
+    		}
+    	}
+    	);
+    	
+    	timerFast.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			fadeToWhite();
+    		}
+    	}
+    	);
     }
     
+    /**
+     * The method to be executed repeatedly by the timers so dark gray text
+     * can be faded to white.
+     */
     public void fadeToWhite() {
     	if (r < 255) {
     		r++;
@@ -53,14 +76,41 @@ public class ColorAnim {
     		label.setText("");
     		label.setForeground(new Color(51, 51, 51));
     		r = 51;
-    		timer.stop();
+    		timerSlow.stop();
+    		timerFast.stop();
     	}
     }
     
-    public void startTimer() {
-        timer.restart();
+    /**
+     * Start slow fading. If fast fading is running stop it.
+     */
+    public void slowFade() {
+    	
+    	if (timerFast.isRunning()) {
+    		timerFast.stop();
+    	}
+
     	label.setForeground(new Color(51, 51, 51));
     	r = label.getForeground().getRed();
+    	t1 = System.currentTimeMillis();
+    	timerSlow.restart();
+    }
+    
+    /**
+     * Start fast fading. But only if slow fading IS running BUT hasn't run any
+     * longer then it's initial delay (2800 ms) from the start.
+     */
+    public void fastFade() {
+    	
+    	t2 = System.currentTimeMillis();
+    	
+    	if (timerSlow.isRunning() && t2 - t1 < 2798) {
+    		timerSlow.stop();
+    		timerFast.stop();
+    		label.setForeground(new Color(51, 51, 51));
+    		r = label.getForeground().getRed();
+    		timerFast.restart();
+    	}
     }
     
 }

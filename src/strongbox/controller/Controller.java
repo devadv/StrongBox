@@ -40,7 +40,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 31-01-2017
+ * @version 07-02-2017
  */
 public class Controller {
 
@@ -141,7 +141,7 @@ public class Controller {
 					String pw = view.getFields().get(3).getText();
 					System.out.println(pw);
 					view.getStatusLabel().setText(messages.getStatus(14));
-					anim.startTimer();
+					anim.slowFade();
 					StringSelection stringSelection = new StringSelection(pw);
 					Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 					clpbrd.setContents(stringSelection, null);
@@ -153,9 +153,17 @@ public class Controller {
 				if (record != null) {
 					super.mouseEntered(e);
 					view.getStatusLabel().setText(messages.getStatus(13));
-					anim.startTimer();
+					anim.slowFade();
 				}
 			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+				super.mouseExited(e);
+				anim.fastFade();
+				}
+			}
+			
 		});
 
 	}
@@ -297,7 +305,7 @@ public class Controller {
     		public void mouseClicked(MouseEvent e) {
 
     			view.getStatusLabel().setText(messages.getStatus(7));
-    			anim.startTimer();
+    			anim.slowFade();
     			
     			edit = false;
     			
@@ -311,10 +319,11 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(0));
     			view.getStatusLabel().setText(messages.getStatus(0));
-    			anim.startTimer();
+    			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(0));
+    			anim.fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -335,7 +344,7 @@ public class Controller {
     			if (view.getRecordView().getSelectedValue() != null) {
 
     				view.getStatusLabel().setText(messages.getStatus(7));
-    				anim.startTimer();
+    				anim.slowFade();
     				
     				edit = true;
     				
@@ -350,10 +359,11 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(1));
     			view.getStatusLabel().setText(messages.getStatus(1));
-    			anim.startTimer();
+    			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(1));
+    			anim.fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -401,7 +411,7 @@ public class Controller {
     				model.writeRecordsToFile();
 
     				view.getStatusLabel().setText(messages.getStatus(8));
-    				anim.startTimer();
+    				anim.slowFade();
     				
         			setEnableNormalMode(true);
         			setEnableEditMode(false);
@@ -447,11 +457,11 @@ public class Controller {
     					}
     					if (edit) {
     						view.getStatusLabel().setText(messages.getStatus(9));
-    						anim.startTimer();
+    						anim.slowFade();
     					}
     					else {
     						view.getStatusLabel().setText(messages.getStatus(10));
-    						anim.startTimer();
+    						anim.slowFade();
     					}
         				initSearchBox();
         				view.getRecordView().grabFocus();    					
@@ -496,7 +506,7 @@ public class Controller {
     					model.delete(record);
     					model.writeRecordsToFile();
     					view.getStatusLabel().setText(messages.getStatus(5));
-    					anim.startTimer();
+    					anim.slowFade();
     					initializeFolderData();
     					recordData.clear();
     					for (String recordTitle: model.getTitlesByFolder(folder)) {
@@ -514,10 +524,13 @@ public class Controller {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(2));
     			view.getStatusLabel().setText(messages.getStatus(2));
-    			anim.startTimer();
+    			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(2));
+    			if (! view.getStatusLabel().getText().equals(messages.getStatus(5))) {
+    				anim.fastFade();
+    			}
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -541,17 +554,20 @@ public class Controller {
 					model.deleteAll();
 					model.writeRecordsToFile();
 					view.getStatusLabel().setText(messages.getStatus(6));
-					anim.startTimer();
+					anim.slowFade();
 					initializeFolderData();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(3));
     			view.getStatusLabel().setText(messages.getStatus(3));
-    			anim.startTimer();
+    			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(3));
+    			if (! view.getStatusLabel().getText().equals(messages.getStatus(6))) {
+    				anim.fastFade();
+    			}
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -578,7 +594,7 @@ public class Controller {
 					view.getStrengthTextLabel().setVisible(true);
 					view.getStrengthScoreLabel().setVisible(true);
 					view.getStatusLabel().setText(messages.getStatus(12));
-					anim.startTimer();
+					anim.slowFade();
 				}
 				else {
 					pwField.setEchoChar(echoChar);
@@ -586,22 +602,23 @@ public class Controller {
 					view.getStrengthTextLabel().setVisible(false);
 					view.getStrengthScoreLabel().setVisible(false);
 					view.getStatusLabel().setText(messages.getStatus(11));
-					anim.startTimer();
+					anim.slowFade();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(6));
     			if (!showPassword) {
     				view.getStatusLabel().setText(messages.getStatus(11));
-    				anim.startTimer();
+    				anim.slowFade();
     			}
     			else {
     				view.getStatusLabel().setText(messages.getStatus(12));
-    				anim.startTimer();
+    				anim.slowFade();
     			}
     		}
     		public void mouseExited(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(5));
+    			anim.fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(6));
@@ -628,15 +645,16 @@ public class Controller {
     			view.getIconButton(6).setIcon(view.getIcon(8));
     			if (editMode) {
     				view.getStatusLabel().setText(messages.getStatus(15));
-    				anim.startTimer();
+    				anim.slowFade();
     			}
     			else {
     				view.getStatusLabel().setText(messages.getStatus(16));
-    				anim.startTimer();
+    				anim.slowFade();
     			}
     		}
     		public void mouseExited(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(7));
+    			anim.fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(8));
@@ -654,27 +672,25 @@ public class Controller {
     public void addAboutButtonListener() {
     	view.getIconButton(4).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-    			//view.getIconLabel(4).setIcon(view.getIcon(4));
     			view.showMessageDialog("StrongBox v1.0\n" +
     					"Made by Ben Ansems De Vries and Thomas Timmermans\n" +
     					"www.github.com/devadv/StrongBox\n\n" +
     					"blablabla, uitleg programma en zo..");
     		}
     		public void mouseEntered(MouseEvent e) {
-    			//view.getIconLabel(4).setIcon(view.getIcon(4));
     			view.setDullGrayColor(view.getIconLabelTexts().get(4));
     			view.getStatusLabel().setText(messages.getStatus(4));
-    			anim.startTimer();
+    			anim.slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
-    			//view.getIconLabel(4).setIcon(view.getIcon(4));
     			view.setDarkGrayColor(view.getIconLabelTexts().get(4));
+    			anim.fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
-    			//view.getIconLabel(4).setIcon(view.getIcon(4));
+    			
     		}
     		public void mouseReleased(MouseEvent e) {
-    			//view.getIconLabel(4).setIcon(view.getIcon(4));
+    			
     		}
     	}
     	);
@@ -747,9 +763,19 @@ public class Controller {
     		@Override
     		public void mouseEntered(MouseEvent e) {
 
+    			if (! editMode) {
     			super.mouseEntered(e);
     			view.getStatusLabel().setText(messages.getStatus(17));
-    			anim.startTimer();
+    			anim.slowFade();
+    			}
+    		}
+    		@Override
+    		public void mouseExited(MouseEvent e) {
+
+    			if (! editMode) {
+    			super.mouseExited(e);
+    			anim.fastFade();
+    			}
     		}
     	}
     	);
