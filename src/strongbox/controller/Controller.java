@@ -238,6 +238,7 @@ public class Controller {
      *           Also toggle icons and colors accordingly.
      */
     public void setEnableNormalMode(boolean b) {
+    	
     	view.getFolderScrollPane().setEnabled(b);
     	view.getRecordScrollPane().setEnabled(b);
     	view.getFolderView().setEnabled(b);
@@ -270,7 +271,7 @@ public class Controller {
     public void setEnableEditMode(boolean b) {
     	
     	editMode = b;
-
+    	
     	view.getButton(0).setVisible(b);
     	view.getButton(0).setEnabled(b);
     	view.getButton(1).setVisible(b);
@@ -297,6 +298,8 @@ public class Controller {
     		}
         	view.getSearchLabel().setIcon(view.getIcon(14));
     	}
+    	view.getBlackLabel().setVisible(b);
+    	view.repaintFrame();
     }
 
     /**

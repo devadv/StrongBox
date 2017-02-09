@@ -41,6 +41,10 @@ public class GUI {
     private JLabel strength;
     private JLabel pwStrength;
     
+    private JLayeredPane layeredPane;
+    //private JPanel blackLayer;
+    private JLabel blackLabel;
+    
     //JSlider slider = new JSlider(1, 48, 16);
 
     /**
@@ -51,7 +55,13 @@ public class GUI {
     	frame = new JFrame("StrongBox");
         frame.setLayout(new GridBagLayout());
         
+        layeredPane = frame.getLayeredPane();
+        
         JPanel mainBorderPanel = new JPanel(new BorderLayout());
+        layeredPane.add(mainBorderPanel, 0);
+        JPanel blackLayer = new JPanel(new GridLayout(1, 1));
+        layeredPane.add(blackLayer, 1);
+        
         frame.add(mainBorderPanel);
         
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -243,6 +253,14 @@ public class GUI {
         frame.pack();
         folderScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
         recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
+        
+        
+        blackLayer.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+        createBlackLayer();
+    	blackLayer.add(blackLabel);
+    	blackLayer.setOpaque(false);
+        
+        
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -405,6 +423,24 @@ public class GUI {
     
     public JScrollPane getRecordScrollPane() {
     	return recordScrollPane;
+    }
+    
+    public JLabel getBlackLabel() {
+    	return blackLabel;
+    }
+    
+    public void createBlackLayer() {
+
+    	blackLabel = new JLabel();
+    	blackLabel.setOpaque(true);
+    	blackLabel.setBackground(new Color(255, 0, 0, 140));
+    	blackLabel.setVisible(false);
+    	//blackLabel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+    }
+    
+    public void repaintFrame() {
+    	frame.repaint();
+    	blackLabel.repaint();
     }
     
 }
