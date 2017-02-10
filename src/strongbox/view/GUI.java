@@ -42,8 +42,8 @@ public class GUI {
     private JLabel pwStrength;
     
     private JLayeredPane layeredPane;
-    //private JPanel blackLayer;
-    private JLabel blackLabel;
+    
+    private ArrayList<JPanel> blackLayers = new ArrayList<>();
     
     //JSlider slider = new JSlider(1, 48, 16);
 
@@ -59,8 +59,11 @@ public class GUI {
         
         JPanel mainBorderPanel = new JPanel(new BorderLayout());
         layeredPane.add(mainBorderPanel, 0);
-        JPanel blackLayer = new JPanel(new GridLayout(1, 1));
+        for (int i = 0; i < 4; i++) {
+        JPanel blackLayer = new JPanel();
         layeredPane.add(blackLayer, 1);
+        blackLayers.add(blackLayer);
+        }
         
         frame.add(mainBorderPanel);
         
@@ -147,6 +150,8 @@ public class GUI {
         searchLabel = new JLabel(getIcon(14));
         searchPanel.add(searchLabel);
         searchBox = new JTextField(12);
+     	Font newFont = searchBox.getFont().deriveFont(Font.PLAIN, (float)12.9);
+     	searchBox.setFont(newFont);
         searchPanel.add(searchBox);
         searchPanel.setBorder(new EmptyBorder(8, 2, 22, 164));
         //searchPanel.setBorder(new MatteBorder(8, 2, 22, 164, Color.RED));
@@ -241,25 +246,39 @@ public class GUI {
         
         enlargeFont(folderView);
         enlargeFont(recordView);
-        
-        //TODO Create Black JLayer (with opacity 50% or so) covering everything 
-        //except the record-details panel. This JLayer should be hidden in normal
-        //mode and shown in edit-mode (a visual guidance to draw the user's 
-        //attention to the record-details panel and away from the rest).
         	
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setSize(300, 320);
-        //setResizable(false);
-        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        
+        frame.pack(); // additional pack here is necessary for rendering
+        
         folderScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
-        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
+        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));        
         
+        // Setting the bounds of the 4 black "layers" (which are JPanels)
+        blackLayers.get(0).setBounds(
+        		0, 
+        		0, 
+        		frame.getWidth(), 
+        		boxPanelTop.getSize().height + 15);
         
-        blackLayer.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-        createBlackLayer();
-    	blackLayer.add(blackLabel);
-    	blackLayer.setOpaque(false);
+        blackLayers.get(1).setBounds(
+        		0, 
+        		boxPanelTop.getSize().height + 15,
+        		frame.getWidth() - boxPanel.getSize().width - 24, 
+        		frame.getHeight() - boxPanelTop.getSize().height + 15);
         
+        blackLayers.get(2).setBounds(
+        		frame.getWidth() - boxPanel.getSize().width - 24,
+        		boxPanelTop.getSize().height + 13 + boxPanel.getSize().height,
+        		boxPanel.getSize().width - 1,
+        		frame.getHeight() - boxPanelTop.getSize().height + 15 - boxPanel.getSize().height);
+        
+        blackLayers.get(3).setBounds(
+        		boxPanel.getSize().width + 2 * folderScrollPane.getSize().width + 41,
+        		boxPanelTop.getSize().height + 15,
+        		15,
+        		frame.getHeight() - boxPanelTop.getSize().height + 14);
+        
+        setBlackLayerProperties();
         
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -425,22 +444,24 @@ public class GUI {
     	return recordScrollPane;
     }
     
-    public JLabel getBlackLabel() {
-    	return blackLabel;
+    public ArrayList<JPanel> getBlackLayers() {
+    	return blackLayers;
     }
     
-    public void createBlackLayer() {
+    public void setBlackLayerProperties() {
 
-    	blackLabel = new JLabel();
-    	blackLabel.setOpaque(true);
-    	blackLabel.setBackground(new Color(255, 0, 0, 140));
-    	blackLabel.setVisible(false);
-    	//blackLabel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+    	for (JPanel blackLayer: blackLayers) {
+    		blackLayer.setBackground(new Color(0, 0, 0, 112));
+    		blackLayer.setVisible(false);
+    	}
+
     }
     
     public void repaintFrame() {
     	frame.repaint();
-    	blackLabel.repaint();
+    	for (JPanel blackLayer: blackLayers) {
+    		blackLayer.repaint();
+    	}
     }
     
 }

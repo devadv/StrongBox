@@ -22,6 +22,7 @@ import java.awt.event.FocusListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -67,8 +68,6 @@ public class Controller {
      * Constructor
      */
 	public Controller(Model model) {
-		
-		System.out.println(record);
 		
 		this.model = model;
 		
@@ -298,7 +297,9 @@ public class Controller {
     		}
         	view.getSearchLabel().setIcon(view.getIcon(14));
     	}
-    	view.getBlackLabel().setVisible(b);
+    	for (JPanel blackLayer: view.getBlackLayers()) {
+    		blackLayer.setVisible(b);
+    	}
     	view.repaintFrame();
     }
 
