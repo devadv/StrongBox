@@ -66,7 +66,7 @@ public class GUI {
         }
         
         frame.add(mainBorderPanel);
-        
+       
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         //mainPanel.setBorder(new MatteBorder(12, 2, 12, 2, Color.MAGENTA));
         mainPanel.setBorder(new EmptyBorder(12, 2, 12, 2));
@@ -251,7 +251,9 @@ public class GUI {
         frame.pack(); // additional pack here is necessary for rendering
         
         folderScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
-        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));        
+        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
+        
+        // Drawing the gradient on the frame       
         
         // Setting the bounds of the 4 black "layers" (which are JPanels)
         blackLayers.get(0).setBounds(
@@ -463,5 +465,5 @@ public class GUI {
     		blackLayer.repaint();
     	}
     }
-    
+
 }
