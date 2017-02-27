@@ -1,6 +1,7 @@
 package strongbox.login;
 
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,8 +37,13 @@ public abstract class PasswordView extends JPanel {
 		button = new JButton("Login");
 		labelPassword = new JLabel("Password: ");
 		msg = new JLabel("Welcome to StrongBox: ");
-		ImageIcon pict = new ImageIcon("res/box.png");
-		pict_small = new ImageIcon("res/box_small.png");
+		
+		URL url = PasswordView.class.getResource("/box.png");
+		ImageIcon pict = new ImageIcon(url);
+		
+		url = PasswordView.class.getResource("/box_small.png");
+		pict_small = new ImageIcon(url);
+		
 		image = new JLabel(pict);
 		
 		setLayout(null);

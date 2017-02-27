@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -37,6 +38,9 @@ public class GUI {
     		"Email or User Name", "Password", "Folder Name", "Note"};
     
     private JLabel statusLabel;
+    
+    private URL url;
+    private ImageIcon icon;
     
     private JLabel strength;
     private JLabel pwStrength;
@@ -251,9 +255,7 @@ public class GUI {
         frame.pack(); // additional pack here is necessary for rendering
         
         folderScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
-        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));
-        
-        // Drawing the gradient on the frame       
+        recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));   
         
         // Setting the bounds of the 4 black "layers" (which are JPanels)
         blackLayers.get(0).setBounds(
@@ -330,23 +332,28 @@ public class GUI {
         return field;
     }
     
+    private void makeNewIcon(String png) {
+    	url = GUI.class.getResource(png);
+    	icons.add(new ImageIcon(url));
+    }
+    
     private void makeIconList() {
-    	icons.add(new ImageIcon("res/new.png"));            // icons (0)  "new record normal"
-    	icons.add(new ImageIcon("res/edit.png"));           // icons (1)  "edit record normal"
-    	icons.add(new ImageIcon("res/delete.png"));         // icons (2)  "delete record normal"
-    	icons.add(new ImageIcon("res/trash.png"));          // icons (3)  "delete ALL records normal"		
-    	icons.add(new ImageIcon("res/about.png"));          // icons (4)  "about button normal" 	
-    	icons.add(new ImageIcon("res/eye-01.png"));         // icons (5)  "black eye"
-    	icons.add(new ImageIcon("res/eye-02.png"));         // icons (6)  "gray eye"
-    	icons.add(new ImageIcon("res/dice-01.png"));        // icons (7)  "black dice"
-		icons.add(new ImageIcon("res/dice-02.png"));        // icons (8)  "gray dice"		
-    	icons.add(new ImageIcon("res/new-gray.png"));       // icons (9)  "new record grayscale"
-    	icons.add(new ImageIcon("res/edit-gray.png"));      // icons (10) "edit record grayscale"
-    	icons.add(new ImageIcon("res/delete-gray.png"));    // icons (11) "delete record grayscale"
-    	icons.add(new ImageIcon("res/trash-gray.png"));     // icons (12) "delete ALL records grayscale"		
-    	icons.add(new ImageIcon("res/about-gray.png"));     // icons (13) "about button grayscale"
-    	icons.add(new ImageIcon("res/magnifier-01.png"));   // icons (14) "black magnifier icon"
-    	icons.add(new ImageIcon("res/magnifier-02.png"));   // icons (15) "gray magnifier icon"
+    	makeNewIcon("/new.png");                        // icons (0)  "new record normal"
+    	makeNewIcon("/edit.png");                       // icons (1)  "edit record normal"
+    	makeNewIcon("/delete.png");                     // icons (2)  "delete record normal"
+    	makeNewIcon("/trash.png");                      // icons (3)  "delete ALL records normal"
+    	makeNewIcon("/about.png");                      // icons (4)  "about button normal"
+    	makeNewIcon("/eye-01.png");                     // icons (5)  "black eye"
+    	makeNewIcon("/eye-02.png");                     // icons (6)  "gray eye"
+    	makeNewIcon("/dice-01.png");                    // icons (7)  "black dice"
+    	makeNewIcon("/dice-02.png");                    // icons (8)  "gray dice"
+    	makeNewIcon("/new-gray.png");                   // icons (9)  "new record grayscale"
+    	makeNewIcon("/edit-gray.png");                  // icons (10) "edit record grayscale"
+    	makeNewIcon("/delete-gray.png");                // icons (11) "delete record grayscale"
+    	makeNewIcon("/trash-gray.png");                 // icons (12) "delete ALL records grayscale"
+    	makeNewIcon("/about-gray.png");                 // icons (13) "about button grayscale"
+    	makeNewIcon("/magnifier-01.png");               // icons (14) "black magnifier icon"
+    	makeNewIcon("/magnifier-02.png");               // icons (15) "gray magnifier icon"
     }
     
     private void enlargeFont(JComponent comp) {
