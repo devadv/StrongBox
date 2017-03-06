@@ -5,6 +5,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import strongbox.model.Record;
+
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -18,7 +20,7 @@ public class GUI {
 	private JFrame frame;
 	
     private JList<String> folderView = new JList<String>();
-    private JList<String> recordView = new JList<String>();
+    private JList<Record> recordView = new JList<Record>();
     private JScrollPane folderScrollPane;
     private JScrollPane recordScrollPane;
 
@@ -401,7 +403,7 @@ public class GUI {
     	return folderView;
     }
     
-    public JList<String> getRecordView() {
+    public JList<Record> getRecordView() {
     	return recordView;
     }
     

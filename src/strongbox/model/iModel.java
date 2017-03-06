@@ -41,29 +41,24 @@ public interface iModel {
 	 * @return  The record-list.
 	 */
 	ArrayList<Record> getRecordList();
-
-	/**
-	 * Get a record based on it's title.
-	 * @param title  The record's title.
-	 * @return  The corresponding record.
-	 */
-	Record getRecord(String title);
 	
 	/**
-	 * Get a list of record titles containing (parts of) the keyword. To create 
-	 * the list searching is done not only by title but address, note and folder
-	 * attributes are also being searched.
+	 * Get a list of records whose title, address, note or folder attribute 
+	 * contains (parts of) the keyword searched with.
+	 * Sort this list before returning.
+	 * 
 	 * @param keyword  The keyword to search for.
-	 * @return A list of matching record titles.
+	 * @return A sorted list of matching records.
 	 */
-	ArrayList<String> search(String keyword);
+	ArrayList<Record> search(String keyword);
 
 	/**
-	 * Returns a list of record titles associated with the specified folder name.
-	 * @param folder   The folder's name.
-	 * @return The list of record titles.
+	 * Make a list of records associated with the specified folder name,
+	 * sort the list and then return it.
+	 * @param folder  The folder's name.
+	 * @return The sorted list of records.
 	 */
-	ArrayList<String> getTitlesByFolder(String folder);
+	ArrayList<Record> getRecordsByFolder(String folder);
 	
 	/**
 	 * Get a set with the folder names (it's a set so no duplicate names are

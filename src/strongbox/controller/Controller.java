@@ -49,7 +49,7 @@ public class Controller {
 	private GUI view;
 	
     private DefaultListModel<String> folderData = new DefaultListModel<>();
-    private DefaultListModel<String> recordData = new DefaultListModel<>();
+    private DefaultListModel<Record> recordData = new DefaultListModel<>();
 	
 	private Record record; // The currently selected or last selected record.
 
@@ -190,8 +190,8 @@ public class Controller {
                     if (!e.getValueIsAdjusting()) {
                     	initSearchBox();
                     	recordData.clear();
-                    	for (String recordTitle: model.getTitlesByFolder(view.getFolderView().getSelectedValue())) {
-                    		recordData.addElement(recordTitle);
+                    	for (Record record: model.getRecordsByFolder(view.getFolderView().getSelectedValue())) {
+                    		recordData.addElement(record);
                     		view.getRecordView().setSelectedValue(recordData.firstElement(), true);                    		
                         }
                     }
@@ -209,7 +209,7 @@ public class Controller {
     		public void valueChanged(ListSelectionEvent e) {
     			if (!e.getValueIsAdjusting()) {
     				try {
-    					record = model.getRecord(view.getRecordView().getSelectedValue());
+    					record = view.getRecordView().getSelectedValue();
     					String[] fields = model.getRecordFields(record);
     					for (int i = 0; i < 6; i++) {
     						view.setDarkGrayColor(view.getFields().get(i));
@@ -477,8 +477,8 @@ public class Controller {
         				initSearchBox();
         				view.getRecordView().grabFocus();    					
                     	recordData.clear();
-                    	for (String recordTitle: model.getTitlesByFolder(view.getFolderView().getSelectedValue())) {
-                    		recordData.addElement(recordTitle);
+                    	for (Record record: model.getRecordsByFolder(view.getFolderView().getSelectedValue())) {
+                    		recordData.addElement(record);
                         }
                 		view.getRecordView().setSelectedIndex(j);
         				
@@ -509,19 +509,21 @@ public class Controller {
     	view.getIconButton(2).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			if (view.getRecordView().getSelectedValue() != null) {
-    				String title = view.getRecordView().getSelectedValue();
+    				record = view.getRecordView().getSelectedValue();
+    				String title = record.getTitle();
+    				String folder = record.getFolder();
     				if (view.showConfirmDialog("Are you sure you want to" + 
     						" delete the following record: " + title + " ?")) {
-    					record = model.getRecord(title);
-    					String folder = record.getFolder();
+    					//record = model.getRecord(title);
+    					//String folder = record.getFolder();
     					model.delete(record);
     					model.writeRecordsToFile();
     					view.getStatusLabel().setText(messages.getStatus(5));
     					anim.slowFade();
     					initializeFolderData();
     					recordData.clear();
-    					for (String recordTitle: model.getTitlesByFolder(folder)) {
-    						recordData.addElement(recordTitle);
+    					for (Record record: model.getRecordsByFolder(folder)) {
+    						recordData.addElement(record);
     					}
     					if (folderData.indexOf(folder) != -1) {
     						view.getFolderView().setSelectedIndex(folderData.indexOf(folder));
@@ -741,8 +743,8 @@ public class Controller {
     private void goSearch(Document doc) {
     	recordData.clear();
     	if (doc.getLength() > 0) {
-    		for (String recordTitle: model.search(getDocumentText(doc))) {
-    			recordData.addElement(recordTitle);
+    		for (Record record: model.search(getDocumentText(doc))) {
+    			recordData.addElement(record);
     		}
     		view.getRecordView().setSelectedIndex(0);
     	}

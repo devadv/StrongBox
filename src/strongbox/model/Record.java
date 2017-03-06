@@ -8,7 +8,7 @@ import strongbox.encryption.Encryption;
  * A representation of a record object.
  */
 
-public class Record implements Serializable {
+public class Record implements Serializable, Comparable<Record> {
 
 	private String title;
 	private String address;
@@ -142,11 +142,21 @@ public class Record implements Serializable {
 	}
 	
 	/**
-	 * @return String to display Record
+	 * Return the title. Used as a string representation of the record in
+	 * the view's Record-JList.
+	 * @return String to display Record's title.
 	 */
 	public String toString() {
-		return title + "   " + address + "   " + userName + "   " + 
-				getPassword() + "   " + folder + "   " + note;
+		return title;
 	}
+	
+    /**
+     * Implementation of compareTo() method from interface Comparable to enable 
+     * the sorting of Record objects. The records should be lexicographically 
+     * sorted based on their name.
+     */
+    public int compareTo(Record record) {
+      	return this.getTitle().compareTo(record.getTitle());
+    }	
 
 }

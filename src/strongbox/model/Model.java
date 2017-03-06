@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TreeSet;
 
 import org.jasypt.properties.EncryptableProperties;
@@ -68,8 +69,9 @@ public class Model implements iModel {
 			String password, String folder) {
 
 		for (Record record: records) {
-			if (title.trim().toLowerCase().equals(record.getTitle().trim().toLowerCase())) {
-				// Duplicate title
+			if (title.trim().toLowerCase().equals(record.getTitle().trim().toLowerCase())
+					&& folder.trim().toLowerCase().equals(record.getFolder().toLowerCase())) {
+				// Duplicate title within the same folder
 				throw new IllegalArgumentException();
 			}
 		}
@@ -77,7 +79,7 @@ public class Model implements iModel {
 		if (title.trim().length() == 0 || address.trim().length() == 0 ||
 				userName.trim().length() == 0 || password.trim().length() == 0
 				|| folder.trim().length() == 0) {
-			    // Empty field (the note-field is permitted to be empty)
+			    // Empty fields check (the note-field is permitted to be empty)
 			    throw new IllegalArgumentException();
 		}
 	}
@@ -111,60 +113,45 @@ public class Model implements iModel {
 	}
 
 	/**
-	 * Get a record based on it's title.
-	 * 
-	 * @param title  The record's title.
-	 * @return The corresponding record.
-	 */
-	@Override
-	public Record getRecord(String title) {
-		Record rec = null;
-		for (Record record : records) {
-			if (record.getTitle().equals(title)) {
-				rec = record;
-			}
-		}
-		return rec;
-	}
-
-	/**
-	 * Get a list of record titles containing (parts of) the keyword. To create 
-	 * the list searching is done not only by title but address, note and folder
-	 * attributes are also being searched.
+	 * Get a list of records whose title, address, note or folder attribute 
+	 * contains (parts of) the keyword searched with.
+	 * Sort this list before returning.
 	 * 
 	 * @param keyword  The keyword to search for.
-	 * @return A list of matching record titles.
+	 * @return A sorted list of matching records.
 	 */
 	@Override
-	public ArrayList<String> search(String keyword) {
-		ArrayList<String> titlesByKeyword = new ArrayList<>();
+	public ArrayList<Record> search(String keyword) {
+		ArrayList<Record> recordsByKeyword = new ArrayList<>();
 		keyword = keyword.trim().toLowerCase();
 		for (Record record : records) {
 			if (record.getTitle().trim().toLowerCase().contains(keyword)
 					|| record.getAddress().trim().toLowerCase().contains(keyword)
 					|| record.getNote().trim().toLowerCase().contains(keyword)
 					|| record.getFolder().trim().toLowerCase().contains(keyword)) {
-				titlesByKeyword.add(record.getTitle());
+				recordsByKeyword.add(record);
 			}
 		}
-		return titlesByKeyword;
+		Collections.sort(recordsByKeyword);
+		return recordsByKeyword;
 	}
 
 	/**
-	 * Returns a list of record titles associated with the specified folder 
-	 * name.
+	 * Make a list of records associated with the specified folder name,
+	 * sort the list and then return it.
 	 * @param folder  The folder's name.
-	 * @return The list of record titles.
+	 * @return The sorted list of records.
 	 */
 	@Override
-	public ArrayList<String> getTitlesByFolder(String folder) {
-		ArrayList<String> titlesByFolder = new ArrayList<>();
+	public ArrayList<Record> getRecordsByFolder(String folder) {
+		ArrayList<Record> recordsByFolder = new ArrayList<>();
 		for (Record record : records) {
 			if (record.getFolder().equals(folder)) {
-				titlesByFolder.add(record.getTitle());
+				recordsByFolder.add(record);
 			}
 		}
-		return titlesByFolder;
+		Collections.sort(recordsByFolder);
+		return recordsByFolder;
 	}
 
 	/**
