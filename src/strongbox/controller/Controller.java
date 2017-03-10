@@ -41,7 +41,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 07-02-2017
+ * @version 10-03-2017
  */
 public class Controller {
 
@@ -411,9 +411,14 @@ public class Controller {
     				}
 
     				if (edit) { // This is an existing record
+    					
+    					// validate this attempted edit
+    					model.validate(fieldValues[0], fieldValues[1],
+    						fieldValues[2], fieldValues[3], fieldValues[4]);
+    					
     					model.setRecordFields(record, fieldValues);
     				}
-    				else {  // New record
+    				else {  // This is a new record being created
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
     							fieldValues[2], fieldValues[3], fieldValues[4], 
     							fieldValues[5]);
@@ -437,10 +442,10 @@ public class Controller {
     				view.showMessageDialog("There was a problem with the data" +
     						" you entered. \n\n" + "Most likely cause of the " + 
     						"problem: \n\n-You entered a " +
-    						"title that is already in use (when making a new record)\n" + 
+    						"title that is already in use (within that same folder)\n" + 
     						"-You left one of the fields blank (you may opt to " +
     						"leave \"note\" blank)\n" +
-    						"-You used comma's", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
+    						"-You used comma's, which you shouldn't do", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
     			}
     		}
     	}
@@ -514,8 +519,6 @@ public class Controller {
     				String folder = record.getFolder();
     				if (view.showConfirmDialog("Are you sure you want to" + 
     						" delete the following record: " + title + " ?")) {
-    					//record = model.getRecord(title);
-    					//String folder = record.getFolder();
     					model.delete(record);
     					model.writeRecordsToFile();
     					view.getStatusLabel().setText(messages.getStatus(5));

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 31-01-2017
+ * @version 10-03-2017
  */
 public class GUI {
 	
@@ -40,10 +40,7 @@ public class GUI {
     		"Email or User Name", "Password", "Folder Name", "Note"};
     
     private JLabel statusLabel;
-    
-    private URL url;
-    private ImageIcon icon;
-    
+
     private JLabel strength;
     private JLabel pwStrength;
     
@@ -58,6 +55,12 @@ public class GUI {
      */
     public GUI()
     {
+    	/* first we check if this is running on a windows operating system
+    	   or not. If OS is a version of windows the constructor will run 
+    	   some "custom" code related to the positioning of components */
+    	boolean isWindows = System.getProperty("os.name").trim().toLowerCase().contains("windows");
+    	System.out.println("Is this a Windows OS? " + isWindows);
+    	
     	frame = new JFrame("StrongBox");
         frame.setLayout(new GridBagLayout());
         
@@ -335,7 +338,7 @@ public class GUI {
     }
     
     private void makeNewIcon(String png) {
-    	url = GUI.class.getResource(png);
+    	URL url = GUI.class.getResource(png);
     	icons.add(new ImageIcon(url));
     }
     

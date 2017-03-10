@@ -20,7 +20,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 /**
  * A model for managing the application and the handling of records.
  * 
- * @version 19-12-2016
+ * @version 10-03-2017
  */
 
 public class Model implements iModel {
@@ -65,7 +65,7 @@ public class Model implements iModel {
 	/**
 	 * Validate the arguments when a record is created or when editing is done.
 	 */
-	private void validate(String title, String address, String userName,
+	public void validate(String title, String address, String userName,
 			String password, String folder) {
 
 		for (Record record: records) {
@@ -162,7 +162,7 @@ public class Model implements iModel {
 	 */
 	@Override
 	public TreeSet<String> getFolders() {
-		TreeSet<String> folderNames = new TreeSet<>();
+		TreeSet<String> folderNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 		for (Record record : records) {
 			folderNames.add(record.getFolder());
 		}

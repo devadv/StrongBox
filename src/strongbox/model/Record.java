@@ -6,6 +6,8 @@ import strongbox.encryption.Encryption;
 
 /**
  * A representation of a record object.
+ * 
+ * @version 10-03-2017
  */
 
 public class Record implements Serializable, Comparable<Record> {
@@ -156,7 +158,7 @@ public class Record implements Serializable, Comparable<Record> {
      * sorted based on their name.
      */
     public int compareTo(Record record) {
-      	return this.getTitle().compareTo(record.getTitle());
+      	return this.getTitle().compareToIgnoreCase(record.getTitle());
     }	
 
 }
