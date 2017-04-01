@@ -140,6 +140,11 @@ public class GoogleDriveModel {
 		FileList files = service.files().list().setSpaces("appDataFolder")
 				.setFields("nextPageToken, files(id, name)").setPageSize(10)
 				.execute();
+		System.out.println(files.getFiles());
+		if(files.getFiles().isEmpty()){
+			System.out.println("file not exists");
+		}
+		// probeer met key value
 		for (File file : files.getFiles()) {
 			System.out.printf("Found file: %s (%s)\n", file.getName(),
 					file.getId());
@@ -147,6 +152,7 @@ public class GoogleDriveModel {
 				System.out.println("file exists");
 				fileId = file.getId();
 			}
+			
 		}
 		return fileId;
 	}
@@ -207,7 +213,7 @@ public class GoogleDriveModel {
 	}
 
 	public static void main(String[] args) {
-		Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
+		/*Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
 		GoogleDriveModel.downLoadData();
 		//System.out.println(GoogleDriveModel.getRecords());
 		Model model = new Model();
@@ -218,7 +224,15 @@ public class GoogleDriveModel {
 		model.writeRecordsToFile();
 		uploadData();
 		GoogleDriveModel.downLoadData();
-		System.out.println(GoogleDriveModel.getRecords());
+		System.out.println(GoogleDriveModel.getRecords());*/
+		GoogleDriveModel.createDataFile();
+		try {
+			System.out.println(GoogleDriveModel.getFileID());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
