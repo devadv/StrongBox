@@ -1,5 +1,6 @@
 package strongbox.encryption;
 
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 /**
  * Encryption class for encryption password and passphrase 
@@ -21,7 +22,7 @@ public class Encryption {
 	 */
 	
 	public static String encrypt(String text) {
-		StrongTextEncryptor sTextEncryptor = new StrongTextEncryptor();
+		BasicTextEncryptor sTextEncryptor = new BasicTextEncryptor();
 		sTextEncryptor.setPassword(password);
 		String encryptedText = sTextEncryptor.encrypt(text);
 		return encryptedText;
@@ -32,7 +33,7 @@ public class Encryption {
 	 * @return
 	 */
 	public static String decrypt(String encryptedtext){
-		StrongTextEncryptor sTextEncryptor = new StrongTextEncryptor();
+		BasicTextEncryptor sTextEncryptor = new BasicTextEncryptor();
 		sTextEncryptor.setPassword(password);
 		String decryptedText =sTextEncryptor.decrypt(encryptedtext);
 		return decryptedText;

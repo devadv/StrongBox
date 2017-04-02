@@ -11,8 +11,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
 import strongbox.encryption.Encryption;
+import strongbox.model.Model;
 import strongbox.model.Record;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -125,8 +128,8 @@ public class GoogleDriveObject {
 		boolean dataExist = false;
 
 		FileList files = service.files().list().setSpaces("appDataFolder")
-				.setFields("nextPageToken, files(id, name)").setPageSize(10)
-				.execute();
+				.setFields("nextPageToken, files(id, name)").execute();
+		System.out.println(files);
 		for (File file : files.getFiles()) {
 			file.getId();
 			if (file.getName().equals("data.csv")) {
@@ -196,15 +199,25 @@ public class GoogleDriveObject {
 		GoogleDriveObject gdo = new GoogleDriveObject();
 
 		try {
-
+			//gdo.createDataFile();
 			gdo.downloadData();
+			ArrayList<Record>  records = new ArrayList<Record>();
 			for (Record record : gdo.getRecords()) {
 				System.out.println(record.toString());
+				records.add(record);
 			}
+			
+			/*Model model = new Model();
+			model.writeRecordsToFile(records);
+			System.out.println(model.getRecordList().toString());
+			model.createNewRecord("Kaasboer", "kaas.nl", "boertje", "karnemelk12", "Food", "boerenkaas");
+			model.createNewRecord("Groenteboer", "groeten.nl", "boertje", "komkommer12", "Food", "bio");
+			model.writeRecordsToFile();*/
+			
 			//gdo.uploadData();
+			System.out.println(gdo.getFileID());
 			//gdo.deleteDataFile();
-			//System.out.println(gdo.hasDatafile());
-
+			System.out.println(gdo.hasDatafile());
 		} catch (IOException e) {
 
 			e.printStackTrace();

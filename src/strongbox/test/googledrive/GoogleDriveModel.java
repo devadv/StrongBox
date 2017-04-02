@@ -140,10 +140,7 @@ public class GoogleDriveModel {
 		FileList files = service.files().list().setSpaces("appDataFolder")
 				.setFields("nextPageToken, files(id, name)").setPageSize(10)
 				.execute();
-		System.out.println(files.getFiles());
-		if(files.getFiles().isEmpty()){
-			System.out.println("file not exists");
-		}
+		
 		// probeer met key value
 		for (File file : files.getFiles()) {
 			System.out.printf("Found file: %s (%s)\n", file.getName(),
@@ -155,6 +152,21 @@ public class GoogleDriveModel {
 			
 		}
 		return fileId;
+	}
+	public static boolean dataFileExists() throws IOException{
+		Drive service = getDriveService();
+	
+		FileList files = service.files().list().setSpaces("appDataFolder")
+				.setFields("nextPageToken, files(id, name)").execute();
+		System.out.println(files.getFiles());
+		if(files.getFiles().isEmpty()){
+			System.out.println("file not exists");
+			return false;
+		}else{
+			return true;
+		}
+		
+		
 	}
 
 	public static void downLoadData() {
@@ -225,9 +237,10 @@ public class GoogleDriveModel {
 		uploadData();
 		GoogleDriveModel.downLoadData();
 		System.out.println(GoogleDriveModel.getRecords());*/
-		GoogleDriveModel.createDataFile();
+		//GoogleDriveModel.createDataFile();
+		
 		try {
-			System.out.println(GoogleDriveModel.getFileID());
+			System.out.println(dataFileExists());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
