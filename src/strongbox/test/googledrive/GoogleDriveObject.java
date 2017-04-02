@@ -61,7 +61,7 @@ public class GoogleDriveObject {
 	// DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_FILE,
 			DriveScopes.DRIVE_APPDATA);
 
-	public ArrayList<Record> records = new ArrayList<>();
+	private ArrayList<Record> records = new ArrayList<>();
 	private Drive service;
 	private String fileId;
 
