@@ -174,7 +174,7 @@ public class GoogleDriveObject extends Model{
 		
 		File file = new File();
 		file.setTrashed(true);
-		java.io.File filePath = new java.io.File("res/data.csv");
+		java.io.File filePath = new java.io.File(path);
 		FileContent mediaContent = new FileContent("text/csv", filePath);
 		service.files()
 				.update(getFileID(), file, mediaContent).execute();
@@ -208,14 +208,14 @@ public class GoogleDriveObject extends Model{
 				
 			}
 			
-			gdo.writeRecordsToFile(gdo.getRecords());
+			/*gdo.writeRecordsToFile(gdo.getRecords());
 			
 			System.out.println(gdo.getRecordList().toString());
 			gdo.createNewRecord("Kaasboer", "kaas.nl", "boertje", "karnemelk12", "Food", "boerenkaas");
 			gdo.createNewRecord("Groenteboer", "groenten.nl", "boertje", "komkommer12", "Food", "bio");
 			gdo.writeRecordsToFile();
 			
-			//gdo.uploadData();
+			gdo.uploadData();*/
 			//System.out.println(gdo.getFileID());
 			//gdo.deleteDataFile();
 			//System.out.println(gdo.hasDatafile());

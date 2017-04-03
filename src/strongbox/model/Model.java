@@ -24,11 +24,17 @@ import strongbox.test.login.mvc.PropertiesModel;
  * A model for managing the application and the handling of records.
  */
 
+
+
 public class Model implements iModel {
 
 	private ArrayList<Record> records;
 	private String masterpassword;
 	private String passphrase;
+	
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	protected static String path = DATA_STORE_DIR + "/data.csv";
 
 	/**
 	 * Constructor for the model.
@@ -219,7 +225,7 @@ public class Model implements iModel {
 	 */
 	@Override
 	public void readRecordsFromFile() {
-		readFile("res/data.csv");
+		readFile(DATA_STORE_DIR +"/data.csv");
 	}
 
 	/**
@@ -275,7 +281,7 @@ public class Model implements iModel {
 		FileWriter writer = null;
 		
 			try {
-				writer = new FileWriter("res/data.csv");
+				writer = new FileWriter(DATA_STORE_DIR + "/data.csv");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
