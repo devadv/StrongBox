@@ -14,6 +14,7 @@ import java.util.HashSet;
 
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.password.StrongPasswordEncryptor;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 import strongbox.test.encryption.RecordBC;
@@ -338,7 +339,7 @@ public class Model implements iModel {
 
 		File file = new File("res/config.properties");
 
-		StrongTextEncryptor stringEncryptor = new StrongTextEncryptor();
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(getMasterpassword());
 		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
 

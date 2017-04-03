@@ -32,7 +32,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
-public class GoogleDriveObject {
+public class GoogleDriveObject extends Model{
 	/** Application name. */
 	private final String APPLICATION_NAME = "StrongBox";
 
@@ -90,7 +90,7 @@ public class GoogleDriveObject {
 	 */
 	public Credential authorize() throws IOException {
 		// Load client secrets.
-		InputStream in = Quickstart.class
+		InputStream in = GoogleDriveObject.class
 				.getResourceAsStream("/client_secret_strongbox.json");
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
 				JSON_FACTORY, new InputStreamReader(in));
@@ -192,6 +192,7 @@ public class GoogleDriveObject {
 		return records;
 
 	}
+	
 
 	public static void main(String[] args) {
 
@@ -201,23 +202,23 @@ public class GoogleDriveObject {
 		try {
 			//gdo.createDataFile();
 			gdo.downloadData();
-			ArrayList<Record>  records = new ArrayList<Record>();
+			//ArrayList<Record>  records = new ArrayList<Record>();
 			for (Record record : gdo.getRecords()) {
 				System.out.println(record.toString());
-				records.add(record);
+				
 			}
 			
-			/*Model model = new Model();
-			model.writeRecordsToFile(records);
-			System.out.println(model.getRecordList().toString());
-			model.createNewRecord("Kaasboer", "kaas.nl", "boertje", "karnemelk12", "Food", "boerenkaas");
-			model.createNewRecord("Groenteboer", "groeten.nl", "boertje", "komkommer12", "Food", "bio");
-			model.writeRecordsToFile();*/
+			gdo.writeRecordsToFile(gdo.getRecords());
+			
+			System.out.println(gdo.getRecordList().toString());
+			gdo.createNewRecord("Kaasboer", "kaas.nl", "boertje", "karnemelk12", "Food", "boerenkaas");
+			gdo.createNewRecord("Groenteboer", "groenten.nl", "boertje", "komkommer12", "Food", "bio");
+			gdo.writeRecordsToFile();
 			
 			//gdo.uploadData();
-			System.out.println(gdo.getFileID());
+			//System.out.println(gdo.getFileID());
 			//gdo.deleteDataFile();
-			System.out.println(gdo.hasDatafile());
+			//System.out.println(gdo.hasDatafile());
 		} catch (IOException e) {
 
 			e.printStackTrace();
