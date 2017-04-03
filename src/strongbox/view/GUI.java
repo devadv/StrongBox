@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 10-03-2017
+ * @version 03-04-2017
  */
 public class GUI {
 	
@@ -28,7 +28,7 @@ public class GUI {
     
     private ArrayList<ImageIcon> icons = new ArrayList<>();
     private ArrayList<JLabel> iconButtons = new ArrayList<>();
-    private ArrayList<JLabel> iconLabelTexts = new ArrayList<JLabel>();
+    private ArrayList<JLabel> iconLabelTexts = new ArrayList<>();
     
     private JTextField field;
     private ArrayList<JTextField> fields = new ArrayList<>();
@@ -55,11 +55,12 @@ public class GUI {
      */
     public GUI()
     {
-    	/* first we check if this is running on a windows operating system
-    	   or not. If OS is a version of windows the constructor will run 
-    	   some "custom" code related to the positioning of components */
+    	// Check if program is running on a Windows OS, if so "custom" code
+    	// for positioning of components is applied.
     	boolean isWindows = System.getProperty("os.name").trim().toLowerCase().contains("windows");
     	System.out.println("Is this a Windows OS? " + isWindows);
+    	// Nr. of black layers (JPanels actually)  6 on windows, 4 on other OS
+    	int nBlackLayers = (isWindows) ? 6 : 4;
     	
     	frame = new JFrame("StrongBox");
         frame.setLayout(new GridBagLayout());
@@ -68,7 +69,7 @@ public class GUI {
         
         JPanel mainBorderPanel = new JPanel(new BorderLayout());
         layeredPane.add(mainBorderPanel, 0);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < nBlackLayers; i++) {
         JPanel blackLayer = new JPanel();
         layeredPane.add(blackLayer, 1);
         blackLayers.add(blackLayer);
@@ -120,7 +121,12 @@ public class GUI {
         
         /// top panel
         JPanel flowContainer = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel buttonGrid = new JPanel(new GridLayout(1, 4, 36, 0));
+        int gap = 36; // horizontal gap of buttonGrid
+        if (isWindows) {
+        	flowContainer.add(Box.createHorizontalStrut(8));
+        	gap = 48;
+        }
+        JPanel buttonGrid = new JPanel(new GridLayout(1, 4, gap, 0));
         //buttonGrid.setBorder(new MatteBorder(2, 2, 2, 2, Color.GREEN));
 
         String[] iconLabelStrings = {"New", "Edit", "Delete", "Delete ALL"};
@@ -286,6 +292,20 @@ public class GUI {
         		boxPanelTop.getSize().height + 15,
         		15,
         		frame.getHeight() - boxPanelTop.getSize().height + 14);
+        
+        if (isWindows) {
+        blackLayers.get(4).setBounds(
+        		frame.getWidth() - boxPanel.getSize().width - 24,
+        		boxPanelTop.getSize().height + 15,
+        		3,
+        		frame.getHeight() - boxPanelTop.getSize().height - 62);
+        
+        blackLayers.get(5).setBounds(
+        		boxPanel.getSize().width + 2 * folderScrollPane.getSize().width + 39,
+        		boxPanelTop.getSize().height + 13 + boxPanel.getSize().height,
+        		2,
+        		frame.getHeight() - boxPanelTop.getSize().height + 15 - boxPanel.getSize().height);
+        }
         
         setBlackLayerProperties();
         

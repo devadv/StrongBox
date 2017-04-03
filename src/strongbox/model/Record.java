@@ -1,7 +1,5 @@
 package strongbox.model;
 
-import java.io.Serializable;
-
 import strongbox.encryption.Encryption;
 
 /**
@@ -10,7 +8,7 @@ import strongbox.encryption.Encryption;
  * @version 10-03-2017
  */
 
-public class Record implements Serializable, Comparable<Record> {
+public class Record implements Comparable<Record> {
 
 	private String title;
 	private String address;
@@ -19,8 +17,6 @@ public class Record implements Serializable, Comparable<Record> {
 	private String folder;
 	private String note;
 	private String encryptionpasswd;
-	// serialVersionUID is needed since Serializable interface is implemented.
-	private static final long serialVersionUID = 1983L;
 
 	/**
 	 * Constructor for objects of class Record
@@ -155,7 +151,7 @@ public class Record implements Serializable, Comparable<Record> {
     /**
      * Implementation of compareTo() method from interface Comparable to enable 
      * the sorting of Record objects. The records should be lexicographically 
-     * sorted based on their name.
+     * sorted (case insensitive) according to their title.
      */
     public int compareTo(Record record) {
       	return this.getTitle().compareToIgnoreCase(record.getTitle());
