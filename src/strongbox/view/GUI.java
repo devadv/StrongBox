@@ -46,7 +46,7 @@ public class GUI {
     
     private JLayeredPane layeredPane;
     
-    private ArrayList<JPanel> blackLayers = new ArrayList<>();
+    private ArrayList<JPanel> blackLayer = new ArrayList<>();
     
     //JSlider slider = new JSlider(1, 48, 16);
 
@@ -57,10 +57,10 @@ public class GUI {
     {
     	// Check if program is running on a Windows OS, if so "custom" code
     	// for positioning of components is applied.
-    	boolean isWindows = System.getProperty("os.name").trim().toLowerCase().contains("windows");
-    	System.out.println("Is this a Windows OS? " + isWindows);
-    	// Nr. of black layers (JPanels actually)  6 on windows, 4 on other OS
-    	int nBlackLayers = (isWindows) ? 6 : 4;
+    	boolean windows = System.getProperty("os.name").trim().toLowerCase().contains("windows");
+    	System.out.println("Is this a Windows OS? " + windows);
+    	// Nr. of black transparent JPanels.  6 on windows, 4 on other OS
+    	int nBlackPanels = (windows) ? 6 : 4;
     	
     	frame = new JFrame("StrongBox");
         frame.setLayout(new GridBagLayout());
@@ -69,10 +69,10 @@ public class GUI {
         
         JPanel mainBorderPanel = new JPanel(new BorderLayout());
         layeredPane.add(mainBorderPanel, 0);
-        for (int i = 0; i < nBlackLayers; i++) {
-        JPanel blackLayer = new JPanel();
-        layeredPane.add(blackLayer, 1);
-        blackLayers.add(blackLayer);
+        for (int i = 0; i < nBlackPanels; i++) {
+        JPanel blackPanel = new JPanel();
+        layeredPane.add(blackPanel, 1);
+        blackLayer.add(blackPanel);
         }
         
         frame.add(mainBorderPanel);
@@ -122,7 +122,7 @@ public class GUI {
         /// top panel
         JPanel flowContainer = new JPanel(new FlowLayout(FlowLayout.LEFT));
         int gap = 36; // horizontal gap of buttonGrid
-        if (isWindows) {
+        if (windows) {
         	flowContainer.add(Box.createHorizontalStrut(8));
         	gap = 48;
         }
@@ -269,38 +269,38 @@ public class GUI {
         recordScrollPane.setPreferredSize(new Dimension(224, boxPanel.getHeight()));   
         
         // Setting the bounds of the 4 black "layers" (which are JPanels)
-        blackLayers.get(0).setBounds(
+        blackLayer.get(0).setBounds(
         		0, 
         		0, 
         		frame.getWidth(), 
         		boxPanelTop.getSize().height + 15);
         
-        blackLayers.get(1).setBounds(
+        blackLayer.get(1).setBounds(
         		0, 
         		boxPanelTop.getSize().height + 15,
         		frame.getWidth() - boxPanel.getSize().width - 24, 
         		frame.getHeight() - boxPanelTop.getSize().height + 15);
         
-        blackLayers.get(2).setBounds(
+        blackLayer.get(2).setBounds(
         		frame.getWidth() - boxPanel.getSize().width - 24,
         		boxPanelTop.getSize().height + 13 + boxPanel.getSize().height,
         		boxPanel.getSize().width - 1,
         		frame.getHeight() - boxPanelTop.getSize().height + 15 - boxPanel.getSize().height);
         
-        blackLayers.get(3).setBounds(
+        blackLayer.get(3).setBounds(
         		boxPanel.getSize().width + 2 * folderScrollPane.getSize().width + 41,
         		boxPanelTop.getSize().height + 15,
         		15,
         		frame.getHeight() - boxPanelTop.getSize().height + 14);
         
-        if (isWindows) {
-        blackLayers.get(4).setBounds(
+        if (windows) {
+        blackLayer.get(4).setBounds(
         		frame.getWidth() - boxPanel.getSize().width - 24,
         		boxPanelTop.getSize().height + 15,
         		3,
         		frame.getHeight() - boxPanelTop.getSize().height - 62);
         
-        blackLayers.get(5).setBounds(
+        blackLayer.get(5).setBounds(
         		boxPanel.getSize().width + 2 * folderScrollPane.getSize().width + 39,
         		boxPanelTop.getSize().height + 13 + boxPanel.getSize().height,
         		2,
@@ -478,23 +478,23 @@ public class GUI {
     	return recordScrollPane;
     }
     
-    public ArrayList<JPanel> getBlackLayers() {
-    	return blackLayers;
+    public ArrayList<JPanel> getBlackLayer() {
+    	return blackLayer;
     }
     
     public void setBlackLayerProperties() {
 
-    	for (JPanel blackLayer: blackLayers) {
-    		blackLayer.setBackground(new Color(0, 0, 0, 112));
-    		blackLayer.setVisible(false);
+    	for (JPanel blackPanel: blackLayer) {
+    		blackPanel.setBackground(new Color(0, 0, 0, 112));
+    		blackPanel.setVisible(false);
     	}
 
     }
     
     public void repaintFrame() {
     	frame.repaint();
-    	for (JPanel blackLayer: blackLayers) {
-    		blackLayer.repaint();
+    	for (JPanel blackPanel: blackLayer) {
+    		blackPanel.repaint();
     	}
     }
 

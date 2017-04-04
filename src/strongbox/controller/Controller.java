@@ -297,8 +297,8 @@ public class Controller {
     		}
         	view.getSearchLabel().setIcon(view.getIcon(14));
     	}
-    	for (JPanel blackLayer: view.getBlackLayers()) {
-    		blackLayer.setVisible(b);
+    	for (JPanel blackPanel: view.getBlackLayer()) {
+    		blackPanel.setVisible(b);
     	}
     	view.repaintFrame();
     }
