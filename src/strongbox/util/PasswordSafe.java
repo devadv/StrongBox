@@ -8,7 +8,7 @@ import java.security.SecureRandom;
  * 1) Generate a random password with a specified length.
  * 2) A 'password meter' to give a score to a password indicating it's safety.
  * 
- * @version 18-01-2017
+ * @version 04-04-2017
  */
 public class PasswordSafe {
 	
@@ -20,6 +20,9 @@ public class PasswordSafe {
 	
 	public static String generatePassphrase(int length) {
 
+		if (length < 4) {
+			length = 4;
+		}
 		String passphrase = new String();
 		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String alphabet_lc = "abcdefghijklmnopqrstuvwxyz";
@@ -28,10 +31,50 @@ public class PasswordSafe {
 		String totalchars = alphabet + alphabet_lc + signs + numbers;
 		SecureRandom random = new SecureRandom();
 		int n = totalchars.length();
-		for (int i = 0; i < length; i++) {
-			passphrase = passphrase + totalchars.charAt(random.nextInt(n));
-		}
+		do {
+			passphrase = "";
+			for (int i = 0; i < length; i++) {
+				passphrase = passphrase + totalchars.charAt(random.nextInt(n));
+			}
+		} while (countCharacterTypes(passphrase) < 4);
 		return passphrase;
+	}
+	
+	/**
+	 * Count the number of different character types of a String. 
+	 * @param s       The string to get the number of types from.
+	 * @return types  The number of different character types.
+	 */
+	public static int countCharacterTypes(String s) {
+		int types = 0;
+        boolean lowerCaseLetterFound = false;
+        boolean upperCaseLetterFound = false;
+        boolean digitFound = false;
+        boolean symbolFound = false;
+        
+		for (int i = 0; i < s.length(); i++) {
+			char ch = s.charAt(i);
+			if (Character.isLetter(ch) && Character.isLowerCase(ch) &&
+				lowerCaseLetterFound == false) {
+				types++;
+				lowerCaseLetterFound = true;
+			}
+			if (Character.isLetter(ch) && Character.isUpperCase(ch) &&
+				upperCaseLetterFound == false) {
+				types++;
+				upperCaseLetterFound = true;
+			}
+			if (Character.isDigit(ch) && digitFound == false) {
+				types++;
+				digitFound = true;
+			}
+			if (s.trim().length() != 0 && Character.isLetter(ch) == false &&
+		        Character.isDigit(ch) == false && symbolFound == false) {
+				types++;
+				symbolFound = true;
+			}			
+		}
+		return types;
 	}
 	
 	/**
@@ -293,7 +336,7 @@ public class PasswordSafe {
         	score += pw.length() - 2;
         }
         
-        // FINALLY!
+        // AT LAST!
         return score;
     }
     
@@ -327,28 +370,28 @@ public class PasswordSafe {
         		
         for (int i = 0; i < 101; i++) {
 
-        	if (r < 250 && i <= 14) {
+        	if (i <= 14) {
         		if (i == pwScore) {
         			color = new Color(r, g, b);
         		}
         		r += 6;
         	}
 
-            if (r == 254 && i > 14 && g < 206) {
+            if (i > 14 && i <= 49) {
         		if (i == pwScore) {
         			color = new Color(r, g, b);
         		}
                 g += 6;
             }
 
-            if (g == 210 && i > 49  && r > 5) {
+            if (i > 49 && i <= 91) {
         		if (i == pwScore) {
         			color = new Color(r, g, b);
         		}
                 r -= 6;
             }
 
-            if (r == 2 && i > 91) {
+            if (i > 91) {
         		if (i == pwScore) {
         			color = new Color(r, g, b);
         		}

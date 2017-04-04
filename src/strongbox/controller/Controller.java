@@ -41,7 +41,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 10-03-2017
+ * @version 04-04-2017
  */
 public class Controller {
 
@@ -63,6 +63,8 @@ public class Controller {
 	
 	private Messages messages;
 	private ColorAnim anim;
+	
+	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
     
     /**
      * Constructor
@@ -112,7 +114,9 @@ public class Controller {
 		
         initSearchBox();
         
-        copyPasswordToClipboard();
+        copyAddress();
+        copyLoginName();
+        copyPassword();
 		
 		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
 		
@@ -128,44 +132,6 @@ public class Controller {
         view.getIconButton(5).repaint();
         view.getIconButton(6).repaint();
         view.getSearchLabel().repaint();
-
-	}
-	  
-	public void copyPasswordToClipboard(){
-		view.getFields().get(3).addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				super.mouseClicked(e);
-				if (SwingUtilities.isRightMouseButton(e) && record != null) {
-					String pw = view.getFields().get(3).getText();
-					System.out.println(pw);
-					view.getStatusLabel().setText(messages.getStatus(14));
-					anim.slowFade();
-					StringSelection stringSelection = new StringSelection(pw);
-					Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-					clpbrd.setContents(stringSelection, null);
-				}
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-				if (record != null) {
-					super.mouseEntered(e);
-					view.getStatusLabel().setText(messages.getStatus(13));
-					anim.slowFade();
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
-				super.mouseExited(e);
-				anim.fastFade();
-				}
-			}
-			
-		});
 
 	}
 
@@ -716,6 +682,126 @@ public class Controller {
     	}
     	);
     }
+    
+	/**
+	 * Copy the website's address to the system clipboard when the user
+	 * right-clicks on the address-field.
+	 */
+	public void copyAddress() {
+		view.getFields().get(1).addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				super.mouseClicked(e);
+				if (SwingUtilities.isRightMouseButton(e) && record != null) {
+					String address = view.getFields().get(1).getText();
+					System.out.println(address + " copied to clipboard!");
+					view.getStatusLabel().setText(messages.getStatus(14));
+					anim.slowFade();
+					StringSelection stringSelection = new StringSelection(address);
+					clpbrd.setContents(stringSelection, null);
+				}
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+				if (record != null) {
+					super.mouseEntered(e);
+					view.getStatusLabel().setText(messages.getStatus(20));
+					anim.slowFade();
+				}
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+				super.mouseExited(e);
+				anim.fastFade();
+				}
+			}
+			
+		});
+	}	
+	
+	/**
+	 * Copy the login name to the system clipboard when the user
+	 * right-clicks on the login name-field.
+	 */
+	public void copyLoginName() {
+		view.getFields().get(2).addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				super.mouseClicked(e);
+				if (SwingUtilities.isRightMouseButton(e) && record != null) {
+					String login = view.getFields().get(2).getText();
+					System.out.println(login + " copied to clipboard!");
+					view.getStatusLabel().setText(messages.getStatus(14));
+					anim.slowFade();
+					StringSelection stringSelection = new StringSelection(login);
+					clpbrd.setContents(stringSelection, null);
+				}
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+				if (record != null) {
+					super.mouseEntered(e);
+					view.getStatusLabel().setText(messages.getStatus(21));
+					anim.slowFade();
+				}
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+				super.mouseExited(e);
+				anim.fastFade();
+				}
+			}
+			
+		});
+	}
+	
+	/**
+	 * Copy the password to the system clipboard when the user
+	 * right-clicks on the password-field. 
+	 */
+	public void copyPassword() {
+		view.getFields().get(3).addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				super.mouseClicked(e);
+				if (SwingUtilities.isRightMouseButton(e) && record != null) {
+					String pw = view.getFields().get(3).getText();
+					System.out.println(pw + " copied to clipboard!");
+					view.getStatusLabel().setText(messages.getStatus(14));
+					anim.slowFade();
+					StringSelection stringSelection = new StringSelection(pw);
+					clpbrd.setContents(stringSelection, null);
+				}
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+				if (record != null) {
+					super.mouseEntered(e);
+					view.getStatusLabel().setText(messages.getStatus(13));
+					anim.slowFade();
+				}
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+				super.mouseExited(e);
+				anim.fastFade();
+				}
+			}
+			
+		});
+	}
     
     /**
      * Add a DocumentListener to the search field and implement the methods.

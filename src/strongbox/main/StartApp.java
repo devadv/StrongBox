@@ -31,7 +31,6 @@ public class StartApp {
 						// System.out.println("Login started ...");
 						lock.notify();
 					}
-
 				}
 			}
 		};

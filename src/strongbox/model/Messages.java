@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * This class provides the text for the status messages and dialog messages
  * which are served to the user to clarify and notify things.
- * @version 31-01-2017
+ * @version 04-04-2017
  */
 public class Messages {
 
@@ -37,6 +37,8 @@ public class Messages {
 		statusMessages.add("Search for records");                  // statusMessages (17)
 		statusMessages.add("Edit a record");                       // statusMessages (18)
 		statusMessages.add("Delete a record");                     // statusMessages (19)
+		statusMessages.add("Right-click to copy address");         // statusMessages (20)
+		statusMessages.add("Right-click to copy login");           // statusMessages (21)
 	}
 	
 	public String getStatus(int index) {
