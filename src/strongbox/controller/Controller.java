@@ -405,13 +405,7 @@ public class Controller {
     				view.getRecordView().setSelectedValue(fieldValues[0], true);
     			}
     			catch (IllegalArgumentException exc) {
-    				view.showMessageDialog("There was a problem with the data" +
-    						" you entered. \n\n" + "Most likely cause of the " + 
-    						"problem: \n\n-You entered a " +
-    						"title that is already in use (within that same folder)\n" + 
-    						"-You left one of the fields blank (you may opt to " +
-    						"leave \"note\" blank)\n" +
-    						"-You used comma's, which you shouldn't do", "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
+    				view.showMessageDialog(messages.getDialog(0), "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
     			}
     		}
     	}

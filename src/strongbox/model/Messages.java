@@ -9,10 +9,30 @@ import java.util.ArrayList;
  */
 public class Messages {
 
+	private ArrayList<String> dialogMessages = new ArrayList<>();
 	private ArrayList<String> statusMessages = new ArrayList<>();
 
 	public Messages() {
+		createDialogMsgList();
 		createStatusMsgList();
+	}
+	
+	public String getStatus(int index) {
+		return statusMessages.get(index);
+	}
+	
+	public String getDialog(int index) {
+		return dialogMessages.get(index);
+	}
+	
+	public void createDialogMsgList() {
+		dialogMessages.add("There was a problem with the data" +
+				" you entered. \n\n" + "Most likely cause of the " + 
+				"problem: \n\n-You entered a " +
+				"title that is already in use (within that same folder)\n" + 
+				"-You left one of the fields blank (you may opt to " +
+				"leave \"note\" blank)\n" +
+				"-You used comma's, which you shouldn't do");                  // dialogMessages (0)
 	}
 	
 	// Don't make the statusmessages longer than 33 characters!
@@ -40,8 +60,5 @@ public class Messages {
 		statusMessages.add("Right-click to copy address");         // statusMessages (20)
 		statusMessages.add("Right-click to copy login");           // statusMessages (21)
 	}
-	
-	public String getStatus(int index) {
-		return statusMessages.get(index);
-	}
+
 }
