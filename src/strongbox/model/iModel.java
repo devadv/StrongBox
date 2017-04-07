@@ -17,7 +17,7 @@ public interface iModel {
 	 * Create a new record and add it to the list.
 	 */
 	void createNewRecord(String title, String address, String userName,
-			String password, String folder, String note);
+			String password, String folder, String note, long timestamp);
 	
 	/**
 	 * Add a record to the list.

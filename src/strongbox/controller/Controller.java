@@ -387,7 +387,7 @@ public class Controller {
     				else {  // This is a new record being created
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
     							fieldValues[2], fieldValues[3], fieldValues[4], 
-    							fieldValues[5]);
+    							fieldValues[5], System.currentTimeMillis());
     				}
 
     				model.writeRecordsToFile();

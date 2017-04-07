@@ -5,7 +5,7 @@ import strongbox.encryption.Encryption;
 /**
  * A representation of a record object.
  * 
- * @version 10-03-2017
+ * @version 04-04-2017
  */
 
 public class Record implements Comparable<Record> {
@@ -17,12 +17,13 @@ public class Record implements Comparable<Record> {
 	private String folder;
 	private String note;
 	private String encryptionpasswd;
+	private long timestamp;
 
 	/**
 	 * Constructor for objects of class Record
 	 */
 	public Record(String title, String address, String userName,
-			String password, String folder, String note) {
+			String password, String folder, String note, long timestamp) {
 		
 		this.title = title;
 		this.address = address;
@@ -38,6 +39,7 @@ public class Record implements Comparable<Record> {
 			this.password = password;
 			setEncryptionpasswd(password);
 		}
+		this.timestamp = timestamp;
 	}
 
 	public String getEncryptionpasswd() {
@@ -137,6 +139,14 @@ public class Record implements Comparable<Record> {
 	 */
 	public void setNote(String note) {
 		this.note = note;
+	}
+	
+	/**
+	 * Return the timestamp of this record indicating when it was created. 
+	 * @return the record's timestamp.
+	 */
+	public long getTimestamp() {
+		return timestamp;
 	}
 	
 	/**

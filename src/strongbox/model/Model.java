@@ -46,10 +46,11 @@ public class Model implements iModel {
 	 */
 	@Override
 	public void createNewRecord(String title, String address, String userName,
-			String password, String folder, String note) {
+			String password, String folder, String note, long timestamp) {
 		
 		validate(title, address, userName, password, folder);
-		addRecord(new Record(title, address, userName, password, folder, note));
+		addRecord(new Record(title, address, userName, password, folder, note,
+				             timestamp));
 	}
 
 	/**
@@ -156,7 +157,7 @@ public class Model implements iModel {
 
 	/**
 	 * Get a set with the folder names (a TreeSet provides automatic sorting).
-	 * No duplicate names are added of course since it's a set.
+	 * Of course, no duplicate names are ever returned here since it's a set.
 	 * 
 	 * @return The set with folder names.
 	 */
@@ -279,14 +280,15 @@ public class Model implements iModel {
 					
 					// separator
 					String[] fields = line.split(cvsSplitBy);
-					String[] item = new String[6];
+					String[] item = new String[7];
 					for (int i = 0; i < fields.length; i++) {
 						item[i] = fields[i];
 					}
-					if (fields.length == 5) { // Note was left empty by user
+					if (fields.length == 6) { // Note was left empty by user
 						item[5] = "";
 					}
-					createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5]);
+					long timestamp = Long.parseUnsignedLong(item[6]);
+					createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5], timestamp);
 				}
 			}
 	
@@ -368,6 +370,8 @@ public class Model implements iModel {
 		s += record.getFolder();
 		s += separator;
 		s += record.getNote();
+		s += separator;
+		s += Long.toString(record.getTimestamp());
 		s += "\n";
 		try {
 			writer.append(s);
