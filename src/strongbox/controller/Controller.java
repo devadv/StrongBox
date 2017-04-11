@@ -383,6 +383,7 @@ public class Controller {
     						fieldValues[2], fieldValues[3], fieldValues[4]);
     					
     					model.setRecordFields(record, fieldValues);
+    					record.setTimestamp(System.currentTimeMillis());
     				}
     				else {  // This is a new record being created
     					model.createNewRecord(fieldValues[0], fieldValues[1], 

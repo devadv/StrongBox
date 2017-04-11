@@ -150,6 +150,14 @@ public class Record implements Comparable<Record> {
 	}
 	
 	/**
+	 * Set the record's timestamp. 
+	 * @param  timestamp  The value to set the record's timestamp to.
+	 */
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	/**
 	 * Return the title. Used as a string representation of the record in
 	 * the view's Record-JList.
 	 * @return String to display Record's title.
