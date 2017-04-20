@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/encryption/jasypt-1.9.2.jar">
 		<attributes>
@@ -11,7 +12,11 @@
 	<classpathentry kind="lib" path="lib/googledrive/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/googledrive/google-api-client-1.22.0.jar"/>
 	<classpathentry kind="lib" path="lib/googledrive/google-api-client-servlet-1.22.0.jar"/>
-	<classpathentry kind="lib" path="lib/googledrive/google-api-services-drive-v3-rev52-1.22.0.jar"/>
+	<classpathentry kind="lib" path="lib/googledrive/google-api-services-drive-v3-rev52-1.22.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/StrongBox/lib/googledrive/javadoc/google-api-services-drive-v3-rev52-1.22.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/googledrive/google-http-client-1.22.0.jar"/>
 	<classpathentry kind="lib" path="lib/googledrive/google-http-client-jackson2-1.22.0.jar"/>
 	<classpathentry kind="lib" path="lib/googledrive/google-http-client-jdo-1.22.0.jar"/>

@@ -31,7 +31,7 @@ public class Model implements iModel {
 
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
-	private static String path = DATA_STORE_DIR + "/data.csv";
+	protected static String path = DATA_STORE_DIR + "/data.csv";
 
 
 	/**
