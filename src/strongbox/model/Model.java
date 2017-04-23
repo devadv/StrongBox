@@ -11,7 +11,8 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.TreeSet;
+import java.util.Comparator;
+import java.util.HashSet;
 
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -20,7 +21,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 /**
  * A model for managing the application and the handling of records.
  * 
- * @version 10-03-2017
+ * @version 23-04-2017
  */
 
 public class Model implements iModel {
@@ -72,15 +73,26 @@ public class Model implements iModel {
 		for (Record record: records) {
 			if (title.trim().toLowerCase().equals(record.getTitle().trim().toLowerCase())
 					&& folder.trim().toLowerCase().equals(record.getFolder().toLowerCase())) {
-				// Duplicate title within the same folder
+				// Duplicate title also associated with same folder
 				throw new IllegalArgumentException();
 			}
 		}
-
+		emptyFieldsCheck(title, address, userName, password, folder);		
+	}
+	
+	/**
+	 * Validate the attempted creation or editing of a record by checking for 
+	 * empty fields and throwing an exception if empty fields are found.
+	 * 
+	 * @throws IllegalArgumentException if one of the arguments is an empty string
+	 */
+	public void emptyFieldsCheck(String title, String address, String userName,
+			String password, String folder) {
+		
 		if (title.trim().length() == 0 || address.trim().length() == 0 ||
 				userName.trim().length() == 0 || password.trim().length() == 0
 				|| folder.trim().length() == 0) {
-			    // Empty fields check (the note-field is permitted to be empty)
+			    // The note-field is permitted to be empty so it isn't checked
 			    throw new IllegalArgumentException();
 		}
 	}
@@ -156,17 +168,31 @@ public class Model implements iModel {
 	}
 
 	/**
-	 * Get a set with the folder names (a TreeSet provides automatic sorting).
-	 * Of course, no duplicate names are ever returned here since it's a set.
+	 * Get a list with all unique folder names found in the records-list.
+	 * Then sort this list ignoring case differences.
 	 * 
-	 * @return The set with folder names.
+	 * @return  The sorted list with unique folder names.
 	 */
 	@Override
-	public TreeSet<String> getFolders() {
-		TreeSet<String> folderNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+	public ArrayList<String> getFolders() {
+		
+		HashSet<String> folderNameSet = new HashSet<>();
 		for (Record record : records) {
-			folderNames.add(record.getFolder());
+			folderNameSet.add(record.getFolder());
 		}
+		
+		ArrayList<String> folderNames = new ArrayList<>();
+		for (String folderName : folderNameSet) {
+			folderNames.add(folderName);
+		}
+		
+		Collections.sort(folderNames, new Comparator<String>() {
+		    @Override
+		    public int compare(String s1, String s2) {              
+		        return s1.compareToIgnoreCase(s2);
+		    }
+		});
+		
 		return folderNames;
 	}
 
@@ -284,10 +310,20 @@ public class Model implements iModel {
 					for (int i = 0; i < fields.length; i++) {
 						item[i] = fields[i];
 					}
+					
 					if (fields.length == 6) { // Note was left empty by user
+						
+					 /* In this case the timestamp comes one entry 'too early'
+						in the 'item' array, taking the place of where note 
+						should be. So the timestamp-value is assigned to the 
+						next entry of the array and an empty string is assigned 
+						to the entry where the timestamp-value came from (the 
+						spot where note should be). */
+						item[6] = item[5];
 						item[5] = "";
 					}
-					long timestamp = Long.parseUnsignedLong(item[6]);
+					
+					long timestamp = Long.parseLong(item[6]);
 					createNewRecord(item[0], item[1], item[2], item[3], item[4], item[5], timestamp);
 				}
 			}

@@ -8,7 +8,6 @@ package strongbox.model;
  */
 
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 public interface iModel {
 		
@@ -61,11 +60,12 @@ public interface iModel {
 	ArrayList<Record> getRecordsByFolder(String folder);
 	
 	/**
-	 * Get a set with the folder names (it's a set so no duplicate names are
-	 * to be found here).
-	 * @return  The set with folder names.
+	 * Get a list with all unique folder names found in the records-list.
+	 * Then sort this list ignoring case differences.
+	 * 
+	 * @return  The sorted list with unique folder names.
 	 */
-	TreeSet<String> getFolders();
+	ArrayList<String> getFolders();
 	
     // --- Password settings ---
 	/**
@@ -89,8 +89,6 @@ public interface iModel {
 	/**
 	 * Save the records to a file.
 	 */
-	void writeRecordsToFile();
-
-	
+	void writeRecordsToFile();	
 	
 }

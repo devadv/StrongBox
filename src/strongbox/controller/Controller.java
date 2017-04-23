@@ -41,7 +41,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 04-04-2017
+ * @version 23-04-2017
  */
 public class Controller {
 
@@ -378,10 +378,25 @@ public class Controller {
 
     				if (edit) { // This is an existing record
     					
-    					// validate this attempted edit
-    					model.validate(fieldValues[0], fieldValues[1],
-    						fieldValues[2], fieldValues[3], fieldValues[4]);
+    					// validate this attempted edit    					
+    					if (fieldValues[0].toLowerCase().equals(record.getTitle().toLowerCase()) && 
+    						fieldValues[4].toLowerCase().equals(record.getFolder().toLowerCase()) && 
+    					    (  ! fieldValues[0].equals(record.getTitle())
+    					    || ! fieldValues[1].equals(record.getAddress())
+    						|| ! fieldValues[2].equals(record.getUserName())
+    						|| ! fieldValues[3].equals(record.getPassword())
+    						|| ! fieldValues[4].equals(record.getFolder())
+    						|| ! fieldValues[5].equals(record.getNote())
+    					    )) {
+    						model.emptyFieldsCheck(fieldValues[0], fieldValues[1], 
+    								fieldValues[2], fieldValues[3], fieldValues[4]);
+    					}
+    					else {
+    						model.validate(fieldValues[0], fieldValues[1],
+    								fieldValues[2], fieldValues[3], fieldValues[4]);	
+    					}
     					
+    					// validation passed! - assign the new values to the edited record
     					model.setRecordFields(record, fieldValues);
     					record.setTimestamp(System.currentTimeMillis());
     				}

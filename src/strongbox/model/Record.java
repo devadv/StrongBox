@@ -5,7 +5,7 @@ import strongbox.encryption.Encryption;
 /**
  * A representation of a record object.
  * 
- * @version 04-04-2017
+ * @version 23-04-2017
  */
 
 public class Record implements Comparable<Record> {
@@ -29,25 +29,9 @@ public class Record implements Comparable<Record> {
 		this.address = address;
 		this.userName = userName;
 		this.folder = folder;
-		this.note = note;
-		//if password is hashed decrypt and set encryptionpasswd
-		if (password.startsWith("hash_")) {
-			this.encryptionpasswd = password;
-			this.password = Encryption.decrypt(password.substring(5));
-		}
-		else {
-			this.password = password;
-			setEncryptionpasswd(password);
-		}
+		this.note = note;		
+		this.setPassword(password);
 		this.timestamp = timestamp;
-	}
-
-	public String getEncryptionpasswd() {
-		return encryptionpasswd;
-	}
-
-	public void setEncryptionpasswd(String passwd) {
-		this.encryptionpasswd = "hash_" + Encryption.encrypt(passwd);
 	}
 	
 	/**
@@ -100,7 +84,6 @@ public class Record implements Comparable<Record> {
 	 */
 	public String getPassword() {
 		return password;
-		
 	}
 
 	/**
@@ -108,7 +91,16 @@ public class Record implements Comparable<Record> {
 	 *            the password to set
 	 */
 	public void setPassword(String password) {
-		this.password = password;
+		
+		//if password is hashed decrypt and set encryptionpasswd
+		if (password.startsWith("hash_")) {
+			this.encryptionpasswd = password;
+			this.password = Encryption.decrypt(password.substring(5));
+		}
+		else {
+			this.password = password;
+			setEncryptionpasswd(password);
+		}		
 	}
 	
 	/**
@@ -155,6 +147,14 @@ public class Record implements Comparable<Record> {
 	 */
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	public String getEncryptionpasswd() {
+		return encryptionpasswd;
+	}
+
+	public void setEncryptionpasswd(String passwd) {
+		this.encryptionpasswd = "hash_" + Encryption.encrypt(passwd);
 	}
 	
 	/**
