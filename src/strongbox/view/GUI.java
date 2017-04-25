@@ -9,13 +9,15 @@ import strongbox.model.Record;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Write a description of class GUI here.
  * 
  * @version 03-04-2017
  */
-public class GUI {
+public class GUI  implements Observer{
 	
 	private JFrame frame;
 	
@@ -497,5 +499,11 @@ public class GUI {
     		blackPanel.repaint();
     	}
     }
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observable;
 import java.util.TreeSet;
 
 import org.jasypt.properties.EncryptableProperties;
@@ -23,7 +24,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
  * @version 10-03-2017
  */
 
-public class Model implements iModel {
+public class Model extends Observable implements iModel {
 
 	private ArrayList<Record> records;
 	private String masterpassword;
