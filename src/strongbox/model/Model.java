@@ -52,6 +52,8 @@ public class Model extends Observable implements iModel {
 		validate(title, address, userName, password, folder);
 		addRecord(new Record(title, address, userName, password, folder, note,
 				             timestamp));
+		setChanged();
+		notifyObservers();
 	}
 
 	/**

@@ -19,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -43,7 +45,7 @@ import org.jasypt.util.text.StrongTextEncryptor;
 /**
  * @version 04-04-2017
  */
-public class Controller {
+public class Controller implements Observer {
 
 	private Model model;
 	private GUI view;
@@ -73,6 +75,7 @@ public class Controller {
 		
 		this.model = model;
 		
+		
 		//use masterpasswd for encryption	
 		Encryption enMaster = new Encryption(model.getMasterpassword());
 		//read properties from config.properties
@@ -85,7 +88,7 @@ public class Controller {
 		model.readRecordsFromFile();
 				
 		view = new GUI();
-		
+		model.addObserver(this);
 		messages = new Messages();
 		
 		anim = new ColorAnim();
@@ -404,12 +407,14 @@ public class Controller {
     				view.getFolderView().setSelectedValue(fieldValues[4], true);
     				view.getRecordView().grabFocus();
     				view.getRecordView().setSelectedValue(fieldValues[0], true);
+    				
     			}
     			catch (IllegalArgumentException exc) {
     				view.showMessageDialog(messages.getDialog(0), "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
     			}
     		}
     	}
+    	
     	);
     }
     
@@ -963,5 +968,11 @@ public class Controller {
         	setStrengthLabel();
         }
     }
-    
+
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("View updated");
+		
+		view.getFolderView().grabFocus();
+	}
 }

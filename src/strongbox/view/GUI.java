@@ -17,7 +17,7 @@ import java.util.Observer;
  * 
  * @version 03-04-2017
  */
-public class GUI  implements Observer{
+public class GUI  {
 	
 	private JFrame frame;
 	
@@ -500,10 +500,6 @@ public class GUI  implements Observer{
     	}
     }
 
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }
