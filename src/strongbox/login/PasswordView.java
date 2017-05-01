@@ -5,6 +5,7 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,6 +27,7 @@ public abstract class PasswordView extends JPanel {
 	protected JLabel msg;
 	protected JLabel image;
 	protected ImageIcon pict_small;
+	protected JCheckBox googleCheck;
 	/**
 	 * Constructor sets up the default GUI
 	 */
@@ -63,6 +65,7 @@ public abstract class PasswordView extends JPanel {
 	public void addActionListenerButtonAndField(ActionListener listenForAction) {
 		button.addActionListener(listenForAction);
 		passwordField.addActionListener(listenForAction);
+		
 	}
 	/**
 	 * get the userpassword at login 
@@ -72,4 +75,14 @@ public abstract class PasswordView extends JPanel {
 		return passwordField.getText();
 	}
 
+	public boolean getGoogleCheck(){
+		
+		if(googleCheck.isSelected()){
+			return true;
+		}else {
+			return false;
+		}
+		
+		
+	}
 }

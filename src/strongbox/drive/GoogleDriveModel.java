@@ -32,13 +32,15 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
-public class GoogleDriveObject extends Model{
+public class GoogleDriveModel {
 	/** Application name. */
 	private final String APPLICATION_NAME = "StrongBox";
 
 	/** Directory to store user credentials for this application. */
-	private final java.io.File DATA_STORE_DIR = new java.io.File(
+	private final java.io.File DATA_STORE_DIR_DRIVE = new java.io.File(
 			System.getProperty("user.home"), ".credentials/drive_strongbox");
+
+	private String path = DATA_STORE_DIR_DRIVE + "/data.csv";
 
 	/** Global instance of the {@link FileDataStoreFactory}. */
 	private FileDataStoreFactory DATA_STORE_FACTORY;
@@ -65,11 +67,12 @@ public class GoogleDriveObject extends Model{
 	private Drive service;
 	private String fileId;
 
-	public GoogleDriveObject() {
+	public GoogleDriveModel() {
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-			DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
+			DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR_DRIVE);
 			service = getDriveService();
+
 			if (!hasDatafile()) {
 				createDataFile();
 			} else {
@@ -90,7 +93,7 @@ public class GoogleDriveObject extends Model{
 	 */
 	public Credential authorize() throws IOException {
 		// Load client secrets.
-		InputStream in = GoogleDriveObject.class
+		InputStream in = GoogleDriveModel.class
 				.getResourceAsStream("/client_secret_strongbox.json");
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
 				JSON_FACTORY, new InputStreamReader(in));
@@ -103,7 +106,7 @@ public class GoogleDriveObject extends Model{
 		Credential credential = new AuthorizationCodeInstalledApp(flow,
 				new LocalServerReceiver()).authorize("user");
 		System.out.println("Credentials saved to "
-				+ DATA_STORE_DIR.getAbsolutePath());
+				+ DATA_STORE_DIR_DRIVE.getAbsolutePath());
 		return credential;
 	}
 
@@ -170,60 +173,58 @@ public class GoogleDriveObject extends Model{
 	}
 
 	public void uploadData() throws IOException {
-
 		
 		File file = new File();
 		file.setTrashed(true);
 		java.io.File filePath = new java.io.File(path);
 		FileContent mediaContent = new FileContent("text/csv", filePath);
-		service.files()
-				.update(getFileID(), file, mediaContent).execute();
+		service.files().update(getFileID(), file, mediaContent).execute();
 		System.out.println("Data uploaded!");
 	}
 
 	public void deleteDataFile() throws IOException {
-		//TODO 
+		
 		service.files().delete(fileId).execute();
-
-
 	}
 
 	public ArrayList<Record> getRecords() {
 		return records;
 
 	}
-	
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 
 		Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
-		GoogleDriveObject gdo = new GoogleDriveObject();
+		GoogleDriveModel gdo = new GoogleDriveModel();
 
 		try {
-			//gdo.createDataFile();
+			// gdo.createDataFile();
 			gdo.downloadData();
-			//ArrayList<Record>  records = new ArrayList<Record>();
+			// ArrayList<Record> records = new ArrayList<Record>();
 			for (Record record : gdo.getRecords()) {
 				System.out.println(record.toString());
-				
+
 			}
+
 			
-			/*gdo.writeRecordsToFile(gdo.getRecords());
-			
-			System.out.println(gdo.getRecordList().toString());
-			gdo.createNewRecord("Kaasboer", "kaas.nl", "boertje", "karnemelk12", "Food", "boerenkaas");
-			gdo.createNewRecord("Groenteboer", "groenten.nl", "boertje", "komkommer12", "Food", "bio");
-			gdo.writeRecordsToFile();
-			
-			gdo.uploadData();*/
-			//System.out.println(gdo.getFileID());
-			//gdo.deleteDataFile();
-			//System.out.println(gdo.hasDatafile());
+			 * gdo.writeRecordsToFile(gdo.getRecords());
+			 * 
+			 * System.out.println(gdo.getRecordList().toString());
+			 * gdo.createNewRecord("Kaasboer", "kaas.nl", "boertje",
+			 * "karnemelk12", "Food", "boerenkaas");
+			 * gdo.createNewRecord("Groenteboer", "groenten.nl", "boertje",
+			 * "komkommer12", "Food", "bio"); gdo.writeRecordsToFile();
+			 * 
+			 * gdo.uploadData();
+			 
+			// System.out.println(gdo.getFileID());
+			// gdo.deleteDataFile();
+			// System.out.println(gdo.hasDatafile());
 		} catch (IOException e) {
 
 			e.printStackTrace();
 		}
 
-	}
+	}*/
 
 }

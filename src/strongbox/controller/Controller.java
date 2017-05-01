@@ -3,6 +3,7 @@ package strongbox.controller;
 import strongbox.model.Messages;
 import strongbox.model.Model;
 import strongbox.model.Record;
+import strongbox.drive.GoogleDriveModel;
 import strongbox.encryption.Encryption;
 import strongbox.util.ColorAnim;
 import strongbox.util.PasswordSafe;
@@ -65,6 +66,8 @@ public class Controller {
 	private ColorAnim anim;
 	
 	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+    private GoogleDriveModel googleDriveModel;
+    private boolean hasDriveConnection = true;
     
     /**
      * Constructor
@@ -72,6 +75,8 @@ public class Controller {
 	public Controller(Model model) {
 		
 		this.model = model;
+		setDriveConnection();
+		
 		
 		//use masterpasswd for encryption	
 		Encryption enMaster = new Encryption(model.getMasterpassword());
@@ -83,6 +88,7 @@ public class Controller {
 		Encryption enPassphrase = new Encryption(decryptedpassphrase);
 		
 		model.readRecordsFromFile();
+		
 				
 		view = new GUI();
 		
@@ -132,7 +138,7 @@ public class Controller {
         view.getIconButton(5).repaint();
         view.getIconButton(6).repaint();
         view.getSearchLabel().repaint();
-
+      
 	}
 
 	/**
@@ -850,7 +856,7 @@ public class Controller {
     		}
 
     		public void focusLost(FocusEvent e) {
-
+    			googleDriveModel = new GoogleDriveModel();
     		}
     	}
     	);
@@ -917,6 +923,22 @@ public class Controller {
 		}
 		return s;
     }
+    
+    /**
+     * sets boolean on /off
+     */
+    public void hasDriveConnection(){
+    	hasDriveConnection = !hasDriveConnection;   	
+    }
+    
+    /**
+     * creates a drive connection and if data file not exits it will be
+     * created.
+     */
+    
+    public void setDriveConnection(){
+    	googleDriveModel = new GoogleDriveModel();
+    }
     	
     /**
      * Use the characters contained in the PasswordField's Document to calculate 
@@ -963,5 +985,6 @@ public class Controller {
         	setStrengthLabel();
         }
     }
+    
     
 }

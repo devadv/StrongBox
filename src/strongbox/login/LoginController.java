@@ -16,6 +16,7 @@ public class LoginController {
 	private PasswordView view;
 	private boolean access = false;
 	private String password;
+	private boolean drive = false;
 
 	/**
 	 * Constructor sets the properties model
@@ -75,7 +76,7 @@ public class LoginController {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(" SetupMasterKey");
-					model.saveMasterKey(view.getPassword());
+					model.saveMasterKey(view.getPassword());	
 					view.frame.dispose();
 					login();
 				}
