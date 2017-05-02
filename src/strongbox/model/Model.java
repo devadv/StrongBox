@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Observable;
 
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -21,10 +22,10 @@ import org.jasypt.util.text.BasicTextEncryptor;
 /**
  * A model for managing the application and the handling of records.
  * 
- * @version 23-04-2017
+ * @version 02-05-2017
  */
 
-public class Model implements iModel {
+public class Model extends Observable implements iModel {
 
 	private ArrayList<Record> records;
 	private String masterpassword;
@@ -52,6 +53,16 @@ public class Model implements iModel {
 		validate(title, address, userName, password, folder);
 		addRecord(new Record(title, address, userName, password, folder, note,
 				             timestamp));
+		observableChanged();
+	}
+	
+	/**
+	 * Marks this Observable object as having been changed then 
+	 * notify all of it's observers that this happened.
+	 */
+	public void observableChanged() {
+		setChanged();
+		notifyObservers();
 	}
 
 	/**

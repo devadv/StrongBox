@@ -1,0 +1,52 @@
+
+- Introduction story when setting masterkey.
+
+- Descriptive story in 'info'
+
+- Move dialogmessages from controller class to messages class.
+
+- Remove println statements.
+
+- Create more general "Right-Click to Copy methods" with specified parameters for different fields.
+
+- Open the browser with correct web-address when right-clicking on address-field.  
+
+
+
+- Strong Iron Lockbox instead of cardboard box as picture for splashscreen.
+
+- Use somewhat larger frames for 'login' screens for windows.
+
+- Gradientpaint on frame (or on a panel 'sitting' on the frame).
+
+- Icons in JLists (folder and file icons).
+
+- Dialogs with custom layout and icons.
+
+- SwingUtilities.invokeLater Runnable to prevent AWT-EDT chrashes
+
+- Fix occasional glitchy graphics of magnifier icon on linux
+
+- Fix display of highlighted folders or records during edit mode
+
+- Searchbox occasionaly initializes incorrectly (at least on linux): Gray "Search" text is not present and searchbox is focused
+
+- When 'No Record Selected' shows in fields never show dots for password
+
+
+
+- Re-generate passphrase to encrypt masterkey with each time a button is clicked.
+
+- Add encoding/decoding mechanisms for config.properties and data.csv in source code.
+
+- Read and write config.properties and data.csv as binary files using serialization. 
+
+- Make a distribution with Excelsior Jet.
+
+
+
+- Google Drive Connection
+
+
+
+- Android App

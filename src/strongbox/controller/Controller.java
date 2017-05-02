@@ -20,6 +20,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,9 +44,9 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
- * @version 23-04-2017
+ * @version 02-05-2017
  */
-public class Controller {
+public class Controller implements Observer {
 
 	private Model model;
 	private GUI view;
@@ -85,6 +88,8 @@ public class Controller {
 		model.readRecordsFromFile();
 				
 		view = new GUI();
+		
+		model.addObserver(this);
 		
 		messages = new Messages();
 		
@@ -399,6 +404,7 @@ public class Controller {
     					// validation passed! - assign the new values to the edited record
     					model.setRecordFields(record, fieldValues);
     					record.setTimestamp(System.currentTimeMillis());
+    					model.observableChanged();
     				}
     				else {  // This is a new record being created
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
@@ -977,6 +983,16 @@ public class Controller {
         	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
         	setStrengthLabel();
         }
+    }
+    
+    /**
+     * Implementation of Observer's update method.
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+    	System.out.println("View updated");
+
+    	view.getFolderView().grabFocus();
     }
     
 }
