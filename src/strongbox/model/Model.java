@@ -52,6 +52,14 @@ public class Model extends Observable implements iModel {
 		validate(title, address, userName, password, folder);
 		addRecord(new Record(title, address, userName, password, folder, note,
 				             timestamp));
+		observableChanged();
+	}
+	
+	/**
+	 * Marks this Observable object as having been changed then 
+	 * notify all of it's observers that this happened.
+	 */
+	public void observableChanged() {
 		setChanged();
 		notifyObservers();
 	}

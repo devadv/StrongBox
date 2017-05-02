@@ -387,6 +387,7 @@ public class Controller implements Observer {
     					
     					model.setRecordFields(record, fieldValues);
     					record.setTimestamp(System.currentTimeMillis());
+    					model.observableChanged();
     				}
     				else {  // This is a new record being created
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
