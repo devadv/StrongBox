@@ -112,6 +112,9 @@ public class Model implements iModel {
 	public ArrayList<Record> getRecordList() {
 		return records;
 	}
+	public void setRecordList(ArrayList<Record> records){
+		this.records = records;
+	}
 
 	/**
 	 * Get a list of records whose title, address, note or folder attribute 

@@ -40,7 +40,10 @@ public class GoogleDriveModel {
 	private final java.io.File DATA_STORE_DIR_DRIVE = new java.io.File(
 			System.getProperty("user.home"), ".credentials/drive_strongbox");
 
-	private String path = DATA_STORE_DIR_DRIVE + "/data.csv";
+	//private String path = DATA_STORE_DIR_DRIVE + "/data.csv";
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	private static String path = DATA_STORE_DIR + "/data.csv";
 
 	/** Global instance of the {@link FileDataStoreFactory}. */
 	private FileDataStoreFactory DATA_STORE_FACTORY;

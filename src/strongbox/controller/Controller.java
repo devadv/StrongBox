@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -75,9 +76,11 @@ public class Controller {
 	public Controller(Model model) {
 		
 		this.model = model;
-		setDriveConnection();
+		if(hasDriveConnection){
+			setDriveConnection();
+		}
 		
-		
+				
 		//use masterpasswd for encryption	
 		Encryption enMaster = new Encryption(model.getMasterpassword());
 		//read properties from config.properties
@@ -86,8 +89,22 @@ public class Controller {
 		String decryptedpassphrase = Encryption.decrypt(model.getPassphrase());
 		//use passphrase
 		Encryption enPassphrase = new Encryption(decryptedpassphrase);
+		if(hasDriveConnection){
+			try {
+				//googleDriveModel.uploadData();
+				googleDriveModel.downloadData();
+			} catch (IOException e) {
+				System.out.println("error downloading data file");
+				e.printStackTrace();
+				
+			}
+			model.setRecordList(googleDriveModel.getRecords());
+		}else{
+			model.readRecordsFromFile();
+		}
 		
-		model.readRecordsFromFile();
+		
+		
 		
 				
 		view = new GUI();
@@ -398,7 +415,11 @@ public class Controller {
     				}
 
     				model.writeRecordsToFile();
-
+					try {
+						googleDriveModel.uploadData();
+					} catch (IOException e1) {
+						System.out.println("upload error");
+					}
     				view.getStatusLabel().setText(messages.getStatus(8));
     				anim.slowFade();
     				
@@ -984,7 +1005,6 @@ public class Controller {
         	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
         	setStrengthLabel();
         }
-    }
-    
-    
+	}
+
 }
