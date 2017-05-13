@@ -7,36 +7,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
-import org.jasypt.util.text.StrongTextEncryptor;
 
 import strongbox.util.PasswordSafe;
 
-
 public class PropertiesModel {
 
-	
-/** Directory to store user data for this application. */
-	
+	/** Directory to store user data for this application. */
+
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
 	private String pathMaster = DATA_STORE_DIR + "/config.properties";
-	private String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
 	private File file;
-	
-
-
-	public PropertiesModel() {
-		
-	}
 
 	/**
-	 * checks if masterkey exists
+	 * checks if masterkey exists and if not it will create config.properties
 	 * 
 	 * @return boolean keyExist
 	 */
@@ -45,28 +34,23 @@ public class PropertiesModel {
 		file = new File(pathMaster);
 		try {
 			Scanner input = new Scanner(file);
-			while(input.hasNextLine()){
+			while (input.hasNextLine()) {
 				input.nextLine();
 				String key = input.findInLine("masterkey");
-				if(key !=null){
+				if (key != null) {
 					if (key.equals("masterkey")) {
 						keyExist = true;
 					}
 				}
-				
 			}
-			
-			
-			
-		} catch (NoSuchElementException ex) {
-			keyExist = false;
+			input.close();
 		} catch (FileNotFoundException e) {
 			keyExist = false;
+			// if not found create file
 			try {
 				file.getParentFile().mkdirs();
 				file.createNewFile();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -74,12 +58,21 @@ public class PropertiesModel {
 	}
 
 	/**
-	 * writes masterkey to properties file
+	 * writes masterkey and setgoogledrive or passphrase to config.properties or
+	 * config.passphrase properties. file
 	 * 
-	 * @param userkey
-	 *            setup password
+	 * @param masterpasswd
+	 *            uses masterpasswd
+	 * @param path
+	 *            path of file
+	 * @param key
+	 *            set to masterkey or passphrase
+	 * @param drive
+	 *            set googledrive true or false
+	 * 
 	 */
-	public void saveProperties(String masterpasswd, String path , String key, boolean drive) {
+	public void saveProperties(String masterpasswd, String path, String key,
+			boolean drive) {
 
 		OutputStream output = null;
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
@@ -88,17 +81,18 @@ public class PropertiesModel {
 		try {
 			output = new FileOutputStream(path);
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
-			if(key =="masterkey"){
+			if (key == "masterkey") {
 				prop.setProperty(key, encryptPasswd);
-				if(drive){
+				if (drive) {
 					prop.setProperty("setgoogledrive", "on");
-				}else{
+				} else {
 					prop.setProperty("setgoogledrive", "off");
 				}
-				
-			}else{
-				prop.setProperty(key,stringEncryptor.encrypt(PasswordSafe.generatePassphrase((32))));
-			
+
+			} else {
+				prop.setProperty(key, stringEncryptor.encrypt(PasswordSafe
+						.generatePassphrase((32))));
+
 			}
 			prop.store(output, null);
 
@@ -118,7 +112,7 @@ public class PropertiesModel {
 
 	/**
 	 * read property from file config.properties and checks if user input is the
-	 * right key
+	 * right masterkey
 	 * 
 	 * @param userInputpasswd
 	 *            the user password
@@ -156,5 +150,4 @@ public class PropertiesModel {
 		return login;
 
 	}
-
 }
