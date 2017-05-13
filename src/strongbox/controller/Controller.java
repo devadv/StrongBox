@@ -424,7 +424,7 @@ public class Controller implements Observer {
     				initSearchBox();
     				view.getFolderView().setSelectedValue(fieldValues[4], true);
     				view.getRecordView().grabFocus();
-    				view.getRecordView().setSelectedValue(fieldValues[0], true);
+    				//view.getRecordView().setSelectedValue(fieldValues[0], true);
     			}
     			catch (IllegalArgumentException exc) {
     				view.showMessageDialog(messages.getDialog(0), "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
