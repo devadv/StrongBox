@@ -13,14 +13,14 @@ import java.awt.event.ActionListener;
 public class LoginController {
 
 	private PropertiesModel model;
-	private PasswordView view;
 	private boolean access = false;
 	private String password;
-	private boolean drive = false;
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
 	private String pathMaster = DATA_STORE_DIR + "/config.properties";
-	private String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
+	private String pathPassphrase = DATA_STORE_DIR
+			+ "/config.passphrase.properties";
+
 	/**
 	 * Constructor sets the properties model
 	 * 
@@ -52,13 +52,13 @@ public class LoginController {
 
 						System.out.println("Login correct!");
 						LoginController.this.password = view.getPassword();
-						//System.out.println(LoginController.this.password);
+						// System.out.println(LoginController.this.password);
 						view.frame.repaint();
 						view.frame.dispose();
 						LoginController.this.access = true;
-						
+
 					} else {
-						//set the title of the frame
+						// set the title of the frame
 						view.frame.setTitle("Wrong password try again!");
 						counter++;
 						if (counter > 2) {
@@ -79,15 +79,16 @@ public class LoginController {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(" SetupMasterKey");
-					String  masterpasswd = view.getPassword();
-					model.saveProperties(masterpasswd, pathMaster, "masterkey", view.getGoogleCheck());	
+					String masterpasswd = view.getPassword();
+					// create config.properties and set drive connection
+					model.saveProperties(masterpasswd, pathMaster, "masterkey",
+							view.getGoogleCheck());
 					System.out.println(" SetupPassphrase");
-					if(!view.getGoogleCheck()){
-						model.saveProperties(masterpasswd, pathPassphrase, "passphrase", false);
+					if (!view.getGoogleCheck()) {
+						// create passphrase properties
+						model.saveProperties(masterpasswd, pathPassphrase,
+								"passphrase", false);
 					}
-					
-					
-					
 					view.frame.dispose();
 					login();
 				}
@@ -95,15 +96,19 @@ public class LoginController {
 		}
 
 	}
+
 	/**
 	 * get the user password
+	 * 
 	 * @return
 	 */
 	public String getPassword() {
 		return password;
 	}
+
 	/**
-	 * true if the user has access 
+	 * true if the user has access
+	 * 
 	 * @return boolean access
 	 */
 	public boolean hasAccess() {

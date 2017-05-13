@@ -15,12 +15,19 @@ import org.jasypt.util.text.BasicTextEncryptor;
 
 import strongbox.util.PasswordSafe;
 
+/** 
+ * class for checking masterkey at login and set it up
+ * and saves passphrase properties
+ * @author ben
+ *
+ */
+
 public class PropertiesModel {
 
 	/** Directory to store user data for this application. */
-
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
+	/** path te store masterkey */
 	private String pathMaster = DATA_STORE_DIR + "/config.properties";
 	private File file;
 
