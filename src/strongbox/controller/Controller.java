@@ -68,7 +68,7 @@ public class Controller {
 	
 	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
     private GoogleDriveModel googleDriveModel;
-    private boolean hasDriveConnection = true;
+    private boolean hasDriveConnection = false;
     private final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
 	private final String pathData = DATA_STORE_DIR + "/data.csv";
@@ -79,6 +79,9 @@ public class Controller {
 	public Controller(Model model) {
 		
 		this.model = model;
+		if(model.isDrive()){
+			hasDriveConnection = true;
+		}
 		if(hasDriveConnection){
 			googleDriveModel = new GoogleDriveModel();
 		}
@@ -512,6 +515,11 @@ public class Controller {
     						" delete the following record: " + title + " ?")) {
     					model.delete(record);
     					model.writeRecordsToFile();
+    					try {
+    						googleDriveModel.uploadData(pathData);
+    					} catch (IOException e1) {
+    						System.out.println("upload error");
+    					}
     					view.getStatusLabel().setText(messages.getStatus(5));
     					anim.slowFade();
     					initializeFolderData();
@@ -565,6 +573,11 @@ public class Controller {
 						" delete ALL records?")) {
 					model.deleteAll();
 					model.writeRecordsToFile();
+					try {
+						googleDriveModel.uploadData(pathData);
+					} catch (IOException e1) {
+						System.out.println("upload error");
+					}
 					view.getStatusLabel().setText(messages.getStatus(6));
 					anim.slowFade();
 					initializeFolderData();
@@ -948,23 +961,7 @@ public class Controller {
 		return s;
     }
     
-    /**
-     * sets boolean on /off
-     */
-    public void hasDriveConnection(){
-    	hasDriveConnection = !hasDriveConnection;   	
-    }
-    
-    /**
-     * creates a drive connection and if data file not exits it will be
-     * created.
-     */
-    
-    public void setDriveConnection(){
-    	googleDriveModel = new GoogleDriveModel();
-    	
-    }
-    	
+      	
     /**
      * Use the characters contained in the PasswordField's Document to calculate 
      * the password safety score.

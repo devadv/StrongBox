@@ -80,9 +80,12 @@ public class LoginController {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(" SetupMasterKey");
 					String  masterpasswd = view.getPassword();
-					model.saveProperties(masterpasswd, pathMaster, "masterkey");	
+					model.saveProperties(masterpasswd, pathMaster, "masterkey", view.getGoogleCheck());	
 					System.out.println(" SetupPassphrase");
-					model.saveProperties(masterpasswd, pathPassphrase, "passphrase");
+					if(!view.getGoogleCheck()){
+						model.saveProperties(masterpasswd, pathPassphrase, "passphrase", false);
+					}
+					
 					
 					
 					view.frame.dispose();

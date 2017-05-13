@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 import java.util.TreeSet;
 
 import org.jasypt.properties.EncryptableProperties;
@@ -409,5 +410,32 @@ public class Model implements iModel {
 
 		setPassPhraseEncryption(prop.getProperty("passphrase"));
 
+	}
+	public boolean isDrive(){
+		
+		File file = new File(DATA_STORE_DIR +"/config.properties");
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
+		stringEncryptor.setPassword(getMasterpassword());
+		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
+		InputStream input;
+		try {
+			input = new FileInputStream(file);
+			prop.load(input);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(prop.getProperty("setgoogledrive").equals("on")){
+			return true;
+		}
+		else {
+			System.out.println("Drive Connection is set to off");
+			return false;
+		}
+		
+		
 	}
 }

@@ -45,11 +45,19 @@ public class PropertiesModel {
 		file = new File(pathMaster);
 		try {
 			Scanner input = new Scanner(file);
-			input.nextLine();
-			String key = input.findInLine("masterkey");
-			if (key.equals("masterkey")) {
-				keyExist = true;
+			while(input.hasNextLine()){
+				input.nextLine();
+				String key = input.findInLine("masterkey");
+				if(key !=null){
+					if (key.equals("masterkey")) {
+						keyExist = true;
+					}
+				}
+				
 			}
+			
+			
+			
 		} catch (NoSuchElementException ex) {
 			keyExist = false;
 		} catch (FileNotFoundException e) {
@@ -71,7 +79,7 @@ public class PropertiesModel {
 	 * @param userkey
 	 *            setup password
 	 */
-	public void saveProperties(String masterpasswd, String path , String key) {
+	public void saveProperties(String masterpasswd, String path , String key, boolean drive) {
 
 		OutputStream output = null;
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
@@ -82,6 +90,12 @@ public class PropertiesModel {
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
 			if(key =="masterkey"){
 				prop.setProperty(key, encryptPasswd);
+				if(drive){
+					prop.setProperty("setgoogledrive", "on");
+				}else{
+					prop.setProperty("setgoogledrive", "off");
+				}
+				
 			}else{
 				prop.setProperty(key,stringEncryptor.encrypt(PasswordSafe.generatePassphrase((32))));
 			
