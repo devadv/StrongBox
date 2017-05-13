@@ -69,7 +69,10 @@ public class Controller {
 	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
     private GoogleDriveModel googleDriveModel;
     private boolean hasDriveConnection = true;
-    
+    private final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	private final String pathData = DATA_STORE_DIR + "/data.csv";
+	private final String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
     /**
      * Constructor
      */
@@ -77,7 +80,7 @@ public class Controller {
 		
 		this.model = model;
 		if(hasDriveConnection){
-			setDriveConnection();
+			googleDriveModel = new GoogleDriveModel();
 		}
 		
 				
@@ -92,7 +95,7 @@ public class Controller {
 		if(hasDriveConnection){
 			try {
 				//googleDriveModel.uploadData();
-				googleDriveModel.downloadData();
+				googleDriveModel.downloadRecords();
 			} catch (IOException e) {
 				System.out.println("error downloading data file");
 				e.printStackTrace();
@@ -416,7 +419,7 @@ public class Controller {
 
     				model.writeRecordsToFile();
 					try {
-						googleDriveModel.uploadData();
+						googleDriveModel.uploadData(pathData);
 					} catch (IOException e1) {
 						System.out.println("upload error");
 					}
@@ -959,6 +962,7 @@ public class Controller {
     
     public void setDriveConnection(){
     	googleDriveModel = new GoogleDriveModel();
+    	
     }
     	
     /**

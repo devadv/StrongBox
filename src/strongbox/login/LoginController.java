@@ -17,7 +17,10 @@ public class LoginController {
 	private boolean access = false;
 	private String password;
 	private boolean drive = false;
-
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	private String pathMaster = DATA_STORE_DIR + "/config.properties";
+	private String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
 	/**
 	 * Constructor sets the properties model
 	 * 
@@ -76,7 +79,12 @@ public class LoginController {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(" SetupMasterKey");
-					model.saveMasterKey(view.getPassword());	
+					String  masterpasswd = view.getPassword();
+					model.saveProperties(masterpasswd, pathMaster, "masterkey");	
+					System.out.println(" SetupPassphrase");
+					model.saveProperties(masterpasswd, pathPassphrase, "passphrase");
+					
+					
 					view.frame.dispose();
 					login();
 				}

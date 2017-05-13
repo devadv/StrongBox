@@ -25,14 +25,14 @@ public class PropertiesModel {
 	
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
-	private String path = DATA_STORE_DIR + "/config.properties";
+	private String pathMaster = DATA_STORE_DIR + "/config.properties";
+	private String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
 	private File file;
-	private BasicTextEncryptor stringEncryptor;
-	private EncryptableProperties prop;
+	
+
 
 	public PropertiesModel() {
-		stringEncryptor = new BasicTextEncryptor();
-		prop = new EncryptableProperties(stringEncryptor);
+		
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class PropertiesModel {
 	 */
 	public boolean checkMasterKeyExists() {
 		boolean keyExist = false;
-		file = new File(path);
+		file = new File(pathMaster);
 		try {
 			Scanner input = new Scanner(file);
 			input.nextLine();
@@ -71,17 +71,21 @@ public class PropertiesModel {
 	 * @param userkey
 	 *            setup password
 	 */
-	public void saveMasterKey(String masterpasswd) {
+	public void saveProperties(String masterpasswd, String path , String key) {
 
 		OutputStream output = null;
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(masterpasswd);
-		
+		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
 		try {
 			output = new FileOutputStream(path);
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
-			prop.setProperty("masterkey", encryptPasswd);
-			prop.setProperty("passphrase",
-					stringEncryptor.encrypt(PasswordSafe.generatePassphrase((32))));
+			if(key =="masterkey"){
+				prop.setProperty(key, encryptPasswd);
+			}else{
+				prop.setProperty(key,stringEncryptor.encrypt(PasswordSafe.generatePassphrase((32))));
+			
+			}
 			prop.store(output, null);
 
 		} catch (IOException e) {
@@ -109,6 +113,7 @@ public class PropertiesModel {
 
 	public boolean checkLogin(String userInputpasswd) {
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
+		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
 		boolean login = false;
 		stringEncryptor.setPassword(userInputpasswd);
 		InputStream input;

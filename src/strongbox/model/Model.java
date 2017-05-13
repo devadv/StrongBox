@@ -385,11 +385,11 @@ public class Model implements iModel {
 
 	}
 
-	//XXX  write javadoc
+	//XXX  read properties file and setPassPhrase
 	 
 	public void readProperties() {
 
-		File file = new File(DATA_STORE_DIR +"/config.properties");
+		File file = new File(DATA_STORE_DIR +"/config.passphrase.properties");
 
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(getMasterpassword());
