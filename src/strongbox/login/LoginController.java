@@ -3,6 +3,9 @@ package strongbox.login;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import strongbox.login.view.LoginView;
+import strongbox.login.view.SetupView;
+
 /**
  * Controller for login
  * 
@@ -53,27 +56,27 @@ public class LoginController {
 						System.out.println("Login correct!");
 						LoginController.this.password = view.getPassword();
 						// System.out.println(LoginController.this.password);
-						view.frame.repaint();
-						view.frame.dispose();
+						view.getFrame().repaint();
+						view.getFrame().dispose();
 						LoginController.this.access = true;
 
 					} else {
 						// set the title of the frame
-						view.frame.setTitle("Wrong password try again!");
+						view.getFrame().setTitle("Wrong password try again!");
 						counter++;
 						if (counter > 2) {
-							view.frame.dispose();
+							view.getFrame().dispose();
 							System.exit(1);
 						}
 						System.out.println("Wrong password try again");
-						view.passwordField.setText("");
+						view.getPasswordField().setText("");
 					}
 
 				}
 			});
 
 		} else {
-			final SetupMasterKeyView view = new SetupMasterKeyView();
+			final SetupView view = new SetupView();
 			view.addActionListenerButtonAndField(new ActionListener() {
 
 				@Override
@@ -89,7 +92,7 @@ public class LoginController {
 						model.saveProperties(masterpasswd, pathPassphrase,
 								"passphrase", false);
 					}
-					view.frame.dispose();
+					view.getFrame().dispose();
 					login();
 				}
 			});

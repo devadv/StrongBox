@@ -65,7 +65,7 @@ public class PropertiesModel {
 	}
 
 	/**
-	 * writes masterkey and setgoogledrive or passphrase to config.properties or
+	 * creates masterkey and setgoogledrive or passphrase to config.properties or
 	 * config.passphrase properties. file
 	 * 
 	 * @param masterpasswd
