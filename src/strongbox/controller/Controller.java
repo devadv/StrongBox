@@ -43,8 +43,10 @@ import javax.swing.text.PlainDocument;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
- * @version 02-05-2017
+ * @version 18-08-2017
  */
 public class Controller implements Observer {
 
@@ -65,7 +67,7 @@ public class Controller implements Observer {
 	private char echoChar;
 	
 	private Messages messages;
-	private ColorAnim anim;
+	//private ColorAnim anim;
 	
 	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
     
@@ -93,8 +95,8 @@ public class Controller implements Observer {
 		
 		messages = new Messages();
 		
-		anim = new ColorAnim();
-		anim.setLabel(view.getStatusLabel());
+		//anim = new ColorAnim();
+		//anim.setLabel(view.getStatusLabel());
 		
 		initializeFolderData();
 		
@@ -103,41 +105,54 @@ public class Controller implements Observer {
 		
 		addFolderListener();
 		addRecordListener();
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				/*
+                throws InterruptedException,
+                       InvocationTargetException
+				 */
+				public void run() {
 
-		addSaveListener();
-		addCancelListener();
-		
-		addEyeButtonListener();
-		//TODO dice button show only in editmode
-		addDiceButtonListener();
+					addSaveListener();
+					addCancelListener();
 
-		addSearchListener();
-		
-		addSearchFocusListener();
-		
-		searchBoxMouseListener();
-		
-        initSearchBox();
-        
-        copyAddress();
-        copyLoginName();
-        copyPassword();
-		
-		echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
-		
-		((AbstractDocument) view.getFields().get(3).getDocument()).setDocumentFilter(new PasswordFilter(view.getFields().get(3)));
-		 
-		view.getFolderView().grabFocus();
-		
-		setEnableNormalMode(true);
-		setEnableEditMode(false);
-		
-		// Next few lines prevent buggy, glitchy, inexplicable visual errors 
-		// that SOMETIMES happen for these icons when they're rendered in linux
-        view.getIconButton(5).repaint();
-        view.getIconButton(6).repaint();
-        view.getSearchLabel().repaint();
+					addEyeButtonListener();
+					//TODO dice button show only in editmode
+					addDiceButtonListener();
 
+					addSearchListener();
+
+					addSearchFocusListener();
+
+					searchBoxMouseListener();
+
+					initSearchBox();
+
+					copyAddress();
+					copyLoginName();
+					copyPassword();
+
+					echoChar = ((JPasswordField)view.getFields().get(3)).getEchoChar();
+
+					((AbstractDocument) view.getFields().get(3).getDocument()).setDocumentFilter(new PasswordFilter(view.getFields().get(3)));
+
+					view.getFolderView().grabFocus();
+
+					setEnableNormalMode(true);
+					setEnableEditMode(false);
+
+					// Next few lines prevent buggy, glitchy, inexplicable visual errors 
+					// that SOMETIMES happen for these icons when they're rendered in linux
+					view.getIconButton(5).repaint();
+					view.getIconButton(6).repaint();
+					view.getSearchLabel().repaint();
+				}
+			});
+		}
+		catch (InterruptedException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -214,6 +229,7 @@ public class Controller implements Observer {
     	view.getFolderView().setEnabled(b);
     	view.getRecordView().setEnabled(b);
     	view.getSearchBox().setEnabled(b);
+    	view.getSearchBox().setEditable(b);
     	if (b) {
     		addRecordCreationListener();
     		addEditListener();
@@ -229,6 +245,11 @@ public class Controller implements Observer {
         		view.getIconButton(i).removeMouseListener(view.getIconButton(i).getMouseListeners()[0]);
         		view.getIconButton(i).setIcon(view.getIcon(i + 9));
         	}
+        	/*
+        	 * Topic for disabling possibility of text selection:
+        	 * 
+        	 * https://stackoverflow.com/questions/32515391/how-to-disable-text-selection-on-jtextarea-swing
+        	 */
     	}    	
     }  
 
@@ -282,7 +303,7 @@ public class Controller implements Observer {
     		public void mouseClicked(MouseEvent e) {
 
     			view.getStatusLabel().setText(messages.getStatus(7));
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     			
     			edit = false;
     			
@@ -296,11 +317,11 @@ public class Controller implements Observer {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(0));
     			view.getStatusLabel().setText(messages.getStatus(0));
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(0));
-    			anim.fastFade();
+    			view.getAnim().fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -321,7 +342,7 @@ public class Controller implements Observer {
     			if (view.getRecordView().getSelectedValue() != null) {
 
     				view.getStatusLabel().setText(messages.getStatus(7));
-    				anim.slowFade();
+    				view.getAnim().slowFade();
     				
     				edit = true;
     				
@@ -341,11 +362,11 @@ public class Controller implements Observer {
     			else {
     				view.getStatusLabel().setText(messages.getStatus(18));
     			}
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(1));
-    			anim.fastFade();
+    			view.getAnim().fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
 
@@ -415,7 +436,7 @@ public class Controller implements Observer {
     				model.writeRecordsToFile();
 
     				view.getStatusLabel().setText(messages.getStatus(8));
-    				anim.slowFade();
+    				view.getAnim().slowFade();
     				
         			setEnableNormalMode(true);
         			setEnableEditMode(false);
@@ -455,11 +476,11 @@ public class Controller implements Observer {
     					}
     					if (edit) {
     						view.getStatusLabel().setText(messages.getStatus(9));
-    						anim.slowFade();
+    						view.getAnim().slowFade();
     					}
     					else {
     						view.getStatusLabel().setText(messages.getStatus(10));
-    						anim.slowFade();
+    						view.getAnim().slowFade();
     					}
         				initSearchBox();
         				view.getRecordView().grabFocus();    					
@@ -504,7 +525,7 @@ public class Controller implements Observer {
     					model.delete(record);
     					model.writeRecordsToFile();
     					view.getStatusLabel().setText(messages.getStatus(5));
-    					anim.slowFade();
+    					view.getAnim().slowFade();
     					initializeFolderData();
     					recordData.clear();
     					for (Record record: model.getRecordsByFolder(folder)) {
@@ -527,12 +548,12 @@ public class Controller implements Observer {
     			else {
     				view.getStatusLabel().setText(messages.getStatus(19));
     			}
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(2));
     			if (! view.getStatusLabel().getText().equals(messages.getStatus(5))) {
-    				anim.fastFade();
+    				view.getAnim().fastFade();
     			}
     		}
     		public void mousePressed(MouseEvent e) {
@@ -557,19 +578,19 @@ public class Controller implements Observer {
 					model.deleteAll();
 					model.writeRecordsToFile();
 					view.getStatusLabel().setText(messages.getStatus(6));
-					anim.slowFade();
+					view.getAnim().slowFade();
 					initializeFolderData();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(3));
     			view.getStatusLabel().setText(messages.getStatus(3));
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(3));
     			if (! view.getStatusLabel().getText().equals(messages.getStatus(6))) {
-    				anim.fastFade();
+    				view.getAnim().fastFade();
     			}
     		}
     		public void mousePressed(MouseEvent e) {
@@ -597,7 +618,7 @@ public class Controller implements Observer {
 					view.getStrengthTextLabel().setVisible(true);
 					view.getStrengthScoreLabel().setVisible(true);
 					view.getStatusLabel().setText(messages.getStatus(12));
-					anim.slowFade();
+					view.getAnim().slowFade();
 				}
 				else {
 					pwField.setEchoChar(echoChar);
@@ -605,23 +626,23 @@ public class Controller implements Observer {
 					view.getStrengthTextLabel().setVisible(false);
 					view.getStrengthScoreLabel().setVisible(false);
 					view.getStatusLabel().setText(messages.getStatus(11));
-					anim.slowFade();
+					view.getAnim().slowFade();
 				}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(6));
     			if (!showPassword) {
     				view.getStatusLabel().setText(messages.getStatus(11));
-    				anim.slowFade();
+    				view.getAnim().slowFade();
     			}
     			else {
     				view.getStatusLabel().setText(messages.getStatus(12));
-    				anim.slowFade();
+    				view.getAnim().slowFade();
     			}
     		}
     		public void mouseExited(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(5));
-    			anim.fastFade();
+    			view.getAnim().fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(6));
@@ -648,16 +669,16 @@ public class Controller implements Observer {
     			view.getIconButton(6).setIcon(view.getIcon(8));
     			if (editMode) {
     				view.getStatusLabel().setText(messages.getStatus(15));
-    				anim.slowFade();
+    				view.getAnim().slowFade();
     			}
     			else {
     				view.getStatusLabel().setText(messages.getStatus(16));
-    				anim.slowFade();
+    				view.getAnim().slowFade();
     			}
     		}
     		public void mouseExited(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(7));
-    			anim.fastFade();
+    			view.getAnim().fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(8));
@@ -683,11 +704,11 @@ public class Controller implements Observer {
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(4));
     			view.getStatusLabel().setText(messages.getStatus(4));
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     		}
     		public void mouseExited(MouseEvent e) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(4));
-    			anim.fastFade();
+    			view.getAnim().fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
     			
@@ -714,7 +735,7 @@ public class Controller implements Observer {
 					String address = view.getFields().get(1).getText();
 					System.out.println(address + " copied to clipboard!");
 					view.getStatusLabel().setText(messages.getStatus(14));
-					anim.slowFade();
+					view.getAnim().slowFade();
 					StringSelection stringSelection = new StringSelection(address);
 					clpbrd.setContents(stringSelection, null);
 				}
@@ -725,14 +746,14 @@ public class Controller implements Observer {
 				if (record != null) {
 					super.mouseEntered(e);
 					view.getStatusLabel().setText(messages.getStatus(20));
-					anim.slowFade();
+					view.getAnim().slowFade();
 				}
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
 				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
 				super.mouseExited(e);
-				anim.fastFade();
+				view.getAnim().fastFade();
 				}
 			}
 			
@@ -754,7 +775,7 @@ public class Controller implements Observer {
 					String login = view.getFields().get(2).getText();
 					System.out.println(login + " copied to clipboard!");
 					view.getStatusLabel().setText(messages.getStatus(14));
-					anim.slowFade();
+					view.getAnim().slowFade();
 					StringSelection stringSelection = new StringSelection(login);
 					clpbrd.setContents(stringSelection, null);
 				}
@@ -765,14 +786,14 @@ public class Controller implements Observer {
 				if (record != null) {
 					super.mouseEntered(e);
 					view.getStatusLabel().setText(messages.getStatus(21));
-					anim.slowFade();
+					view.getAnim().slowFade();
 				}
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
 				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
 				super.mouseExited(e);
-				anim.fastFade();
+				view.getAnim().fastFade();
 				}
 			}
 			
@@ -794,7 +815,7 @@ public class Controller implements Observer {
 					String pw = view.getFields().get(3).getText();
 					System.out.println(pw + " copied to clipboard!");
 					view.getStatusLabel().setText(messages.getStatus(14));
-					anim.slowFade();
+					view.getAnim().slowFade();
 					StringSelection stringSelection = new StringSelection(pw);
 					clpbrd.setContents(stringSelection, null);
 				}
@@ -805,14 +826,14 @@ public class Controller implements Observer {
 				if (record != null) {
 					super.mouseEntered(e);
 					view.getStatusLabel().setText(messages.getStatus(13));
-					anim.slowFade();
+					view.getAnim().slowFade();
 				}
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
 				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
 				super.mouseExited(e);
-				anim.fastFade();
+				view.getAnim().fastFade();
 				}
 			}
 			
@@ -889,7 +910,7 @@ public class Controller implements Observer {
     			if (! editMode) {
     			super.mouseEntered(e);
     			view.getStatusLabel().setText(messages.getStatus(17));
-    			anim.slowFade();
+    			view.getAnim().slowFade();
     			}
     		}
     		@Override
@@ -897,7 +918,7 @@ public class Controller implements Observer {
 
     			if (! editMode) {
     			super.mouseExited(e);
-    			anim.fastFade();
+    			view.getAnim().fastFade();
     			}
     		}
     	}

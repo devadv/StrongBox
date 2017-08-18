@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import strongbox.model.Record;
+import strongbox.util.ColorAnim;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ import java.util.ArrayList;
 /**
  * Write a description of class GUI here.
  * 
- * @version 03-04-2017
+ * @version 18-08-2017
  */
-public class GUI {
+public class GUI implements Runnable {
 	
 	private JFrame frame;
 	
@@ -26,12 +27,12 @@ public class GUI {
 
     private ArrayList<JButton> buttons = new ArrayList<>();
     
-    private ArrayList<ImageIcon> icons = new ArrayList<>();
-    private ArrayList<JLabel> iconButtons = new ArrayList<>();
+    private ArrayList<ImageIcon> icons;
+    private ArrayList<JLabel> iconButtons;
     private ArrayList<JLabel> iconLabelTexts = new ArrayList<>();
     
     private JTextField field;
-    private ArrayList<JTextField> fields = new ArrayList<>();
+    private ArrayList<JTextField> fields;
 
     private JTextField searchBox;
     private JLabel searchLabel;
@@ -48,12 +49,28 @@ public class GUI {
     
     private ArrayList<JPanel> blackLayer = new ArrayList<>();
     
+    private ColorAnim anim;
+    
     //JSlider slider = new JSlider(1, 48, 16);
 
     /**
-     * Constructor for objects of class GUI
+     * Constructor. Makes sure the job of building and arranging the visual 
+     * components is executed by the event dispatch thread. 
      */
-    public GUI()
+    public GUI() {
+    	SwingUtilities.invokeLater(this);
+    }
+    
+    /**
+     * Build and arrange the visual components and draw them on the screen.
+     * This method automatically executes after instantiation of this class
+     * since interface Runnable is implemented.
+     * 
+     * http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html
+     * https://en.wikipedia.org/wiki/Event_dispatching_thread
+     * https://alvinalexander.com/java/jframe-example
+     */
+    public void run()
     {
     	// Check if program is running on a Windows OS, if so "custom" code
     	// for positioning of components is applied.
@@ -117,6 +134,8 @@ public class GUI {
         recordScrollPane.setPreferredSize(new Dimension(224, 420));
         recordPanel.add(recordScrollPane, BorderLayout.CENTER);
 
+        icons = new ArrayList<>();
+        iconButtons = new ArrayList<>();
         makeIconList();
         
         /// top panel
@@ -161,8 +180,10 @@ public class GUI {
         JPanel rightTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         //rightTopPanel.setBorder(new MatteBorder(2, 2, 2, 2, Color.BLUE));
         JPanel searchPanel = new JPanel(new FlowLayout());
+        System.out.println("searchPanel is Opaque? " + searchPanel.isOpaque());
         rightTopPanel.add(searchPanel);
         searchLabel = new JLabel(getIcon(14));
+        searchLabel.setOpaque(false);
         searchPanel.add(searchLabel);
         searchBox = new JTextField(12);
      	Font newFont = searchBox.getFont().deriveFont(Font.PLAIN, (float)12.9);
@@ -191,6 +212,7 @@ public class GUI {
         boxPanelTop.add(rightTopPanel);
         
         /// record details panel
+        fields = new ArrayList<>();
         JPanel boxPanel = new JPanel();
         boxPanel.setLayout(new BoxLayout(boxPanel, BoxLayout.Y_AXIS));
         boxPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
@@ -259,6 +281,9 @@ public class GUI {
         }
         detailPanel.add(boxPanel, BorderLayout.CENTER);
         
+        anim = new ColorAnim();
+		anim.setLabel(statusLabel);
+        
         enlargeFont(folderView);
         enlargeFont(recordView);
         	
@@ -312,6 +337,9 @@ public class GUI {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        System.out.println("Is the current running thread at end run-" + 
+        		"method the EventDispatchThread??? " + 
+        		SwingUtilities.isEventDispatchThread());
     }
     
     public JButton makeTextButton(String text) {
@@ -329,6 +357,7 @@ public class GUI {
     
     public JLabel makeIconButton(ImageIcon icon) {
     	JLabel label = new JLabel(icon);
+    	label.setOpaque(false);
     	iconButtons.add(label);
         return label;
     }
@@ -489,6 +518,10 @@ public class GUI {
     		blackPanel.setVisible(false);
     	}
 
+    }
+    
+    public ColorAnim getAnim() {
+    	return anim;
     }
     
     public void repaintFrame() {

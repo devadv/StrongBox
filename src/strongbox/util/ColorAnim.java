@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 /**
@@ -26,7 +27,7 @@ public class ColorAnim {
 	 * Constructor
 	 */
 	public ColorAnim() {
-
+		
         timerSlow = new Timer(69, null);
      	timerSlow.setInitialDelay(2800);
      	
@@ -52,15 +53,13 @@ public class ColorAnim {
     		public void actionPerformed(ActionEvent e) {
     			fadeToWhite();
     		}
-    	}
-    	);
+    	});
     	
     	timerFast.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			fadeToWhite();
     		}
-    	}
-    	);
+    	});
     }
     
     /**
