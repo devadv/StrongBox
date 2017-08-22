@@ -86,7 +86,11 @@ public class GoogleDriveModel {
 			} else {
 				System.out.println("Passphrase Exists: " + passphraseExistsLocal());
 				if(!passphraseExistsLocal()){
+					System.out.println(" Download passphrase");
+					System.out.println("propertiesID: " + propertiesFileId);
 					downloadPassphrase();
+				}else{
+					System.out.println("Passphrase exits local ");
 				}
 				System.out.println("Data GoogleDrive Connected");
 			}
@@ -186,18 +190,27 @@ public class GoogleDriveModel {
 		}
 		input.close();
 	}
-	public void downloadPassphrase() throws IOException {
+	public void downloadPassphrase() {
 
+		System.out.println("Start Outputstream");
 		OutputStream outputStream = new ByteArrayOutputStream();
-		service.files().get(propertiesFileId)
-				.executeMediaAndDownloadTo(outputStream);
+		try {
+			service.files().get(propertiesFileId)
+					.executeMediaAndDownloadTo(outputStream);
+		} catch (IOException e1) {
+			System.out.println("IO Exception");
+			e1.printStackTrace();
+		}
 		System.out.println(outputStream.toString());
 		String content = outputStream.toString();
 		java.io.File file = new java.io.File(pathPassphrase);
+		System.out.println("try download" + pathPassphrase);
+		
 		try (FileOutputStream fop = new FileOutputStream(file)) {
 
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
+				System.out.println("Create " + pathPassphrase);
 				file.createNewFile();
 			}
 
