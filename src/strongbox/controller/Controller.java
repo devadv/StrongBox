@@ -86,6 +86,7 @@ public class Controller {
 		}
 		if (hasDriveConnection) {
 			googleDriveModel = new GoogleDriveModel();
+			googleDriveModel.downloadPassphrase();
 		}
 
 		// use masterpasswd for encryption
