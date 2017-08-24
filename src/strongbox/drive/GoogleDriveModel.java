@@ -180,6 +180,10 @@ public class GoogleDriveModel {
 		service.files().get(getFileID())
 				.executeMediaAndDownloadTo(outputStream);
 		String cvsSplitBy = ",";
+		System.out.println("Outputstream : " + outputStream.toString());
+		if(outputStream.toString().isEmpty()){
+			System.out.println("Empty data.csv");
+		}
 		Scanner input = new Scanner(outputStream.toString());
 		while (input.hasNextLine()) {
 			// separator

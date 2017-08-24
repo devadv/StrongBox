@@ -91,7 +91,11 @@ public class LoginController {
 						// create passphrase properties
 						model.saveProperties(masterpasswd, pathPassphrase,
 								"passphrase", false);
+					}else{
+						model.saveProperties(masterpasswd, pathPassphrase,
+								"passphrase", true);
 					}
+										
 					view.getFrame().dispose();
 					login();
 				}
