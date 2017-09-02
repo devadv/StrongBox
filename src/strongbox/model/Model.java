@@ -11,9 +11,14 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Observable;
+
+//import java.util.Scanner;
+//import java.util.TreeSet;
+
 
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -22,7 +27,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 /**
  * A model for managing the application and the handling of records.
  * 
- * @version 02-05-2017
+ * @version 02-09-2017
  */
 
 public class Model extends Observable implements iModel {
@@ -84,7 +89,7 @@ public class Model extends Observable implements iModel {
 		for (Record record: records) {
 			if (title.trim().toLowerCase().equals(record.getTitle().trim().toLowerCase())
 					&& folder.trim().toLowerCase().equals(record.getFolder().toLowerCase())) {
-				// Duplicate title also associated with same folder
+				// Duplicate title within the same folder
 				throw new IllegalArgumentException();
 			}
 		}
@@ -135,6 +140,14 @@ public class Model extends Observable implements iModel {
 	public ArrayList<Record> getRecordList() {
 		return records;
 	}
+	
+	/**
+	 * 
+	 * @param records
+	 */
+	public void setRecordList(ArrayList<Record> records){
+		this.records = records;
+	}
 
 	/**
 	 * Get a list of records whose title, address, note or folder attribute 
@@ -180,7 +193,7 @@ public class Model extends Observable implements iModel {
 
 	/**
 	 * Get a list with all unique folder names found in the records-list.
-	 * Then sort this list ignoring case differences.
+	 * Then sort this list (ignoring case differences) and return it. 
 	 * 
 	 * @return  The sorted list with unique folder names.
 	 */
@@ -255,7 +268,6 @@ public class Model extends Observable implements iModel {
 	@Override
 	public void setMasterPassword(String password) {
 		this.masterpassword = password;
-
 	}
 	
 	/**
@@ -273,9 +285,7 @@ public class Model extends Observable implements iModel {
 	 */
 	@Override
 	public void setPassPhraseEncryption(String passphrase) {
-
 		this.passphrase = passphrase;
-
 	}
 	
 	/**
@@ -307,7 +317,7 @@ public class Model extends Observable implements iModel {
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
-		records = new ArrayList<>();
+		records = new ArrayList<>();  // NECESSARY ????????????????????????
 		File file = new File(path);
 		if(file.exists()){
 			try {
@@ -329,7 +339,7 @@ public class Model extends Observable implements iModel {
 						should be. So the timestamp-value is assigned to the 
 						next entry of the array and an empty string is assigned 
 						to the entry where the timestamp-value came from (the 
-						spot where note should be). */
+						spot where note should be after all). */
 						item[6] = item[5];
 						item[5] = "";
 					}
@@ -385,6 +395,7 @@ public class Model extends Observable implements iModel {
 			}
 		
 	}
+	
 	/**
 	 * Write the records to a file.
 	 * @param writer  FileWriter
@@ -396,14 +407,14 @@ public class Model extends Observable implements iModel {
 			writeLine(writer, record);
 		}
 	}
+	
 	/**
-	 * private method
-	 * Converts one object Record to one line of file and write it.
+	 * Converts a Record to one line of text and writes it to file.
 	 * @param writer  FileWriter
 	 * @param record  The record to write as a line.
 	 */
 	private static void writeLine(Writer writer, Record record) {
-		// Title Address UserName Password Info Folder Note
+		// Title Address UserName Password Info Folder Note Timestamp
 		String separator = ",";
 		String s = "";
 		s += record.getTitle();
@@ -429,11 +440,12 @@ public class Model extends Observable implements iModel {
 
 	}
 
-	//XXX  write javadoc
-	 
+	/**
+	 * Read properties file and setPassPhrase.
+	 */	 
 	public void readProperties() {
 
-		File file = new File(DATA_STORE_DIR +"/config.properties");
+		File file = new File(DATA_STORE_DIR +"/config.passphrase.properties");
 
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(getMasterpassword());
@@ -452,6 +464,32 @@ public class Model extends Observable implements iModel {
 		}
 
 		setPassPhraseEncryption(prop.getProperty("passphrase"));
-
 	}
+	
+	public boolean isDrive(){
+		
+		File file = new File(DATA_STORE_DIR +"/config.properties");
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
+		stringEncryptor.setPassword(getMasterpassword());
+		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
+		InputStream input;
+		try {
+			input = new FileInputStream(file);
+			prop.load(input);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(prop.getProperty("setgoogledrive").equals("on")){
+			return true;
+		}
+		else {
+			System.out.println("Drive Connection is set to off");
+			return false;
+		}	
+	}
+
 }

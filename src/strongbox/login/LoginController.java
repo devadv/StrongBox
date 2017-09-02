@@ -3,6 +3,9 @@ package strongbox.login;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import strongbox.login.view.LoginView;
+import strongbox.login.view.SetupView;
+
 /**
  * Controller for login
  * 
@@ -13,9 +16,13 @@ import java.awt.event.ActionListener;
 public class LoginController {
 
 	private PropertiesModel model;
-	private PasswordView view;
 	private boolean access = false;
 	private String password;
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	private String pathMaster = DATA_STORE_DIR + "/config.properties";
+	private String pathPassphrase = DATA_STORE_DIR
+			+ "/config.passphrase.properties";
 
 	/**
 	 * Constructor sets the properties model
@@ -48,50 +55,67 @@ public class LoginController {
 
 						System.out.println("Login correct!");
 						LoginController.this.password = view.getPassword();
-						//System.out.println(LoginController.this.password);
-						view.frame.repaint();
-						view.frame.dispose();
+						// System.out.println(LoginController.this.password);
+						view.getFrame().repaint();
+						view.getFrame().dispose();
 						LoginController.this.access = true;
-						
+
 					} else {
-						//set the title of the frame
-						view.frame.setTitle("Wrong password try again!");
+						// set the title of the frame
+						view.getFrame().setTitle("Wrong password try again!");
 						counter++;
 						if (counter > 2) {
-							view.frame.dispose();
+							view.getFrame().dispose();
 							System.exit(1);
 						}
 						System.out.println("Wrong password try again");
-						view.passwordField.setText("");
+						view.getPasswordField().setText("");
 					}
 
 				}
 			});
 
 		} else {
-			final SetupMasterKeyView view = new SetupMasterKeyView();
+			final SetupView view = new SetupView();
 			view.addActionListenerButtonAndField(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(" SetupMasterKey");
-					model.saveMasterKey(view.getPassword());
-					view.frame.dispose();
+					String masterpasswd = view.getPassword();
+					// create config.properties and set drive connection
+					model.saveProperties(masterpasswd, pathMaster, "masterkey",
+							view.getGoogleCheck());
+					System.out.println(" SetupPassphrase");
+					if (!view.getGoogleCheck()) {
+						// create passphrase properties
+						model.saveProperties(masterpasswd, pathPassphrase,
+								"passphrase", false);
+					}else{
+						model.saveProperties(masterpasswd, pathPassphrase,
+								"passphrase", true);
+					}
+										
+					view.getFrame().dispose();
 					login();
 				}
 			});
 		}
 
 	}
+
 	/**
 	 * get the user password
+	 * 
 	 * @return
 	 */
 	public String getPassword() {
 		return password;
 	}
+
 	/**
-	 * true if the user has access 
+	 * true if the user has access
+	 * 
 	 * @return boolean access
 	 */
 	public boolean hasAccess() {

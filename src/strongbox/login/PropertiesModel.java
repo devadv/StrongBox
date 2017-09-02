@@ -7,58 +7,57 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.properties.EncryptableProperties;
 import org.jasypt.util.text.BasicTextEncryptor;
-import org.jasypt.util.text.StrongTextEncryptor;
 
 import strongbox.util.PasswordSafe;
 
+/** 
+ * class for checking masterkey at login and set it up
+ * and saves passphrase properties
+ * @author ben
+ *
+ */
 
 public class PropertiesModel {
 
-	
-/** Directory to store user data for this application. */
-	
+	/** Directory to store user data for this application. */
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
-	private String path = DATA_STORE_DIR + "/config.properties";
+	/** path te store masterkey */
+	private String pathMaster = DATA_STORE_DIR + "/config.properties";
 	private File file;
-	private BasicTextEncryptor stringEncryptor;
-	private EncryptableProperties prop;
-
-	public PropertiesModel() {
-		stringEncryptor = new BasicTextEncryptor();
-		prop = new EncryptableProperties(stringEncryptor);
-	}
 
 	/**
-	 * checks if masterkey exists
+	 * checks if masterkey exists and if not it will create config.properties
 	 * 
 	 * @return boolean keyExist
 	 */
 	public boolean checkMasterKeyExists() {
 		boolean keyExist = false;
-		file = new File(path);
+		file = new File(pathMaster);
 		try {
 			Scanner input = new Scanner(file);
-			input.nextLine();
-			String key = input.findInLine("masterkey");
-			if (key.equals("masterkey")) {
-				keyExist = true;
+			while (input.hasNextLine()) {
+				input.nextLine();
+				String key = input.findInLine("masterkey");
+				if (key != null) {
+					if (key.equals("masterkey")) {
+						keyExist = true;
+					}
+				}
 			}
-		} catch (NoSuchElementException ex) {
-			keyExist = false;
+			input.close();
 		} catch (FileNotFoundException e) {
 			keyExist = false;
+			// if not found create file
 			try {
 				file.getParentFile().mkdirs();
 				file.createNewFile();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -66,22 +65,42 @@ public class PropertiesModel {
 	}
 
 	/**
-	 * writes masterkey to properties file
+	 * creates masterkey and setgoogledrive or passphrase to config.properties or
+	 * config.passphrase properties. file
 	 * 
-	 * @param userkey
-	 *            setup password
+	 * @param masterpasswd
+	 *            uses masterpasswd
+	 * @param path
+	 *            path of file
+	 * @param key
+	 *            set to masterkey or passphrase
+	 * @param drive
+	 *            set googledrive true or false
+	 * 
 	 */
-	public void saveMasterKey(String masterpasswd) {
+	public void saveProperties(String masterpasswd, String path, String key,
+			boolean drive) {
 
 		OutputStream output = null;
+		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
 		stringEncryptor.setPassword(masterpasswd);
-		
+		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
 		try {
 			output = new FileOutputStream(path);
 			String encryptPasswd = stringEncryptor.encrypt(masterpasswd);
-			prop.setProperty("masterkey", encryptPasswd);
-			prop.setProperty("passphrase",
-					stringEncryptor.encrypt(PasswordSafe.generatePassphrase((32))));
+			if (key == "masterkey") {
+				prop.setProperty(key, encryptPasswd);
+				if (drive) {
+					prop.setProperty("setgoogledrive", "on");
+				} else {
+					prop.setProperty("setgoogledrive", "off");
+				}
+
+			} else {
+				prop.setProperty(key, stringEncryptor.encrypt(PasswordSafe
+						.generatePassphrase((32))));
+
+			}
 			prop.store(output, null);
 
 		} catch (IOException e) {
@@ -100,7 +119,7 @@ public class PropertiesModel {
 
 	/**
 	 * read property from file config.properties and checks if user input is the
-	 * right key
+	 * right masterkey
 	 * 
 	 * @param userInputpasswd
 	 *            the user password
@@ -109,6 +128,7 @@ public class PropertiesModel {
 
 	public boolean checkLogin(String userInputpasswd) {
 		BasicTextEncryptor stringEncryptor = new BasicTextEncryptor();
+		EncryptableProperties prop = new EncryptableProperties(stringEncryptor);
 		boolean login = false;
 		stringEncryptor.setPassword(userInputpasswd);
 		InputStream input;
@@ -137,5 +157,4 @@ public class PropertiesModel {
 		return login;
 
 	}
-
 }

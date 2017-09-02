@@ -1,6 +1,7 @@
-package strongbox.login;
+package strongbox.login.view;
 
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 /**
@@ -10,9 +11,9 @@ import javax.swing.JLabel;
  *
  */
 
-public class SetupMasterKeyView extends PasswordView {
+public class SetupView extends PasswordView {
 
-	public SetupMasterKeyView() {
+	public SetupView() {
 		
 		
 		msg.setText("Welcome to StrongBox: ");
@@ -22,19 +23,25 @@ public class SetupMasterKeyView extends PasswordView {
 		msg.setBounds(20 , 230, 200,50);
 		submsg.setBounds(20,250,200,50);
 		labelPassword.setBounds(20, 300, 120, 20);
-		passwordField.setBounds(150, 300, 150, 20);
-		button.setBounds(189, 350, 80, 20);
+		getPasswordField().setBounds(150, 300, 150, 20);
+		JLabel drive = new JLabel("Set GoogleDrive Storage");
+		drive.setBounds(20, 330, 200, 20);
+		googleCheck = new JCheckBox();
+		googleCheck.setBounds(220, 330, 20, 20);
+		button.setBounds(189, 370, 80, 20);
 		
 		add(image);
 		add(msg);
 		add(submsg);
 		add(labelPassword);
-		add(passwordField);
+		add(getPasswordField());
+		add(drive);
+		add(googleCheck);
 		add(button);
 		
-		frame.setTitle("Make a StrongBox account");
+		getFrame().setTitle("Make a StrongBox account");
 		button.setText("Save");
-		frame.setSize(350, 400);
+		getFrame().setSize(350, 400);
 	}
 
 }

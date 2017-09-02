@@ -3,6 +3,7 @@ package strongbox.controller;
 import strongbox.model.Messages;
 import strongbox.model.Model;
 import strongbox.model.Record;
+import strongbox.drive.GoogleDriveModel;
 import strongbox.encryption.Encryption;
 import strongbox.util.ColorAnim;
 import strongbox.util.PasswordSafe;
@@ -19,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -46,72 +48,90 @@ import org.jasypt.util.text.StrongTextEncryptor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @version 18-08-2017
+ * @version 02-09-2017
  */
 public class Controller implements Observer {
 
 	private Model model;
 	private GUI view;
-	
-    private DefaultListModel<String> folderData = new DefaultListModel<>();
-    private DefaultListModel<Record> recordData = new DefaultListModel<>();
-	
+
+	private DefaultListModel<String> folderData = new DefaultListModel<>();
+	private DefaultListModel<Record> recordData = new DefaultListModel<>();
+
 	private Record record; // The currently selected or last selected record.
 
 	// editMode is true if the user is creating a new record or editing one.
 	private boolean editMode = false;
-	
+
 	private boolean edit = false; // True if we are editing an existing record.
-	
+
 	private boolean showPassword = false;
 	private char echoChar;
-	
+
 	private Messages messages;
-	//private ColorAnim anim;
-	
+
 	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-    
-    /**
-     * Constructor
-     */
+	private GoogleDriveModel googleDriveModel;
+	private boolean hasDriveConnection = false;
+	private final java.io.File DATA_STORE_DIR = new java.io.File(
+			System.getProperty("user.home"), ".strongbox");
+	private final String pathData = DATA_STORE_DIR + "/data.csv";
+	private final String pathPassphrase = DATA_STORE_DIR
+			+ "/config.passphrase.properties";
+
+	/**
+	 * Constructor
+	 */
 	public Controller(Model model) {
-		
+
 		this.model = model;
-		
-		//use masterpasswd for encryption	
+		if (model.isDrive()) {
+			hasDriveConnection = true;
+		}
+		if (hasDriveConnection) {
+			googleDriveModel = new GoogleDriveModel();
+			googleDriveModel.downloadPassphrase();
+		}
+
+		// use masterpasswd for encryption
 		Encryption enMaster = new Encryption(model.getMasterpassword());
-		//read properties from config.properties
+		// read properties from config.properties
 		model.readProperties();
-		//decrypt passphrase
+		// decrypt passphrase
 		String decryptedpassphrase = Encryption.decrypt(model.getPassphrase());
-		//use passphrase
+		// use passphrase
 		Encryption enPassphrase = new Encryption(decryptedpassphrase);
-		
-		model.readRecordsFromFile();
-				
+		if (hasDriveConnection) {
+			try {
+				// googleDriveModel.uploadData();
+				googleDriveModel.downloadRecords();
+			} catch (IOException e) {
+				System.out.println("error downloading data file");
+				e.printStackTrace();
+
+			}
+			model.setRecordList(googleDriveModel.getRecords());
+		} else {
+			model.readRecordsFromFile();
+		}
+
 		view = new GUI();
 		
 		model.addObserver(this);
 		
 		messages = new Messages();
-		
-		//anim = new ColorAnim();
-		//anim.setLabel(view.getStatusLabel());
-		
+
 		initializeFolderData();
-		
-    	view.getFolderView().setModel(folderData);
-    	view.getRecordView().setModel(recordData);
-		
+
+		view.getFolderView().setModel(folderData);
+		view.getRecordView().setModel(recordData);
+
 		addFolderListener();
 		addRecordListener();
 		
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
-				/*
-                throws InterruptedException,
-                       InvocationTargetException
-				 */
+
 				public void run() {
 
 					addSaveListener();
@@ -122,11 +142,8 @@ public class Controller implements Observer {
 					addDiceButtonListener();
 
 					addSearchListener();
-
 					addSearchFocusListener();
-
 					searchBoxMouseListener();
-
 					initSearchBox();
 
 					copyAddress();
@@ -161,35 +178,37 @@ public class Controller implements Observer {
 	 */
 	public void initializeFolderData() {
 		folderData.clear();
-		for (String folderName: model.getFolders()) {
+		for (String folderName : model.getFolders()) {
 			folderData.addElement(folderName);
 		}
 	}
-	
+
 	/**
 	 * Add the ListSelectionListener to the folderView and define it's behavior.
 	 */
-    public void addFolderListener() {
+	public void addFolderListener() {
 
-        view.getFolderView().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    if (!e.getValueIsAdjusting()) {
-                    	initSearchBox();
-                    	recordData.clear();
-                    	for (Record record: model.getRecordsByFolder(view.getFolderView().getSelectedValue())) {
-                    		recordData.addElement(record);
-                    		view.getRecordView().setSelectedValue(recordData.firstElement(), true);                    		
-                        }
-                    }
-                }
-        }
-        );
-    }
-    
+		view.getFolderView().getSelectionModel()
+				.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent e) {
+						if (!e.getValueIsAdjusting()) {
+							initSearchBox();
+							recordData.clear();
+							for (Record record : model.getRecordsByFolder(view
+									.getFolderView().getSelectedValue())) {
+								recordData.addElement(record);
+								view.getRecordView().setSelectedValue(
+										recordData.firstElement(), true);
+							}
+						}
+					}
+				});
+	}
+
 	/**
 	 * Add the ListSelectionListener to the recordView and define it's behavior.
 	 */
-    public void addRecordListener() {
+	public void addRecordListener() {
 
     	view.getRecordView().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
     		public void valueChanged(ListSelectionEvent e) {
@@ -212,8 +231,7 @@ public class Controller implements Observer {
     				}
     			}
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -251,8 +269,8 @@ public class Controller implements Observer {
         	 * https://stackoverflow.com/questions/32515391/how-to-disable-text-selection-on-jtextarea-swing
         	 */
     	}    	
-    }  
-
+    }
+    
     /**
      * Enable or disable the "dice" button, the save and cancel buttons,
      * the textfields and toggle the text color under the buttons.
@@ -260,14 +278,14 @@ public class Controller implements Observer {
      *           Also toggle icons and colors accordingly.
      */
     public void setEnableEditMode(boolean b) {
-    	
+
     	editMode = b;
-    	
+
     	view.getButton(0).setVisible(b);
     	view.getButton(0).setEnabled(b);
     	view.getButton(1).setVisible(b);
     	view.getButton(1).setEnabled(b);
-    	
+
     	for (JTextField field: view.getFields()) {
     		field.setEditable(b);   
     		view.setDarkGrayColor(field);
@@ -279,22 +297,22 @@ public class Controller implements Observer {
     			view.setDullGrayColor(view.getIconLabelTexts().get(i));
     		}
     		view.getFields().get(0).grabFocus();
-        	view.getSearchLabel().setIcon(view.getIcon(15));
+    		view.getSearchLabel().setIcon(view.getIcon(15));
     	}
     	else {
-        	view.getIconButton(6).removeMouseListener(view.getIconButton(6).getMouseListeners()[0]);
-        	//view.getIconButton(6).setIcon(view.getIcon(8));
+    		view.getIconButton(6).removeMouseListener(view.getIconButton(6).getMouseListeners()[0]);
+    		//view.getIconButton(6).setIcon(view.getIcon(8));
     		for (int i = 0; i < view.getIconLabelTexts().size(); i++) {
     			view.setDarkGrayColor(view.getIconLabelTexts().get(i));
     		}
-        	view.getSearchLabel().setIcon(view.getIcon(14));
+    		view.getSearchLabel().setIcon(view.getIcon(14));
     	}
     	for (JPanel blackPanel: view.getBlackLayer()) {
     		blackPanel.setVisible(b);
     	}
     	view.repaintFrame();
     }
-
+    
     /**
      * Add an ActionListener to the 'Create new record' button.
      */
@@ -304,15 +322,15 @@ public class Controller implements Observer {
 
     			view.getStatusLabel().setText(messages.getStatus(7));
     			view.getAnim().slowFade();
-    			
+
     			edit = false;
-    			
+
     			setEnableNormalMode(false);
     			setEnableEditMode(true);
-    			
+
     			for (JTextField field: view.getFields()) {   
     				field.setText("");
-       			}
+    			}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(0));
@@ -329,8 +347,7 @@ public class Controller implements Observer {
     		public void mouseReleased(MouseEvent e) {
 
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -343,16 +360,16 @@ public class Controller implements Observer {
 
     				view.getStatusLabel().setText(messages.getStatus(7));
     				view.getAnim().slowFade();
-    				
+
     				edit = true;
-    				
-        			setEnableNormalMode(false);
-        			setEnableEditMode(true);
+
+    				setEnableNormalMode(false);
+    				setEnableEditMode(true);
 
     			}
-        		else {
-        			view.showMessageDialog("No record selected");
-        		}
+    			else {
+    				view.showMessageDialog("No record selected");
+    			}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(1));
@@ -374,8 +391,7 @@ public class Controller implements Observer {
     		public void mouseReleased(MouseEvent e) {
 
     		}
-    	}
-        );
+    	});
     }
     
     /**
@@ -396,24 +412,24 @@ public class Controller implements Observer {
     					commaFound = true;
     				}
     			}
-    			
+
     			try {
     				if (commaFound) {
     					throw new IllegalArgumentException();
     				}
 
     				if (edit) { // This is an existing record
-    					
+
     					// validate this attempted edit    					
     					if (fieldValues[0].toLowerCase().equals(record.getTitle().toLowerCase()) && 
-    						fieldValues[4].toLowerCase().equals(record.getFolder().toLowerCase()) && 
-    					    (  ! fieldValues[0].equals(record.getTitle())
-    					    || ! fieldValues[1].equals(record.getAddress())
-    						|| ! fieldValues[2].equals(record.getUserName())
-    						|| ! fieldValues[3].equals(record.getPassword())
-    						|| ! fieldValues[4].equals(record.getFolder())
-    						|| ! fieldValues[5].equals(record.getNote())
-    					    )) {
+    							fieldValues[4].toLowerCase().equals(record.getFolder().toLowerCase()) && 
+    							(  ! fieldValues[0].equals(record.getTitle())
+    									|| ! fieldValues[1].equals(record.getAddress())
+    									|| ! fieldValues[2].equals(record.getUserName())
+    									|| ! fieldValues[3].equals(record.getPassword())
+    									|| ! fieldValues[4].equals(record.getFolder())
+    									|| ! fieldValues[5].equals(record.getNote())
+    									)) {
     						model.emptyFieldsCheck(fieldValues[0], fieldValues[1], 
     								fieldValues[2], fieldValues[3], fieldValues[4]);
     					}
@@ -421,7 +437,7 @@ public class Controller implements Observer {
     						model.validate(fieldValues[0], fieldValues[1],
     								fieldValues[2], fieldValues[3], fieldValues[4]);	
     					}
-    					
+
     					// validation passed! - assign the new values to the edited record
     					model.setRecordFields(record, fieldValues);
     					record.setTimestamp(System.currentTimeMillis());
@@ -434,12 +450,18 @@ public class Controller implements Observer {
     				}
 
     				model.writeRecordsToFile();
-
+    				if (hasDriveConnection) {
+    					try {
+    						googleDriveModel.uploadData(pathData);
+    					} catch (IOException e1) {
+    						System.out.println("upload error");
+    					}
+    				}
     				view.getStatusLabel().setText(messages.getStatus(8));
     				view.getAnim().slowFade();
-    				
-        			setEnableNormalMode(true);
-        			setEnableEditMode(false);
+
+    				setEnableNormalMode(true);
+    				setEnableEditMode(false);
 
     				initializeFolderData();
     				initSearchBox();
@@ -451,8 +473,7 @@ public class Controller implements Observer {
     				view.showMessageDialog(messages.getDialog(0), "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
     			}
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -465,8 +486,8 @@ public class Controller implements Observer {
     		public void actionPerformed(ActionEvent e) {
     			if (view.showConfirmDialog("Discard changes?")) {
 
-        			setEnableNormalMode(true);
-        			setEnableEditMode(false);
+    				setEnableNormalMode(true);
+    				setEnableEditMode(false);
 
     				try {
     					int j = view.getRecordView().getSelectedIndex();
@@ -482,31 +503,30 @@ public class Controller implements Observer {
     						view.getStatusLabel().setText(messages.getStatus(10));
     						view.getAnim().slowFade();
     					}
-        				initSearchBox();
-        				view.getRecordView().grabFocus();    					
-                    	recordData.clear();
-                    	for (Record record: model.getRecordsByFolder(view.getFolderView().getSelectedValue())) {
-                    		recordData.addElement(record);
-                        }
-                		view.getRecordView().setSelectedIndex(j);
-        				
+    					initSearchBox();
+    					view.getRecordView().grabFocus();    					
+    					recordData.clear();
+    					for (Record record: model.getRecordsByFolder(view.getFolderView().getSelectedValue())) {
+    						recordData.addElement(record);
+    					}
+    					view.getRecordView().setSelectedIndex(j);
+
     				}
     				catch (NullPointerException exc) {
     					for (int i = 0; i < 6; i++) {
     						view.setPlainGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
-        				initSearchBox();
-        				view.getFolderView().grabFocus();
-        				
+    					initSearchBox();
+    					view.getFolderView().grabFocus();
+
     				}
     			}
     			else {
     				// Do nothing
     			}
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -522,8 +542,16 @@ public class Controller implements Observer {
     				String folder = record.getFolder();
     				if (view.showConfirmDialog("Are you sure you want to" + 
     						" delete the following record: " + title + " ?")) {
+    					
     					model.delete(record);
     					model.writeRecordsToFile();
+    					if (hasDriveConnection) {
+    						try {
+    							googleDriveModel.uploadData(pathData);
+    						} catch (IOException e1) {
+    							System.out.println("upload error");
+    						}
+    					}
     					view.getStatusLabel().setText(messages.getStatus(5));
     					view.getAnim().slowFade();
     					initializeFolderData();
@@ -562,8 +590,7 @@ public class Controller implements Observer {
     		public void mouseReleased(MouseEvent e) {
 
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -573,14 +600,17 @@ public class Controller implements Observer {
     public void addDeleteAllListener() {
     	view.getIconButton(3).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
-				if (view.showConfirmDialog("Are you sure you want to" + 
-						" delete ALL records?")) {
-					model.deleteAll();
-					model.writeRecordsToFile();
-					view.getStatusLabel().setText(messages.getStatus(6));
-					view.getAnim().slowFade();
-					initializeFolderData();
-				}
+    			if (view.showConfirmDialog("Are you sure you want to" + 
+    					" delete ALL records?")) {
+    				model.deleteAll();
+    				model.writeRecordsToFile();
+    				if(hasDriveConnection){
+    					googleDriveModel = new GoogleDriveModel();
+    				}
+    				view.getStatusLabel().setText(messages.getStatus(6));
+    				view.getAnim().slowFade();
+    				initializeFolderData();
+    			}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.setDullGrayColor(view.getIconLabelTexts().get(3));
@@ -599,10 +629,9 @@ public class Controller implements Observer {
     		public void mouseReleased(MouseEvent e) {
 
     		}
-    	}
-    	);
-    }
-    
+    	});
+    }    
+
     /**
      * Add a MouseListener to the 'Eye' button so the user can show or hide
      * the password. Bullet symbols are used to mask the password.
@@ -611,23 +640,23 @@ public class Controller implements Observer {
     	view.getIconButton(5).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(5));
-				JPasswordField pwField = (JPasswordField)view.getFields().get(3);
-				if (!showPassword) {
-					pwField.setEchoChar((char)0);
-					showPassword = true;
-					view.getStrengthTextLabel().setVisible(true);
-					view.getStrengthScoreLabel().setVisible(true);
-					view.getStatusLabel().setText(messages.getStatus(12));
-					view.getAnim().slowFade();
-				}
-				else {
-					pwField.setEchoChar(echoChar);
-					showPassword = false;
-					view.getStrengthTextLabel().setVisible(false);
-					view.getStrengthScoreLabel().setVisible(false);
-					view.getStatusLabel().setText(messages.getStatus(11));
-					view.getAnim().slowFade();
-				}
+    			JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+    			if (!showPassword) {
+    				pwField.setEchoChar((char)0);
+    				showPassword = true;
+    				view.getStrengthTextLabel().setVisible(true);
+    				view.getStrengthScoreLabel().setVisible(true);
+    				view.getStatusLabel().setText(messages.getStatus(12));
+    				view.getAnim().slowFade();
+    			}
+    			else {
+    				pwField.setEchoChar(echoChar);
+    				showPassword = false;
+    				view.getStrengthTextLabel().setVisible(false);
+    				view.getStrengthScoreLabel().setVisible(false);
+    				view.getStatusLabel().setText(messages.getStatus(11));
+    				view.getAnim().slowFade();
+    			}
     		}
     		public void mouseEntered(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(6));
@@ -650,8 +679,7 @@ public class Controller implements Observer {
     		public void mouseReleased(MouseEvent e) {
     			view.getIconButton(5).setIcon(view.getIcon(5));
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -662,7 +690,7 @@ public class Controller implements Observer {
     	view.getIconButton(6).addMouseListener(new MouseListener() {
     		public void mouseClicked(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(7));
-    			view.getFields().get(3).setText(PasswordSafe.generatePassphrase(12));
+    			view.getFields().get(3).setText(PasswordSafe.generatePassphrase(16));
     			view.getStrengthScoreLabel().setText("" + PasswordSafe.getScore(view.getFields().get(3).getText()));
     		}
     		public void mouseEntered(MouseEvent e) {
@@ -686,8 +714,7 @@ public class Controller implements Observer {
     		public void mouseReleased(MouseEvent e) {
     			view.getIconButton(6).setIcon(view.getIcon(7));
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -711,134 +738,133 @@ public class Controller implements Observer {
     			view.getAnim().fastFade();
     		}
     		public void mousePressed(MouseEvent e) {
-    			
+
     		}
     		public void mouseReleased(MouseEvent e) {
-    			
+
     		}
-    	}
-    	);
+    	});
     }
     
-	/**
-	 * Copy the website's address to the system clipboard when the user
-	 * right-clicks on the address-field.
-	 */
-	public void copyAddress() {
-		view.getFields().get(1).addMouseListener(new MouseAdapter() {
+    /**
+     * Copy the website's address to the system clipboard when the user
+     * right-clicks on the address-field.
+     */
+    public void copyAddress() {
+    	view.getFields().get(1).addMouseListener(new MouseAdapter() {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				super.mouseClicked(e);
-				if (SwingUtilities.isRightMouseButton(e) && record != null) {
-					String address = view.getFields().get(1).getText();
-					System.out.println(address + " copied to clipboard!");
-					view.getStatusLabel().setText(messages.getStatus(14));
-					view.getAnim().slowFade();
-					StringSelection stringSelection = new StringSelection(address);
-					clpbrd.setContents(stringSelection, null);
-				}
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-				if (record != null) {
-					super.mouseEntered(e);
-					view.getStatusLabel().setText(messages.getStatus(20));
-					view.getAnim().slowFade();
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
-				super.mouseExited(e);
-				view.getAnim().fastFade();
-				}
-			}
-			
-		});
-	}	
-	
-	/**
-	 * Copy the login name to the system clipboard when the user
-	 * right-clicks on the login name-field.
-	 */
-	public void copyLoginName() {
-		view.getFields().get(2).addMouseListener(new MouseAdapter() {
+    		@Override
+    		public void mouseClicked(MouseEvent e) {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				super.mouseClicked(e);
-				if (SwingUtilities.isRightMouseButton(e) && record != null) {
-					String login = view.getFields().get(2).getText();
-					System.out.println(login + " copied to clipboard!");
-					view.getStatusLabel().setText(messages.getStatus(14));
-					view.getAnim().slowFade();
-					StringSelection stringSelection = new StringSelection(login);
-					clpbrd.setContents(stringSelection, null);
-				}
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-				if (record != null) {
-					super.mouseEntered(e);
-					view.getStatusLabel().setText(messages.getStatus(21));
-					view.getAnim().slowFade();
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
-				super.mouseExited(e);
-				view.getAnim().fastFade();
-				}
-			}
-			
-		});
-	}
-	
-	/**
-	 * Copy the password to the system clipboard when the user
-	 * right-clicks on the password-field. 
-	 */
-	public void copyPassword() {
-		view.getFields().get(3).addMouseListener(new MouseAdapter() {
+    			super.mouseClicked(e);
+    			if (SwingUtilities.isRightMouseButton(e) && record != null) {
+    				String address = view.getFields().get(1).getText();
+    				System.out.println(address + " copied to clipboard!");
+    				view.getStatusLabel().setText(messages.getStatus(14));
+    				view.getAnim().slowFade();
+    				StringSelection stringSelection = new StringSelection(address);
+    				clpbrd.setContents(stringSelection, null);
+    			}
+    		}
+    		@Override
+    		public void mouseEntered(MouseEvent e) {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				super.mouseClicked(e);
-				if (SwingUtilities.isRightMouseButton(e) && record != null) {
-					String pw = view.getFields().get(3).getText();
-					System.out.println(pw + " copied to clipboard!");
-					view.getStatusLabel().setText(messages.getStatus(14));
-					view.getAnim().slowFade();
-					StringSelection stringSelection = new StringSelection(pw);
-					clpbrd.setContents(stringSelection, null);
-				}
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-				if (record != null) {
-					super.mouseEntered(e);
-					view.getStatusLabel().setText(messages.getStatus(13));
-					view.getAnim().slowFade();
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
-				super.mouseExited(e);
-				view.getAnim().fastFade();
-				}
-			}
-			
-		});
-	}
+    			if (record != null) {
+    				super.mouseEntered(e);
+    				view.getStatusLabel().setText(messages.getStatus(20));
+    				view.getAnim().slowFade();
+    			}
+    		}
+    		@Override
+    		public void mouseExited(MouseEvent e) {
+    			if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+    				super.mouseExited(e);
+    				view.getAnim().fastFade();
+    			}
+    		}
+
+    	});
+    } 
+    
+    /**
+     * Copy the login name to the system clipboard when the user
+     * right-clicks on the login name-field.
+     */
+    public void copyLoginName() {
+    	view.getFields().get(2).addMouseListener(new MouseAdapter() {
+
+    		@Override
+    		public void mouseClicked(MouseEvent e) {
+
+    			super.mouseClicked(e);
+    			if (SwingUtilities.isRightMouseButton(e) && record != null) {
+    				String login = view.getFields().get(2).getText();
+    				System.out.println(login + " copied to clipboard!");
+    				view.getStatusLabel().setText(messages.getStatus(14));
+    				view.getAnim().slowFade();
+    				StringSelection stringSelection = new StringSelection(login);
+    				clpbrd.setContents(stringSelection, null);
+    			}
+    		}
+    		@Override
+    		public void mouseEntered(MouseEvent e) {
+
+    			if (record != null) {
+    				super.mouseEntered(e);
+    				view.getStatusLabel().setText(messages.getStatus(21));
+    				view.getAnim().slowFade();
+    			}
+    		}
+    		@Override
+    		public void mouseExited(MouseEvent e) {
+    			if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+    				super.mouseExited(e);
+    				view.getAnim().fastFade();
+    			}
+    		}
+
+    	});
+    }    
+    
+    /**
+     * Copy the password to the system clipboard when the user
+     * right-clicks on the password-field. 
+     */
+    public void copyPassword() {
+    	view.getFields().get(3).addMouseListener(new MouseAdapter() {
+
+    		@Override
+    		public void mouseClicked(MouseEvent e) {
+
+    			super.mouseClicked(e);
+    			if (SwingUtilities.isRightMouseButton(e) && record != null) {
+    				String pw = view.getFields().get(3).getText();
+    				System.out.println(pw + " copied to clipboard!");
+    				view.getStatusLabel().setText(messages.getStatus(14));
+    				view.getAnim().slowFade();
+    				StringSelection stringSelection = new StringSelection(pw);
+    				clpbrd.setContents(stringSelection, null);
+    			}
+    		}
+    		@Override
+    		public void mouseEntered(MouseEvent e) {
+
+    			if (record != null) {
+    				super.mouseEntered(e);
+    				view.getStatusLabel().setText(messages.getStatus(13));
+    				view.getAnim().slowFade();
+    			}
+    		}
+    		@Override
+    		public void mouseExited(MouseEvent e) {
+    			if (! view.getStatusLabel().getText().equals(messages.getStatus(14))) {
+    				super.mouseExited(e);
+    				view.getAnim().fastFade();
+    			}
+    		}
+    		
+    	});
+    }    
     
     /**
      * Add a DocumentListener to the search field and implement the methods.
@@ -856,10 +882,9 @@ public class Controller implements Observer {
     		public void removeUpdate(DocumentEvent e) {
     			goSearch(doc);
     		}
-    	}
-    	);
-    }
-    
+    	});
+    }    
+
     /**
      * Implementation of the search process used by the "SearchListener" above.
      * Also handles updating of the JLists' view if matches are found.
@@ -892,10 +917,11 @@ public class Controller implements Observer {
     		}
 
     		public void focusLost(FocusEvent e) {
-
+    			if(hasDriveConnection){
+    				googleDriveModel = new GoogleDriveModel();
+    			}
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -908,21 +934,20 @@ public class Controller implements Observer {
     		public void mouseEntered(MouseEvent e) {
 
     			if (! editMode) {
-    			super.mouseEntered(e);
-    			view.getStatusLabel().setText(messages.getStatus(17));
-    			view.getAnim().slowFade();
+    				super.mouseEntered(e);
+    				view.getStatusLabel().setText(messages.getStatus(17));
+    				view.getAnim().slowFade();
     			}
     		}
     		@Override
     		public void mouseExited(MouseEvent e) {
 
     			if (! editMode) {
-    			super.mouseExited(e);
-    			view.getAnim().fastFade();
+    				super.mouseExited(e);
+    				view.getAnim().fastFade();
     			}
     		}
-    	}
-    	);
+    	});
     }
     
     /**
@@ -950,60 +975,14 @@ public class Controller implements Observer {
      *         a valid part of the document.
      */
     public static String getDocumentText(Document doc) {
-		String s = "";
-		try {
-			s = doc.getText(0, doc.getLength());
-		}
-		catch (BadLocationException exc) {
-			exc.printStackTrace();
-		}
-		return s;
-    }
-    	
-    /**
-     * Use the characters contained in the PasswordField's Document to calculate 
-     * the password safety score.
-     * Keep the text from the pwStrength Label up-to-date with this score and 
-     * also assign an appropriate description and color to the label based
-     * on the score.
-     */
-    public class PasswordFilter extends DocumentFilter {
-    	
-    	private JTextField field;
-    	private Document doc;
-    	private int pwScore;
-    	
-        public PasswordFilter(JTextField field) {
-            this.field = field;
-            this.doc = field.getDocument();
-            this.pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
-        }
-        
-        public void setStrengthLabel() {
-        	view.getStrengthScoreLabel().setForeground(PasswordSafe.getScoreColor(pwScore));
-        	view.getStrengthScoreLabel().setText("" + pwScore);
-        }
-            	
-        @Override
-        public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
-            super.insertString(fb, offset, text, attr);
-        	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
-        	setStrengthLabel();
-        }
-        
-        @Override
-        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-            super.remove(fb, offset, length);
-        	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
-        	setStrengthLabel();
-        }
-        
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-        	super.replace(fb, offset, length, text, attrs);
-        	pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
-        	setStrengthLabel();
-        }
+    	String s = "";
+    	try {
+    		s = doc.getText(0, doc.getLength());
+    	}
+    	catch (BadLocationException exc) {
+    		exc.printStackTrace();
+    	}
+    	return s;
     }
     
     /**
@@ -1014,6 +993,52 @@ public class Controller implements Observer {
     	System.out.println("View updated");
 
     	view.getFolderView().grabFocus();
+    }
+
+    /**
+     * Use the characters contained in the PasswordField's Document to calculate 
+     * the password safety score.
+     * Keep the text from the pwStrength Label up-to-date with this score and 
+     * also assign an appropriate description and color to the label based
+     * on the score.
+     */
+    public class PasswordFilter extends DocumentFilter {
+
+    	private JTextField field;
+    	private Document doc;
+    	private int pwScore;
+
+    	public PasswordFilter(JTextField field) {
+    		this.field = field;
+    		this.doc = field.getDocument();
+    		this.pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+    	}
+
+    	public void setStrengthLabel() {
+    		view.getStrengthScoreLabel().setForeground(PasswordSafe.getScoreColor(pwScore));
+    		view.getStrengthScoreLabel().setText("" + pwScore);
+    	}
+
+    	@Override
+    	public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+    		super.insertString(fb, offset, text, attr);
+    		pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+    		setStrengthLabel();
+    	}
+
+    	@Override
+    	public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+    		super.remove(fb, offset, length);
+    		pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+    		setStrengthLabel();
+    	}
+
+    	@Override
+    	public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+    		super.replace(fb, offset, length, text, attrs);
+    		pwScore = PasswordSafe.getScore(Controller.getDocumentText(doc));
+    		setStrengthLabel();
+    	}
     }
     
 }
