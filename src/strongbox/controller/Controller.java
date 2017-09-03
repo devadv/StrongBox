@@ -5,11 +5,9 @@ import strongbox.model.Model;
 import strongbox.model.Record;
 import strongbox.drive.GoogleDriveModel;
 import strongbox.encryption.Encryption;
-import strongbox.util.ColorAnim;
 import strongbox.util.PasswordSafe;
 import strongbox.view.GUI;
 
-import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;

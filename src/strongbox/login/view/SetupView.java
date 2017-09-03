@@ -24,7 +24,7 @@ public class SetupView extends PasswordView {
 		submsg.setBounds(20,250,200,50);
 		labelPassword.setBounds(20, 300, 120, 20);
 		getPasswordField().setBounds(150, 300, 150, 20);
-		JLabel drive = new JLabel("Set GoogleDrive Storage");
+		JLabel drive = new JLabel("Use Google Drive Storage");
 		drive.setBounds(20, 330, 200, 20);
 		googleCheck = new JCheckBox();
 		googleCheck.setBounds(220, 330, 20, 20);
@@ -41,7 +41,7 @@ public class SetupView extends PasswordView {
 		
 		getFrame().setTitle("Make a StrongBox account");
 		button.setText("Save");
-		getFrame().setSize(350, 400);
+		getFrame().setSize(350, 460);
 	}
 
 }
