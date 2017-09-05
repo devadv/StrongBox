@@ -317,7 +317,6 @@ public class Model extends Observable implements iModel {
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
-		records = new ArrayList<>();  // NECESSARY ????????????????????????
 		File file = new File(path);
 		if(file.exists()){
 			try {

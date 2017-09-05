@@ -186,6 +186,7 @@ public class GoogleDriveModel {
 		}
 		Scanner input = new Scanner(outputStream.toString());
 		while (input.hasNextLine()) {
+			// TODO BEN Data.csv from drive needs to be read same way as local one 
 			// separator
 			String[] item = input.nextLine().split(cvsSplitBy);
 			Record record = new Record(item[0], item[1], item[2], item[3],

@@ -604,6 +604,7 @@ public class Controller implements Observer {
     				model.writeRecordsToFile();
     				if(hasDriveConnection){
     					googleDriveModel = new GoogleDriveModel();
+    					// TODO BEN needs to use uploadData-method
     				}
     				view.getStatusLabel().setText(messages.getStatus(6));
     				view.getAnim().slowFade();
@@ -915,9 +916,7 @@ public class Controller implements Observer {
     		}
 
     		public void focusLost(FocusEvent e) {
-    			if(hasDriveConnection){
-    				googleDriveModel = new GoogleDriveModel();
-    			}
+
     		}
     	});
     }
