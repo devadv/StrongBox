@@ -60,15 +60,6 @@ public class Model extends Observable implements iModel {
 				             timestamp));
 		observableChanged();
 	}
-	
-	/**
-	 * Marks this Observable object as having been changed then 
-	 * notify all of it's observers that this happened.
-	 */
-	public void observableChanged() {
-		setChanged();
-		notifyObservers();
-	}
 
 	/**
 	 * Add a record to the list.
@@ -258,6 +249,32 @@ public class Model extends Observable implements iModel {
     			record.getUserName(), record.getPassword(), 
     			record.getFolder(), record.getNote()};
     }
+    
+    /**
+     * Get a record by using it's title and folder names as 'search-criteria'. 
+     * @param    title
+     * @param    folder
+     * @return   The matching record
+     */
+    public Record getRecordByNames(String title, String folder) {
+    	Record matchingRecord = null;
+    	for (Record record: records) {
+    		if (title.equals(record.getTitle()) &&
+    		    folder.equals(record.getFolder())) {
+    			matchingRecord = record;
+    		}
+    	}
+    	return matchingRecord;
+    }
+    
+	/**
+	 * Marks this Observable object as having been changed then 
+	 * notify all of it's observers that this happened.
+	 */
+	public void observableChanged() {
+		setChanged();
+		notifyObservers();
+	}
     
 	// --- Password settings ---
 	/**

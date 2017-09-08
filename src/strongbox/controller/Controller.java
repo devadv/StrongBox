@@ -19,7 +19,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.IOException;
-
 import java.util.Observable;
 import java.util.Observer;
 
@@ -65,6 +64,10 @@ public class Controller implements Observer {
 
 	private boolean showPassword = false;
 	private char echoChar;
+	
+	// This indicates whether or not the FolderListener will select the first
+	// record from a folder. If not, it will select the current record.
+	private boolean selectFirstRecord = true;
 
 	private Messages messages;
 
@@ -152,11 +155,12 @@ public class Controller implements Observer {
 
 					((AbstractDocument) view.getFields().get(3).getDocument()).setDocumentFilter(new PasswordFilter(view.getFields().get(3)));
 
-					view.getFolderView().grabFocus();
-
 					setEnableNormalMode(true);
 					setEnableEditMode(false);
-
+					
+					view.getFolderView().setSelectedValue(folderData.firstElement(), true);
+					view.getRecordView().grabFocus();
+					
 					// Next few lines prevent buggy, glitchy, inexplicable visual errors 
 					// that SOMETIMES happen for these icons when they're rendered in linux
 					view.getIconButton(5).repaint();
@@ -195,8 +199,14 @@ public class Controller implements Observer {
 							for (Record record : model.getRecordsByFolder(view
 									.getFolderView().getSelectedValue())) {
 								recordData.addElement(record);
+								if (selectFirstRecord) {
 								view.getRecordView().setSelectedValue(
 										recordData.firstElement(), true);
+								}
+								else {
+									view.getRecordView().setSelectedValue(
+											record, true);
+								}
 							}
 						}
 					}
@@ -225,7 +235,7 @@ public class Controller implements Observer {
     						view.setPlainGrayColor(view.getFields().get(i));
     						view.getFields().get(i).setText("No record selected");
     					}
-						view.getStrengthScoreLabel().setText("N/A");
+    					view.getStrengthScoreLabel().setText("N/A");
     				}
     			}
     		}
@@ -445,6 +455,7 @@ public class Controller implements Observer {
     					model.createNewRecord(fieldValues[0], fieldValues[1], 
     							fieldValues[2], fieldValues[3], fieldValues[4], 
     							fieldValues[5], System.currentTimeMillis());
+    					record = model.getRecordByNames(fieldValues[0], fieldValues[4]);
     				}
 
     				model.writeRecordsToFile();
@@ -463,9 +474,10 @@ public class Controller implements Observer {
 
     				initializeFolderData();
     				initSearchBox();
+    				selectFirstRecord = false;
     				view.getFolderView().setSelectedValue(fieldValues[4], true);
     				view.getRecordView().grabFocus();
-    				//view.getRecordView().setSelectedValue(fieldValues[0], true);
+    				selectFirstRecord = true;
     			}
     			catch (IllegalArgumentException exc) {
     				view.showMessageDialog(messages.getDialog(0), "Illegal Arguments", JOptionPane.ERROR_MESSAGE);
@@ -604,7 +616,7 @@ public class Controller implements Observer {
     				model.writeRecordsToFile();
     				if(hasDriveConnection){
     					googleDriveModel = new GoogleDriveModel();
-    					// TODO BEN needs to use uploadData-method
+    					// TODO BEN probable needs to use uploadData-method
     				}
     				view.getStatusLabel().setText(messages.getStatus(6));
     				view.getAnim().slowFade();
