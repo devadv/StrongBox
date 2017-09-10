@@ -74,6 +74,8 @@ public class Controller implements Observer {
 	private Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 	private GoogleDriveModel googleDriveModel;
 	private boolean hasDriveConnection = false;
+	
+	//TODO next three data storage also in GoogleDrive model
 	private final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
 	private final String pathData = DATA_STORE_DIR + "/data.csv";
@@ -86,12 +88,18 @@ public class Controller implements Observer {
 	public Controller(Model model) {
 
 		this.model = model;
+		view = new GUI();
+		
 		if (model.isDrive()) {
 			hasDriveConnection = true;
 		}
 		if (hasDriveConnection) {
-			googleDriveModel = new GoogleDriveModel();
-			googleDriveModel.downloadPassphrase();
+			googleDriveModel = new GoogleDriveModel(model);
+			try {
+				googleDriveModel.downloadPassphrase();
+			} catch (IOException e) {
+				view.showMessageDialog("error downloading passphrase");
+			}
 		}
 
 		// use masterpasswd for encryption
@@ -104,20 +112,18 @@ public class Controller implements Observer {
 		Encryption enPassphrase = new Encryption(decryptedpassphrase);
 		if (hasDriveConnection) {
 			try {
-				// googleDriveModel.uploadData();
+				//throw new IOException();
 				googleDriveModel.downloadRecords();
 			} catch (IOException e) {
-				System.out.println("error downloading data file");
-				e.printStackTrace();
-
+				view.showMessageDialog("error downloading data file");
+				
 			}
 			model.setRecordList(googleDriveModel.getRecords());
 		} else {
 			model.readRecordsFromFile();
 		}
 
-		view = new GUI();
-		
+				
 		model.addObserver(this);
 		
 		messages = new Messages();
@@ -615,8 +621,13 @@ public class Controller implements Observer {
     				model.deleteAll();
     				model.writeRecordsToFile();
     				if(hasDriveConnection){
-    					googleDriveModel = new GoogleDriveModel();
-    					// TODO BEN probable needs to use uploadData-method
+    					try {
+							googleDriveModel.uploadData(pathData);
+						} catch (IOException e1) {
+							view.showMessageDialog("error uploading data file");
+							e1.printStackTrace();
+						}
+    					
     				}
     				view.getStatusLabel().setText(messages.getStatus(6));
     				view.getAnim().slowFade();

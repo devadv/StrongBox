@@ -40,57 +40,51 @@ public class GoogleDriveModel {
 	/** Directory to store user credentials for this application. */
 	private final java.io.File DATA_STORE_DIR_DRIVE = new java.io.File(
 			System.getProperty("user.home"), ".credentials/drive_strongbox");
-
-	//private String path = DATA_STORE_DIR_DRIVE + "/data.csv";
+	/** Directory to store user data for this application. */
 	private final java.io.File DATA_STORE_DIR = new java.io.File(
 			System.getProperty("user.home"), ".strongbox");
+	/** CSV file to store data with encrypted passwords */
 	private final String pathMaster = DATA_STORE_DIR + "/data.csv";
+	/** Properties file to store the passphrase*/
 	private final String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
 	/** Global instance of the {@link FileDataStoreFactory}. */
 	private FileDataStoreFactory DATA_STORE_FACTORY;
-
 	/** Global instance of the JSON factory. */
 	private final JsonFactory JSON_FACTORY = JacksonFactory
 			.getDefaultInstance();
-
 	/** Global instance of the HTTP transport. */
 	private HttpTransport HTTP_TRANSPORT;
-
-	/**
-	 * Global instance of the scopes required by this quickstart.
-	 *
-	 * If modifying these scopes, delete your previously saved credentials at
-	 * ~/.credentials/drive-java-quickstart
-	 */
-	private final List<String> SCOPES = Arrays.asList(
-	// TODO check scope only with DRIVE_APPDATA
-	// DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_FILE,
-			DriveScopes.DRIVE_APPDATA);
-
+	/**View and manage its own configuration data in your Google Drive.*/
+	private final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_APPDATA);
+	/** ArrayList to store googledrive data. */
 	private ArrayList<Record> records = new ArrayList<>();
+	//Manages files in Drive including uploading, downloading, searching, detecting changes, and updating sharing permissions.
 	private Drive service;
+	/** data.csv file id to get access to file */
 	private String dataFileId;
+	/** config.passphrase.properties file id to get access to file */
 	private String propertiesFileId;
+	
+	private Model model;
+	
 
-	public GoogleDriveModel() {
+	public GoogleDriveModel(Model model) {
+		
+		this.model = model;
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 			DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR_DRIVE);
 			service = getDriveService();
 
-			if (!hasDatafile()) {
+			if (!hasDataFile() && !hasPropertiesFile()) {
 				createFile("data.csv");
 				createFile("config.passphrase.properties");
-				hasDatafile();
+				setID();
 				uploadData(pathPassphrase);
 			} else {
-				System.out.println("Passphrase Exists: " + passphraseExistsLocal());
+				setID();
 				if(!passphraseExistsLocal()){
-					System.out.println(" Download passphrase");
-					System.out.println("propertiesID: " + propertiesFileId);
 					downloadPassphrase();
-				}else{
-					System.out.println("Passphrase exits local ");
 				}
 				System.out.println("Data GoogleDrive Connected");
 			}
@@ -121,8 +115,7 @@ public class GoogleDriveModel {
 				.setAccessType("offline").build();
 		Credential credential = new AuthorizationCodeInstalledApp(flow,
 				new LocalServerReceiver()).authorize("user");
-		System.out.println("Credentials saved to "
-				+ DATA_STORE_DIR_DRIVE.getAbsolutePath());
+		//System.out.println("Credentials saved to "	+ DATA_STORE_DIR_DRIVE.getAbsolutePath());
 		return credential;
 	}
 
@@ -143,13 +136,32 @@ public class GoogleDriveModel {
 		return dataFileId;
 	}
 	
-
-	public boolean hasDatafile() throws IOException {
+	/** checks existence of data.csv in appDataFolder
+	 * @return boolean true when data.csv exists
+	 * @throws IOException  */
+	public boolean hasDataFile() throws IOException {
 		boolean dataExist = false;
 
 		FileList files = service.files().list().setSpaces("appDataFolder")
 				.setFields("nextPageToken, files(id, name)").execute();
-		System.out.println(files);
+		//System.out.println(files);
+		for (File file : files.getFiles()) {
+			if (file.getName().equals("data.csv")) {
+				this.dataFileId = file.getId();
+				dataExist = true;
+			}
+		}
+		return dataExist;
+	}
+	
+	/** checks existence of config.passphrase.properties in appDataFolder
+	 * @return boolean true when config.passphrase.properties exists
+	 * @throws IOException  */
+	public boolean hasPropertiesFile() throws IOException{
+		boolean dataExist = false;
+		FileList files = service.files().list().setSpaces("appDataFolder")
+				.setFields("nextPageToken, files(id, name)").execute();
+		//System.out.println(files);
 		for (File file : files.getFiles()) {
 			if (file.getName().equals("data.csv")) {
 				this.dataFileId = file.getId();
@@ -161,8 +173,29 @@ public class GoogleDriveModel {
 			}
 		}
 		return dataExist;
+		
 	}
-
+	
+	/** sets id of both files data.csv and config.passphrase.properties 
+	 * @throws IOException */
+	public void setID() throws IOException{
+		
+		FileList files = service.files().list().setSpaces("appDataFolder")
+				.setFields("nextPageToken, files(id, name)").execute();
+		
+		for (File file : files.getFiles()) {
+			if (file.getName().equals("data.csv")) {
+				this.dataFileId = file.getId();
+				
+			}
+			if(file.getName().equals("config.passphrase.properties")){
+				this.propertiesFileId = file.getId();
+				
+			}
+		}
+		
+	}
+	/** create a file in the appDataFolder */
 	public void createFile(String fileName) throws IOException {
 
 		File fileMetadata = new File();
@@ -170,7 +203,7 @@ public class GoogleDriveModel {
 		fileMetadata.setParents(Collections.singletonList("appDataFolder"));
 		File file = service.files().create(fileMetadata).setFields("id")
 				.execute();
-		System.out.println("File ID: " + file.getId());
+		//System.out.println("File ID: " + file.getId());
 
 	}
 
@@ -180,37 +213,34 @@ public class GoogleDriveModel {
 		service.files().get(getFileID())
 				.executeMediaAndDownloadTo(outputStream);
 		String cvsSplitBy = ",";
-		System.out.println("Outputstream : " + outputStream.toString());
+		//System.out.println("Outputstream : " + outputStream.toString());
 		if(outputStream.toString().isEmpty()){
 			System.out.println("Empty data.csv");
 		}
 		Scanner input = new Scanner(outputStream.toString());
+		
 		while (input.hasNextLine()) {
-			// TODO BEN Data.csv from drive needs to be read same way as local one 
 			// separator
 			String[] item = input.nextLine().split(cvsSplitBy);
-			Record record = new Record(item[0], item[1], item[2], item[3],
+			model.createNewRecord(item[0], item[1], item[2], item[3],
 					item[4], item[5], 0);
-			records.add(record);
+						
 		}
+		//TODO is the following procedure necessary or has the model already been updated 
+		records.addAll(model.getRecordList());
+		//close scanner
 		input.close();
 	}
-	public void downloadPassphrase() {
+	public void downloadPassphrase() throws IOException {
 
-		System.out.println("Start Outputstream");
+		//System.out.println("Start Outputstream");
 		OutputStream outputStream = new ByteArrayOutputStream();
-		try {
-			service.files().get(propertiesFileId)
+		service.files().get(propertiesFileId)
 					.executeMediaAndDownloadTo(outputStream);
-		} catch (IOException e1) {
-			System.out.println("IO Exception");
-			e1.printStackTrace();
-		}
-		System.out.println(outputStream.toString());
+		//System.out.println(outputStream.toString());
 		String content = outputStream.toString();
 		java.io.File file = new java.io.File(pathPassphrase);
-		System.out.println("try download" + pathPassphrase);
-		
+				
 		try (FileOutputStream fop = new FileOutputStream(file)) {
 
 			// if file doesn't exists, then create it
@@ -271,45 +301,5 @@ public class GoogleDriveModel {
 
 	}
 
-	public static void main(String[] args) {
-
-		//Encryption enc = new Encryption("hx8&2RlYz2rqn&N^oiyKZG#35&P1RMkQ");
-		GoogleDriveModel gdo = new GoogleDriveModel();
-
-		/*try {
-			// gdo.createDataFile();
-			gdo.downloadData();
-			// ArrayList<Record> records = new ArrayList<Record>();
-			for (Record record : gdo.getRecords()) {
-				System.out.println(record.toString());
-
-			}*/
-
-		/*	
-			 * gdo.writeRecordsToFile(gdo.getRecords());
-			 * 
-			 * System.out.println(gdo.getRecordList().toString());
-			 * gdo.createNewRecord("Kaasboer", "kaas.nl", "boertje",
-			 * "karnemelk12", "Food", "boerenkaas");
-			 * gdo.createNewRecord("Groenteboer", "groenten.nl", "boertje",
-			 * "komkommer12", "Food", "bio"); gdo.writeRecordsToFile();
-			 * 
-			 * gdo.uploadData();*/
-			 
-			// System.out.println(gdo.getFileID());
-			 try {
-				gdo.deleteDataFile();
-				System.out.println(gdo.hasDatafile());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		/*} catch (IOException e) {
-
-			e.printStackTrace();
-		}*/
-
-	}
-
+	
 }
