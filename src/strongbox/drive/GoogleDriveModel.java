@@ -45,8 +45,9 @@ public class GoogleDriveModel {
 			System.getProperty("user.home"), ".strongbox");
 	/** CSV file to store data with encrypted passwords */
 	private final String pathMaster = DATA_STORE_DIR + "/data.csv";
-	/** Properties file to store the passphrase*/
-	private final String pathPassphrase = DATA_STORE_DIR + "/config.passphrase.properties";
+	/** Properties file to store the passphrase */
+	private final String pathPassphrase = DATA_STORE_DIR
+			+ "/config.passphrase.properties";
 	/** Global instance of the {@link FileDataStoreFactory}. */
 	private FileDataStoreFactory DATA_STORE_FACTORY;
 	/** Global instance of the JSON factory. */
@@ -54,36 +55,40 @@ public class GoogleDriveModel {
 			.getDefaultInstance();
 	/** Global instance of the HTTP transport. */
 	private HttpTransport HTTP_TRANSPORT;
-	/**View and manage its own configuration data in your Google Drive.*/
-	private final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_APPDATA);
+	/** View and manage its own configuration data in your Google Drive. */
+	private final List<String> SCOPES = Arrays
+			.asList(DriveScopes.DRIVE_APPDATA);
 	/** ArrayList to store googledrive data. */
 	private ArrayList<Record> records = new ArrayList<>();
-	//Manages files in Drive including uploading, downloading, searching, detecting changes, and updating sharing permissions.
+	// Manages files in Drive including uploading, downloading, searching,
+	// detecting changes, and updating sharing permissions.
 	private Drive service;
 	/** data.csv file id to get access to file */
 	private String dataFileId;
 	/** config.passphrase.properties file id to get access to file */
-	private String propertiesFileId;
-	
+	private String passphraseFileId;
+
 	private Model model;
-	
 
 	public GoogleDriveModel(Model model) {
-		
+
 		this.model = model;
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 			DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR_DRIVE);
 			service = getDriveService();
 
-			if (!hasDataFile() && !hasPropertiesFile()) {
+			if (!hasFile("data.csv")
+					&& !hasFile("config.passphrase.properties")) {
 				createFile("data.csv");
 				createFile("config.passphrase.properties");
-				setID();
+				getID("data.csv");
+				getID("config.passphrase.properties");
 				uploadData(pathPassphrase);
 			} else {
-				setID();
-				if(!passphraseExistsLocal()){
+				setDataFileId(getID("data.csv"));
+				setPassphraseFileId(getID("config.passphrase.properties"));
+				if (!passphraseExistsLocal()) {
 					downloadPassphrase();
 				}
 				System.out.println("Data GoogleDrive Connected");
@@ -115,7 +120,8 @@ public class GoogleDriveModel {
 				.setAccessType("offline").build();
 		Credential credential = new AuthorizationCodeInstalledApp(flow,
 				new LocalServerReceiver()).authorize("user");
-		//System.out.println("Credentials saved to "	+ DATA_STORE_DIR_DRIVE.getAbsolutePath());
+		// System.out.println("Credentials saved to " +
+		// DATA_STORE_DIR_DRIVE.getAbsolutePath());
 		return credential;
 	}
 
@@ -135,76 +141,83 @@ public class GoogleDriveModel {
 
 		return dataFileId;
 	}
-	
-	/** checks existence of data.csv in appDataFolder
+
+	/**
+	 * checks existence of data.csv in appDataFolder
+	 * 
+	 * @param String
+	 *            filename name of file
 	 * @return boolean true when data.csv exists
-	 * @throws IOException  */
-	public boolean hasDataFile() throws IOException {
+	 * @throws IOException
+	 */
+	public boolean hasFile(String filename) throws IOException {
 		boolean dataExist = false;
 
 		FileList files = service.files().list().setSpaces("appDataFolder")
 				.setFields("nextPageToken, files(id, name)").execute();
-		//System.out.println(files);
+		// System.out.println(files);
 		for (File file : files.getFiles()) {
-			if (file.getName().equals("data.csv")) {
-				this.dataFileId = file.getId();
+			if (file.getName().equals(filename)) {
 				dataExist = true;
 			}
 		}
 		return dataExist;
 	}
-	
-	/** checks existence of config.passphrase.properties in appDataFolder
+
+	/*	*//**
+	 * checks existence of config.passphrase.properties in appDataFolder
+	 * 
 	 * @return boolean true when config.passphrase.properties exists
-	 * @throws IOException  */
-	public boolean hasPropertiesFile() throws IOException{
-		boolean dataExist = false;
+	 * @throws IOException
+	 */
+	/*
+	 * public boolean hasPropertiesFile() throws IOException{ boolean dataExist
+	 * = false; FileList files =
+	 * service.files().list().setSpaces("appDataFolder")
+	 * .setFields("nextPageToken, files(id, name)").execute();
+	 * //System.out.println(files); for (File file : files.getFiles()) { if
+	 * (file.getName().equals("data.csv")) { this.dataFileId = file.getId();
+	 * dataExist = true; }
+	 * if(file.getName().equals("config.passphrase.properties")){
+	 * this.propertiesFileId = file.getId();
+	 * 
+	 * } } return dataExist;
+	 * 
+	 * }
+	 */
+
+	/**
+	 * gets id of file
+	 * 
+	 * @param String
+	 *            filename name of file
+	 * @throws IOException
+	 */
+	public String getID(String filename) throws IOException {
+		String fileid = "";
 		FileList files = service.files().list().setSpaces("appDataFolder")
 				.setFields("nextPageToken, files(id, name)").execute();
-		//System.out.println(files);
+
 		for (File file : files.getFiles()) {
-			if (file.getName().equals("data.csv")) {
-				this.dataFileId = file.getId();
-				dataExist = true;
+
+			if (file.getName().equals(filename)) {
+				fileid = file.getId();
 			}
-			if(file.getName().equals("config.passphrase.properties")){
-				this.propertiesFileId = file.getId();
-				
-			}
+
 		}
-		return dataExist;
-		
+		return fileid;
 	}
-	
-	/** sets id of both files data.csv and config.passphrase.properties 
-	 * @throws IOException */
-	public void setID() throws IOException{
-		
-		FileList files = service.files().list().setSpaces("appDataFolder")
-				.setFields("nextPageToken, files(id, name)").execute();
-		
-		for (File file : files.getFiles()) {
-			if (file.getName().equals("data.csv")) {
-				this.dataFileId = file.getId();
-				
-			}
-			if(file.getName().equals("config.passphrase.properties")){
-				this.propertiesFileId = file.getId();
-				
-			}
-		}
-		
-	}
+
 	/** create a file in the appDataFolder */
 	public void createFile(String fileName) throws IOException {
 
 		File fileMetadata = new File();
 		fileMetadata.setName(fileName);
 		fileMetadata.setParents(Collections.singletonList("appDataFolder"));
-		File file = service.files().create(fileMetadata).setFields("id")
+		/*File file = service.files().create(fileMetadata).setFields("id")
 				.execute();
-		//System.out.println("File ID: " + file.getId());
-
+		// System.out.println("File ID: " + file.getId());
+*/
 	}
 
 	public void downloadRecords() throws IOException {
@@ -213,34 +226,36 @@ public class GoogleDriveModel {
 		service.files().get(getFileID())
 				.executeMediaAndDownloadTo(outputStream);
 		String cvsSplitBy = ",";
-		//System.out.println("Outputstream : " + outputStream.toString());
-		if(outputStream.toString().isEmpty()){
+		// System.out.println("Outputstream : " + outputStream.toString());
+		if (outputStream.toString().isEmpty()) {
 			System.out.println("Empty data.csv");
 		}
 		Scanner input = new Scanner(outputStream.toString());
-		
+
 		while (input.hasNextLine()) {
 			// separator
 			String[] item = input.nextLine().split(cvsSplitBy);
-			model.createNewRecord(item[0], item[1], item[2], item[3],
-					item[4], item[5], 0);
-						
+			model.createNewRecord(item[0], item[1], item[2], item[3], item[4],
+					item[5], 0);
+
 		}
-		//TODO is the following procedure necessary or has the model already been updated 
+		// TODO is the following procedure necessary or has the model already
+		// been updated
 		records.addAll(model.getRecordList());
-		//close scanner
+		// close scanner
 		input.close();
 	}
+
 	public void downloadPassphrase() throws IOException {
 
-		//System.out.println("Start Outputstream");
+		// System.out.println("Start Outputstream");
 		OutputStream outputStream = new ByteArrayOutputStream();
-		service.files().get(propertiesFileId)
-					.executeMediaAndDownloadTo(outputStream);
-		//System.out.println(outputStream.toString());
+		service.files().get(passphraseFileId)
+				.executeMediaAndDownloadTo(outputStream);
+		// System.out.println(outputStream.toString());
 		String content = outputStream.toString();
 		java.io.File file = new java.io.File(pathPassphrase);
-				
+
 		try (FileOutputStream fop = new FileOutputStream(file)) {
 
 			// if file doesn't exists, then create it
@@ -261,39 +276,39 @@ public class GoogleDriveModel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
-	public boolean passphraseExistsLocal(){
-		
+
+	public boolean passphraseExistsLocal() {
+
 		java.io.File file = new java.io.File(pathPassphrase);
-		
+
 		return file.exists();
-		
+
 	}
 
 	public void uploadData(String path) throws IOException {
-		
+
 		File file = new File();
 		file.setTrashed(true);
 		java.io.File filePath = new java.io.File(path);
-		
-		if(path.equals(pathMaster)){
+
+		if (path.equals(pathMaster)) {
 			FileContent mediaContent = new FileContent("text/csv", filePath);
 			service.files().update(dataFileId, file, mediaContent).execute();
-		}else{
+		} else {
 			FileContent mediaContent = new FileContent("text/plain", filePath);
-			service.files().update(propertiesFileId, file, mediaContent).execute();
+			service.files().update(passphraseFileId, file, mediaContent)
+					.execute();
 		}
-		
-		System.out.println(path +" uploaded!");
+
+		System.out.println(path + " uploaded!");
 	}
-	
 
 	public void deleteDataFile() throws IOException {
-		
+
 		service.files().delete(dataFileId).execute();
-		service.files().delete(propertiesFileId).execute();
+		service.files().delete(passphraseFileId).execute();
 	}
 
 	public ArrayList<Record> getRecords() {
@@ -301,5 +316,12 @@ public class GoogleDriveModel {
 
 	}
 
-	
+	public void setDataFileId(String dataFileId) {
+		this.dataFileId = dataFileId;
+	}
+
+	public void setPassphraseFileId(String propertiesFileId) {
+		this.passphraseFileId = propertiesFileId;
+	}
+
 }
