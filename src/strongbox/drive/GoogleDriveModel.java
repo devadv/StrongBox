@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,8 +72,10 @@ public class GoogleDriveModel {
 
 	private Model model;
 
-	public GoogleDriveModel(Model model) {
+	private Instant start;
 
+	public GoogleDriveModel(Model model) {
+		start = Instant.now();
 		this.model = model;
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -92,6 +96,9 @@ public class GoogleDriveModel {
 					downloadPassphrase();
 				}
 				System.out.println("Data GoogleDrive Connected");
+				Instant after = Instant.now();
+				long delta = Duration.between(start, after).toMillis();
+				System.out.println("Connecting time: " + delta) ;
 			}
 		} catch (GeneralSecurityException | IOException e) {
 			e.printStackTrace();
@@ -164,27 +171,6 @@ public class GoogleDriveModel {
 		return dataExist;
 	}
 
-	/*	*//**
-	 * checks existence of config.passphrase.properties in appDataFolder
-	 * 
-	 * @return boolean true when config.passphrase.properties exists
-	 * @throws IOException
-	 */
-	/*
-	 * public boolean hasPropertiesFile() throws IOException{ boolean dataExist
-	 * = false; FileList files =
-	 * service.files().list().setSpaces("appDataFolder")
-	 * .setFields("nextPageToken, files(id, name)").execute();
-	 * //System.out.println(files); for (File file : files.getFiles()) { if
-	 * (file.getName().equals("data.csv")) { this.dataFileId = file.getId();
-	 * dataExist = true; }
-	 * if(file.getName().equals("config.passphrase.properties")){
-	 * this.propertiesFileId = file.getId();
-	 * 
-	 * } } return dataExist;
-	 * 
-	 * }
-	 */
 
 	/**
 	 * gets id of file
@@ -221,6 +207,10 @@ public class GoogleDriveModel {
 	}
 
 	public void downloadRecords() throws IOException {
+		Instant beforedownloading = Instant.now();
+		
+		
+		System.out.println("Start Downloading.... ") ;
 
 		OutputStream outputStream = new ByteArrayOutputStream();
 		service.files().get(getFileID())
@@ -244,6 +234,12 @@ public class GoogleDriveModel {
 		records.addAll(model.getRecordList());
 		// close scanner
 		input.close();
+		Instant end = Instant.now();
+		long delta = Duration.between(beforedownloading, end).toMillis();
+		System.out.println("Downloading time: " + delta) ;
+		delta = Duration.between(start, end).toMillis();
+		System.out.println("Total time: " + delta/1000.0 + " sec") ;
+		
 	}
 
 	public void downloadPassphrase() throws IOException {
