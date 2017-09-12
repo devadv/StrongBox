@@ -164,7 +164,9 @@ public class Controller implements Observer {
 					setEnableNormalMode(true);
 					setEnableEditMode(false);
 					
+					if (folderData.getSize() > 0) {
 					view.getFolderView().setSelectedValue(folderData.firstElement(), true);
+					}
 					view.getRecordView().grabFocus();
 					
 					// Next few lines prevent buggy, glitchy, inexplicable visual errors 
@@ -703,6 +705,52 @@ public class Controller implements Observer {
     		}
     	});
     }
+    
+    
+    /////////
+    /*
+    JPasswordField pwField = (JPasswordField)view.getFields().get(3);
+	if (!showPassword) {
+		pwField.setEchoChar((char)0);
+		showPassword = true;
+		view.getStrengthTextLabel().setVisible(true);
+		view.getStrengthScoreLabel().setVisible(true);
+	}
+	else {
+		pwField.setEchoChar(echoChar);
+		showPassword = false;
+		view.getStrengthTextLabel().setVisible(false);
+		view.getStrengthScoreLabel().setVisible(false);
+	}
+    */
+    /////////////
+    
+    
+    // addPwFieldListener ??????
+    
+    // De DocumentFilter voor passwordfield is overbodig als alles door een
+    // DocListener gebeurd ?????
+
+    
+    ////////////
+    
+    /*
+     * Testen: is record ook echt ALTIJD null zodra er geen geselecteerd is???
+     *      
+     *      
+     * Als pwField-text "No record selected" is EN record is null:
+     * 
+     * dan moet pwFieldDoc listener pw weergave AANZETTEN, echter zodra dit niet meer
+     * het geval is moet pwWeergave weer naar de oorspronkelijke stand 'terug'
+     * zonder dat dit interference oplevert met de initiële stand (false) waarmee
+     * opgestart wordt of welke stand de gebruiker het op gezet heeft via de "eye-button".
+     */
+    
+    //////////////
+    
+    
+    
+    
     
     /**
      * Add a MouseListener to the 'Dice' button so a random password can be
